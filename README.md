@@ -30,15 +30,15 @@ In general, you'll use Capifony as follows:
 
 4. Edit config/deploy.rb to match this:
 
-  set :application,   "example-app"
-  set :repository,    "/path/to/your/production/repos/"
-  set :releases_path, "/path/to/your/www/"
-  set :host,          "hostname"
+    set :application,   "example-app"
+    set :repository,    "/path/to/your/production/repos/"
+    set :releases_path, "/path/to/your/www/"
+    set :host,          "hostname"
 
-  set :db_orm,        "Propel"
-  set :db_dsn,        "mysql:host=localhost;dbname=example-app"
-  set :db_user,       "root"
-  set :db_pass,       "$secr3t"
+    set :db_orm,        "Propel"
+    set :db_dsn,        "mysql:host=localhost;dbname=example-app"
+    set :db_user,       "root"
+    set :db_pass,       "$secr3t"
 
 5. Run "cap git:init". This will generates ".gitignore" file & inits empty repository in project directory. ".gitignore" by defaults ignoring "config/ProjectConfiguration.class.php" & "config/databases.yml", because them is server dependent. You can autogenerate them later on production by calling "cap symfony:setup_remote" & "cap db:setup_remote";
 

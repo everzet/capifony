@@ -34,7 +34,6 @@ In general, you'll use Capifony as follows:
     set :repository,    "/path/to/your/production/repos/"
     set :releases_path, "/path/to/your/www/"
     set :host,          "hostname"
-
     set :db_orm,        "Propel"
     set :db_dsn,        "mysql:host=localhost;dbname=example-app"
     set :db_user,       "root"

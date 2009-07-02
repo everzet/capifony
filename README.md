@@ -11,7 +11,7 @@ Capifony is a batch of Capistrano reciepts, writed for symfony framework.
 
 ## WORKFLOW
 
-![Diagram](http://burkelibbey.org/h/webconfig.png)
+![Diagram](http://everzet.com/images/capifony.png)
 
 ## USAGE
 

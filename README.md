@@ -34,6 +34,7 @@ In general, you'll use Capifony as follows:
     set :repository,    "/path/to/your/production/repos/"
     set :releases_path, "/path/to/your/www/"
     set :host,          "hostname"
+
     set :db_orm,        "Propel"
     set :db_dsn,        "mysql:host=localhost;dbname=example-app"
     set :db_user,       "root"
@@ -46,9 +47,9 @@ In general, you'll use Capifony as follows:
 7. Run "cap symfony:test_remote" task. It will download "check_configuration.php" to your production server, runs it, removes it from production & show it's output;
 
 8. If everything in previous step goes fine, run "cap deploy:setup" task. This task is wrapper to call "git:setup_remote", "symfony:setup_remote", "db:setup_remote" tasks.
-    1. "cap git:setup_remote" creates 'bare' repository on production server, pushes local commits into it, and clones production project from it;
-    2. "cap symfony:setup_remote" generates "config/ProjectConfiguration.class.php" with right path for symfony installation;
-    3. "cap db:setup_remote" runs "symfony configure:database" with data from "deploy.rb".
+    * "cap git:setup_remote" creates 'bare' repository on production server, pushes local commits into it, and clones production project from it;
+    * "cap symfony:setup_remote" generates "config/ProjectConfiguration.class.php" with right path for symfony installation;
+    * "cap db:setup_remote" runs "symfony configure:database" with data from "deploy.rb".
 
 9. You're done. Now you can:
     1. Make changes

@@ -48,13 +48,12 @@ In general, you'll use Capifony as follows:
 8. If everything in previous step goes fine, run "cap deploy:setup" task. This task is wrapper to call "git:setup_remote", "symfony:setup_remote", "db:setup_remote" tasks.
     * "cap git:setup_remote" creates 'bare' repository on production server, pushes local commits into it, and clones production project from it;
     * "cap symfony:setup_remote" generates "config/ProjectConfiguration.class.php" with right path for symfony installation;
-    * "cap db:setup_remote" runs "symfony configure:database" with data from "deploy.rb".
+    * "cap db:setup_remote" runs <code>symfony configure:database</code> with data from <code>deploy.rb</code>.
 
 9. You're done. Now you can:
-    1. Make changes
-    2. Commit them
-    3. Push them to production repository
-    4. "cap deploy" to deploy them on production project via production repository
+    1. Make changes;
+    2. Commit changes, by calling <code>git commit -am 'done something'</code>;
+    3. When you're done with changes & ready to deploy - run <code>git push && cap deploy</code>.s
 
 ## LICENSE:
 

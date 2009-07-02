@@ -1,6 +1,0 @@
-config/ProjectConfiguration.class.php
-config/databases.yml
-web/sf*
-cache/*
-plugins/.*
-log/*

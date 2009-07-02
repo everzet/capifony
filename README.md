@@ -28,7 +28,7 @@ In general, you'll use Capifony as follows:
 
 3. Download or clone capifony, replace "Capfile" in symfony project root directory with downloaded one & place symfony.rb in config subdirectory;
 
-4. Edit config/deploy.rb to match this:
+4. Edit <code>config/deploy.rb</code> to match this:
 <pre>
     set :application,   "example-app"
     set :repository,    "/path/to/your/production/repos/"
@@ -39,21 +39,21 @@ In general, you'll use Capifony as follows:
     set :db_user,       "root"
     set :db_pass,       "$secr3t"
 </pre>
-5. Run "cap git:init". This will generates ".gitignore" file & inits empty repository in project directory. ".gitignore" by defaults ignoring "config/ProjectConfiguration.class.php" & "config/databases.yml", because them is server dependent. You can autogenerate them later on production by calling "cap symfony:setup_remote" & "cap db:setup_remote";
+5. Run <code>cap git:init</code>. This will generates <code>.gitignore</code> file & inits empty repository in project directory. <code>.gitignore</code> by defaults ignoring <code>config/ProjectConfiguration.class.php</code> & <code>config/databases.yml</code>, because them is server dependent. You can autogenerate them later on production by calling <code>cap symfony:setup_remote</code> & <code>cap db:setup_remote</code>;
 
-6. Run "git add . && git commit -am 'initial commit'". You now done initial commit;
+6. Run <code>git add . && git commit -am 'initial commit'</code>. You now done initial commit;
 
-7. Run "cap symfony:test_remote" task. It will download "check_configuration.php" to your production server, runs it, removes it from production & show it's output;
+7. Run <code>cap symfony:test_remote</code> task. It will download <code>check_configuration.php</code> to your production server, runs it, removes it from production & show it's output;
 
-8. If everything in previous step goes fine, run "cap deploy:setup" task. This task is wrapper to call "git:setup_remote", "symfony:setup_remote", "db:setup_remote" tasks.
-    * "cap git:setup_remote" creates 'bare' repository on production server, pushes local commits into it, and clones production project from it;
-    * "cap symfony:setup_remote" generates "config/ProjectConfiguration.class.php" with right path for symfony installation;
-    * "cap db:setup_remote" runs <code>symfony configure:database</code> with data from <code>deploy.rb</code>.
+8. If everything in previous step goes fine, run <code>cap deploy:setup</code> task. This task is wrapper to call <code>git:setup_remote</code>, <code>symfony:setup_remote</code>, <code>db:setup_remote</code> tasks.
+    * <code>cap git:setup_remote</code> creates 'bare' repository on production server, pushes local commits into it, and clones production project from it;
+    * <code>cap symfony:setup_remote</code> generates <code>config/ProjectConfiguration.class.php</code> with right path for symfony installation;
+    * <code>cap db:setup_remote</code> runs <code>symfony configure:database</code> with data from <code>deploy.rb</code>.
 
 9. You're done. Now you can:
     1. Make changes;
     2. Commit changes, by calling <code>git commit -am 'done something'</code>;
-    3. When you're done with changes & ready to deploy - run <code>git push && cap deploy</code>.s
+    3. When you're done with changes & ready to deploy - run <code>git push && cap deploy</code>.
 
 ## LICENSE:
 

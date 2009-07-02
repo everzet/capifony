@@ -29,17 +29,16 @@ In general, you'll use Capifony as follows:
 3. Download or clone capifony, replace "Capfile" in symfony project root directory with downloaded one & place symfony.rb in config subdirectory;
 
 4. Edit config/deploy.rb to match this:
-
+<pre>
     set :application,   "example-app"
     set :repository,    "/path/to/your/production/repos/"
     set :releases_path, "/path/to/your/www/"
     set :host,          "hostname"
-
     set :db_orm,        "Propel"
     set :db_dsn,        "mysql:host=localhost;dbname=example-app"
     set :db_user,       "root"
     set :db_pass,       "$secr3t"
-
+</pre>
 5. Run "cap git:init". This will generates ".gitignore" file & inits empty repository in project directory. ".gitignore" by defaults ignoring "config/ProjectConfiguration.class.php" & "config/databases.yml", because them is server dependent. You can autogenerate them later on production by calling "cap symfony:setup_remote" & "cap db:setup_remote";
 
 6. Run "git add . && git commit -am 'initial commit'". You now done initial commit;
@@ -47,15 +46,15 @@ In general, you'll use Capifony as follows:
 7. Run "cap symfony:test_remote" task. It will download "check_configuration.php" to your production server, runs it, removes it from production & show it's output;
 
 8. If everything in previous step goes fine, run "cap deploy:setup" task. This task is wrapper to call "git:setup_remote", "symfony:setup_remote", "db:setup_remote" tasks.
-  * "cap git:setup_remote" creates 'bare' repository on production server, pushes local commits into it, and clones production project from it;
-  * "cap symfony:setup_remote" generates "config/ProjectConfiguration.class.php" with right path for symfony installation;
-  * "cap db:setup_remote" runs "symfony configure:database" with data from "deploy.rb".
+    1. "cap git:setup_remote" creates 'bare' repository on production server, pushes local commits into it, and clones production project from it;
+    2. "cap symfony:setup_remote" generates "config/ProjectConfiguration.class.php" with right path for symfony installation;
+    3. "cap db:setup_remote" runs "symfony configure:database" with data from "deploy.rb".
 
 9. You're done. Now you can:
-  * Make changes
-  * Commit them
-  * Push them to production repository
-  * "cap deploy" to deploy them on production project via production repository
+    1. Make changes
+    2. Commit them
+    3. Push them to production repository
+    4. "cap deploy" to deploy them on production project via production repository
 
 ## LICENSE:
 

@@ -1,25 +1,25 @@
-= Capifony
+# Capifony
 
 Capistrano is a utility and framework for executing commands in parallel on multiple remote machines, via SSH.
 Capifony is a batch of Capistrano reciepts, writed for symfony framework.
 
-== DEPENDENCIES
+## DEPENDENCIES
 
 * Capistrano (http://github.com/capistrano/capistrano/tree/master)
 * git (http://git-scm.com/). For now, only git supported, working on SVN integration
 * symfony framework 1.2+, installed on development & production servers
 
-== WORKFLOW
+## WORKFLOW
 
-[link:http://everzet.com/images/capifony.png]
+![Diagram](http://burkelibbey.org/h/webconfig.png)
 
-== USAGE
+## USAGE
 
 In general, you'll use Capifony as follows:
 
 1. Go into new project directory on your development server
 
-== LICENSE:
+## LICENSE:
 
 (The MIT License)
 

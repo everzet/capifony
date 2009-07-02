@@ -128,14 +128,14 @@ end
 namespace :db do
   task :get_dump, :roles => :app do
     run "#{symfony.get_rem_path}/symfony doctrine:data-dump"
-    run "cd #{symfony.get_rem_path}/ && git commit -am 'dump from #{Time.now.utc.strftime("%Y%m%d%H%M.%S")}' && git push"
+    run "cd #{symfony.get_rem_path}/ && git commit -m 'dump from #{Time.now.utc.strftime("%Y%m%d%H%M.%S")}' data/fixtures/data.yml && git push"
     run_locally 'git pull'
     run_locally 'symfony doctrine:data-load'
   end
 
   task :push, :roles => :app do
     run_locally 'symfony doctrine:data-dump'
-    run_locally "git commit -am 'dump from #{Time.now.utc.strftime("%Y%m%d%H%M.%S")}' && git push"
+    run_locally "git commit -m 'dump from #{Time.now.utc.strftime("%Y%m%d%H%M.%S")}' data/fixtures/data.yml && git push"
     run "cd #{symfony.get_rem_path}/ && git pull"
     run "#{symfony.get_rem_path}/symfony doctrine:data-load"
   end

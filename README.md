@@ -24,7 +24,7 @@ In general, you'll use Capifony as follows:
 
 1. Go into new project directory on your development server/machine, generate symfony project;
 
-2. Run "capify .";
+2. Run <code>capify .</code>;
 
 3. Download or clone capifony, replace "Capfile" in symfony project root directory with downloaded one & place symfony.rb in config subdirectory;
 
@@ -41,7 +41,7 @@ In general, you'll use Capifony as follows:
 </pre>
 5. Run <code>cap git:init</code>. This will generates <code>.gitignore</code> file & inits empty repository in project directory. <code>.gitignore</code> by defaults ignoring <code>config/ProjectConfiguration.class.php</code> & <code>config/databases.yml</code>, because them is server dependent. You can autogenerate them later on production by calling <code>cap symfony:setup_remote</code> & <code>cap db:setup_remote</code>;
 
-6. Run <code>git add . && git commit -am 'initial commit'</code>. You now done initial commit;
+6. Run <code>git add . && git commit -am 'initial commit'</code>. You done initial commit;
 
 7. Run <code>cap symfony:test_remote</code> task. It will download <code>check_configuration.php</code> to your production server, runs it, removes it from production & show it's output;
 
@@ -54,6 +54,12 @@ In general, you'll use Capifony as follows:
     1. Make changes;
     2. Commit changes, by calling <code>git commit -am 'done something'</code>;
     3. When you're done with changes & ready to deploy - run <code>git push && cap deploy</code>.
+
+## ADDITIONAL TASKS:
+
+* <code>cap db:get_dump</code> runs <code>symfony doctrine:data-dump</code> on the production server, commit fixtures in repo, pull them locally & run <code>symfony doctrine:data-load</code>;
+* <code>cap db:push</code> same as <code>get_dump</code>, but in another direction;
+* <code>cap git:ignore</code> only creates <code>.gitignore</code> file.
 
 ## LICENSE:
 

@@ -93,7 +93,7 @@ public function setup()
   end
 
   task :test_remote, :roles => :app do
-    upload('config/check_configuration.php', "#{symfony.get_rem_path}/check_configuration.php")
+    run "cd #{symfony.get_rem_path}/ && wget http://sf-to.org/1.2/check.php"
     output = capture("php #{symfony.get_rem_path}/check_configuration.php")
     run "rm #{symfony.get_rem_path}/check_configuration.php"
     puts output

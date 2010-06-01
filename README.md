@@ -10,12 +10,12 @@ Capistrano is an open source tool for running scripts on multiple servers. It’
 
 ### Installing Capistrano ###
 
-		sudo gem install capistrano
+	sudo gem install capistrano
 
 ### Setup your project to use Capistrano ###
 
-		cd path/to/your/app
-		capify .
+	cd path/to/your/app
+	capify .
 
 This will create a few files for you. It will create a Capfile in the root of your project. It will also create a directory named config (if it doesn’t exist already) and place a file named deploy.rb in the config folder. That’s where you will add/change any application-specific settings for your deployment recipe.
 
@@ -25,21 +25,21 @@ Now replace your Capfile & deploy.rb with repo's one & add application specific 
 
 Now, you can start the deployment process! To get your server setup with the file structure that Capistrano expects, you can run
 
-		cap deploy:setup
+	cap deploy:setup
 
 This command will create the following folder structure on your server:
 
-		|-- deploy_to_path
-		  |-- current (symlink)
-		  |-- releases
-		    |-- 20100512131539
-		    |-- 20100509150741
-		    |-- 20100509145325
-		  |-- shared
-		    |-- cached-copy
-		    |-- log
-		    |-- pids
-		    |-- system
+	|-- deploy_to_path
+	  |-- current (symlink)
+	  |-- releases
+	    |-- 20100512131539
+	    |-- 20100509150741
+	    |-- 20100509145325
+	  |-- shared
+	    |-- cached-copy
+	    |-- log
+	    |-- pids
+	    |-- system
 
 The folders in the releases directory will be the actual deployed code, timestamped. The pids folder in the shared directory is only used for Rails applications, so you can ignore it completely. Capistrano symlinks your log directory from your app to the log directory in the shared folder so that it doesn’t get erased when you deploy a new version of your code.
 
@@ -47,27 +47,27 @@ This is an important step! Before you deploy the application for the first time,
 
 Now, to deploy your application for the first time, you can run:
 
-		cap deploy:cold
+	cap deploy:cold
 
 This will deploy your application, create the db, models, forms, filters, and run all of your migrations.
 
 Now, whenever you need to deploy a new version of your code, you can just run:
 
-		cap deploy
+	cap deploy
 
 If you need to deploy and run your migrations you can call:
 
-		cap deploy:migrations
+	cap deploy:migrations
 
 We’ve also added a custom task to run your test suite on the production server. You can invoke this by calling:
 
-		cap deploy:testall
+	cap deploy:testall
 
 This will deploy the application, rebuild the test database, then run all of the tests.
 
 If you want to see all of the Capistrano tasks available, you can run:
 
-		cap -T
+	cap -T
 
 We’ve been using this setup for a little while now, and it’s saved us a ton of time when we need to push changes for a site to the production server.
 

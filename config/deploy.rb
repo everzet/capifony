@@ -1,15 +1,35 @@
-set :application, "set your application name here"
-set :repository,  "set your repository location here"
+# =============================================================================
+# REQUIRED VARIABLES
+# =============================================================================
+set :application,   "my_app"
+set :domain,        "mydomain.com"
+set :deploy_to,     "/var/www/#{domain}"
+set :user,          "username"
 
-# If you aren't deploying to /u/apps/#{application} on the target
-# servers (which is the default), you can specify the actual location
-# via the :deploy_to variable:
-# set :deploy_to, "/var/www/#{application}"
+# =============================================================================
+# SCM OPTIONS
+# =============================================================================
+set :scm, :git                  # or :subversion
+set :scm_user,      "username"  # optional
+set :scm_password,  "password"  # optional
+set :repository,    "http://svn.myrepo.com/#{application}/trunk/"
 
-# If you aren't using Subversion to manage your source code, specify
-# your SCM below:
-# set :scm, :subversion
+# =============================================================================
+# SSH OPTIONS
+# =============================================================================
+set :user,          "username"
+set :use_sudo,      false       # optional
 
-role :app, "your app-server here"
-role :web, "your web-server here"
-role :db,  "your db-server here", :primary => true
+# =============================================================================
+# ROLES
+# =============================================================================
+# Modify these values to execute tasks on a different server.
+role :web, domain
+role :app, domain
+role :db,  domain,  :primary => true
+
+# =============================================================================
+# CAPISTRANO OPTIONS
+# =============================================================================
+set :keep_releases, 3
+set :deploy_via,    :remote_cache

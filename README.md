@@ -74,5 +74,4 @@ We’ve been using this setup for a little while now, and it’s saved us a ton 
 Contributors
 ============
 
-* everzet (creator): [http://github.com/everzet](http://github.com/everzet)
 * Travis Roberts (creator of improved version): [http://blog.centresource.com/author/troberts/](http://blog.centresource.com/author/troberts/)

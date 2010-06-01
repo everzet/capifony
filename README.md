@@ -76,7 +76,3 @@ Contributors
 
 * everzet (creator): [http://github.com/everzet](http://github.com/everzet)
 * Travis Roberts (creator of improved version): [http://blog.centresource.com/author/troberts/](http://blog.centresource.com/author/troberts/)
-
-sfLessPhpPlugin is based on lessphp by leafo ([http://github.com/leafo](http://github.com/leafo))
-
-LESS is maintained by Alexis Sellier [http://github.com/cloudhead](http://github.com/cloudhead)

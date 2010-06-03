@@ -8,19 +8,19 @@ Capistrano is an open source tool for running scripts on multiple servers. It’
 - Must have SSH access to the server you are deploying to.
 - Must have Ruby and RubyGems installed on your machine (not required for deployment server)’
 
-### Installing Capistrano ###
+### Installing Capifony ###
 
-	sudo gem install capistrano
+	sudo gem install capifony
 
-### Setup your project to use Capistrano ###
+### Setup your project to use Capifony ###
 
-Place files & folders from this repository into appropriate folders in your project:
+CD to your project directory & run:
 
-- `Capfile` &rarr; `/sf/proj/Capfile`
-- `config/capifony.rb` &rarr; `/sf/proj/config/capifony.rb`
-- `config/deploy.rb` &rarr; `/sf/proj/config/deploy.rb`
+	capifony .
 
-Fill up `/sf/proj/config/deploy.rb` with your server connection data (REQUIRED VARIABLES & SCM OPTIONS)
+This will create `Capfile` in your project root & `deploy.rb` config file in `config` directory
+
+Fill up your `config/deploy.rb` with your server connection data
 
 ### Server Setup ###
 

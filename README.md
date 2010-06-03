@@ -20,9 +20,11 @@ Place files & folders from this repository into appropriate folders in your proj
 - `config/capifony.rb` &rarr; `/sf/proj/config/capifony.rb`
 - `config/deploy.rb` &rarr; `/sf/proj/config/deploy.rb`
 
+Fill up `/sf/proj/config/deploy.rb` with your server connection data (REQUIRED VARIABLES & SCM OPTIONS)
+
 ### Server Setup ###
 
-Now, you can start the deployment process! To get your server setup with the file structure that Capistrano expects, you can run
+Now, you can start the deployment process! To get your server setup with the file structure that Capistrano expects, you can run:
 
 	cap deploy:setup
 

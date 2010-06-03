@@ -36,20 +36,21 @@ This command will create the following folder structure on your server:
 	    |-- 20100509150741
 	    |-- 20100509145325
 	  |-- shared
-	    |-- cached-copy
 	    |-- log
-	    |-- pids
-	    |-- system
+	    |-- web
+	      |-- uploads
 
-The folders in the releases directory will be the actual deployed code, timestamped. The pids folder in the shared directory is only used for Rails applications, so you can ignore it completely. Capistrano symlinks your log directory from your app to the log directory in the shared folder so that it doesn’t get erased when you deploy a new version of your code.
-
-This is an important step! Before you deploy the application for the first time, it’s really a good idea to scp your databases.yml file up to your server so you can set the proper credentials for your production server and keep it out of your repository. Make sure you put the databases.yml file into the shared/system directory, because we already have a task that will symlink it when each new code version is deployed.
+The folders in the releases directory will be the actual deployed code, timestamped. Capistrano symlinks your log & web/uploads directories from your app to the directories in the shared folder so that it doesn’t get erased when you deploy a new version of your code.
 
 Now, to deploy your application for the first time, you can run:
 
 	cap deploy:cold
 
 This will deploy your application, create the db, models, forms, filters, and run all of your migrations.
+
+To configure database on production environment, run:
+
+	cap symfony:configure:database
 
 Now, whenever you need to deploy a new version of your code, you can just run:
 
@@ -61,9 +62,13 @@ If you need to deploy and run your migrations you can call:
 
 We’ve also added a custom task to run your test suite on the production server. You can invoke this by calling:
 
-	cap deploy:testall
+	cap deploy:tests:all
 
 This will deploy the application, rebuild the test database, then run all of the tests.
+
+Also, you have command to run your custom symfony tasks:
+
+	cap symfony:run_task
 
 If you want to see all of the Capistrano tasks available, you can run:
 
@@ -74,4 +79,5 @@ We’ve been using this setup for a little while now, and it’s saved us a ton 
 Contributors
 ============
 
+* everzet (owner): [http://github.com/everzet](http://github.com/everzet)
 * Travis Roberts (creator of improved version): [http://blog.centresource.com/author/troberts/](http://blog.centresource.com/author/troberts/)

@@ -16,9 +16,9 @@ Capistrano is an open source tool for running scripts on multiple servers. It’
 
 Place files & folders from this repository into appropriate folders in your project:
 
-	Capfile → /sf/proj/
-	config/capifony.rb → /sf/proj/config/capifony.rb
-	config/deploy.rb → /sf/proj/config/deploy.rb
+- `Capfile` &rarr; `/sf/proj/Capfile`
+- `config/capifony.rb` &rarr; `/sf/proj/config/capifony.rb`
+- `config/deploy.rb` &rarr; `/sf/proj/config/deploy.rb`
 
 ### Server Setup ###
 

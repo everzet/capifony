@@ -14,12 +14,11 @@ Capistrano is an open source tool for running scripts on multiple servers. It’
 
 ### Setup your project to use Capistrano ###
 
-	cd path/to/your/app
-	capify .
+Place files & folders from this repository into appropriate folders in your project:
 
-This will create a few files for you. It will create a Capfile in the root of your project. It will also create a directory named config (if it doesn’t exist already) and place a file named deploy.rb in the config folder. That’s where you will add/change any application-specific settings for your deployment recipe.
-
-Now replace your Capfile & deploy.rb with repo's one & add application specific options to new deploy.rb.
+	Capfile &rarr; /sf/proj/
+	config/capifony.rb &rarr; /sf/proj/config/capifony.rb
+	config/deploy.rb &rarr; /sf/proj/config/deploy.rb
 
 ### Server Setup ###
 
@@ -56,7 +55,7 @@ To deploy your application for the first time, you can run:
 
 This will deploy your application, configures databases.yml (will ask you about DSN, user, pass), create the db, models, forms, filters, and run all of your migrations.
 
-Now, whenever you need to deploy a new version of your code, you can just run:
+Now, whenever you need to deploy a new version of your code, just run:
 
 	cap deploy
 

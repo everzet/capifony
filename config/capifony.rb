@@ -42,12 +42,7 @@ namespace :deploy do
   task :finalize_update, :except => { :no_release => true } do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
     run "mkdir -p #{latest_release}/cache"
-
-    # Symlink directories
     create_dirs
-
-    # Rotate log file
-    symfony.log.rotate
 
     if fetch(:normalize_asset_timestamps, true)
       stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
@@ -111,7 +106,9 @@ namespace :symfony do
 
     desc "Optimizes a project for better performance"
     task :optimize do
-      run "php #{latest_release}/symfony project:optimize"
+      prompt_with_default(:application, "frontend")
+
+      run "php #{latest_release}/symfony project:optimize #{application}"
     end
 
     desc "Clears all non production environment controllers"
@@ -135,7 +132,10 @@ namespace :symfony do
 
     desc "Rotates an application's log files"
     task :rotate do
-      run "php #{latest_release}/symfony log:rotate"
+      prompt_with_default(:application, "frontend")
+      prompt_with_default(:env, "prod")
+
+      run "php #{latest_release}/symfony log:rotate #{application} #{env}"
     end
   end
 
@@ -170,7 +170,8 @@ namespace :doctrine do
 end
 
 after "deploy:finalize_update", # After finalizing update:
-  "symlink:db",                     # 1. Symlink database
-  "symfony:cc",                     # 2. Clear cache
-  "symfony:plugin:publish_assets",  # 3. Publish plugin assets
-  "symfony:project:permissions"     # 4. Fix project permissions
+  "symlink:db",                       # 1. Symlink database
+  "symfony:cc",                       # 2. Clear cache
+  "symfony:plugin:publish_assets",    # 3. Publish plugin assets
+  "symfony:project:permissions"       # 4. Fix project permissions
+  "symfony:project:clear_controllers" # 5. Clear controllers

@@ -42,15 +42,19 @@ This command will create the following folder structure on your server:
 
 The folders in the releases directory will be the actual deployed code, timestamped. Capistrano symlinks your log & web/uploads directories from your app to the directories in the shared folder so that it doesn’t get erased when you deploy a new version of your code.
 
-Now, to deploy your application for the first time, you can run:
+To deploy your application, simply run:
 
-	cap deploy:cold
-
-This will deploy your application, create the db, models, forms, filters, and run all of your migrations.
+	cap deploy
 
 To configure database on production environment, run:
 
 	cap symfony:configure:database
+
+To deploy your application for the first time, you can run:
+
+	cap deploy:cold
+
+This will deploy your application, configures databases.yml (will ask you about DSN, user, pass), create the db, models, forms, filters, and run all of your migrations.
 
 Now, whenever you need to deploy a new version of your code, you can just run:
 

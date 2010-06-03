@@ -11,6 +11,7 @@ end
 namespace :deploy do
   desc "Overwrite the start task to set the permissions on the project."
   task :start do
+    symfony.configure.database
     symfony.project.permissions
     doctrine.build_all_and_load
   end

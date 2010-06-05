@@ -170,6 +170,44 @@ namespace :doctrine do
   end
 end
 
+namespace :shared do
+  namespace :database do
+    desc "Download config/databases.yml from remote server"
+    task :download do
+      download("#{shared_path}/databases.yml", "config/databases.yml", :via => :scp, :recursive => true)
+    end
+
+    desc "Upload config/databases.yml to remote server"
+    task :upload do
+      upload("config/databases.yml", "#{shared_path}/databases.yml", :via => :scp, :recursive => true)
+    end
+  end
+
+  namespace :logs do
+    desc "Download all logs from remote folder to local one"
+    task :download do
+      download("#{shared_path}/log", "log", :via => :scp, :recursive => true)
+    end
+
+    desc "Upload all logs from local folder to remote one"
+    task :upload do
+      upload("log", "#{shared_path}/log", :via => :scp, :recursive => true)
+    end
+  end
+
+  namespace :uploads do
+    desc "Download all files from remote web/uploads folder to local one"
+    task :download do
+      download("#{shared_path}/web/uploads", "web/uploads", :via => :scp, :recursive => true)
+    end
+
+    desc "Upload all files from local web/uploads folder to remote one"
+    task :upload do
+      upload("web/uploads", "#{shared_path}/web/uploads", :via => :scp, :recursive => true)
+    end
+  end
+end
+
 after "deploy:finalize_update", # After finalizing update:
   "symlink:db",                       # 1. Symlink database
   "symfony:cc",                       # 2. Clear cache

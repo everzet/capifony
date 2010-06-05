@@ -55,7 +55,8 @@ namespace :deploy do
       end
     end
 
-    run "mkdir #{shared_path}/config && touch #{shared_path}/config/databases.yml"
+    run "mkdir -p #{shared_path}/config"
+    run "touch #{shared_path}/config/databases.yml"
   end
 
   desc "Customize the finalize_update task to work with symfony."

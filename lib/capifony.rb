@@ -269,36 +269,36 @@ namespace :shared do
   namespace :database do
     desc "Download config/databases.yml from remote server"
     task :to_local do
-      download("#{shared_path}/config/databases.yml", "config/databases.yml", :via => :scp, :recursive => true)
+      download("#{shared_path}/config/databases.yml", "config/databases.yml", :via => :scp)
     end
 
     desc "Upload config/databases.yml to remote server"
     task :to_remote do
-      upload("config/databases.yml", "#{shared_path}/config/databases.yml", :via => :scp, :recursive => true)
+      upload("config/databases.yml", "#{shared_path}/config/databases.yml", :via => :scp)
     end
   end
 
-  namespace :logs do
+  namespace :log do
     desc "Download all logs from remote folder to local one"
     task :to_local do
-      download("#{shared_path}/log", "log", :via => :scp, :recursive => true)
+      download("#{shared_path}/log", "./", :via => :scp, :recursive => true)
     end
 
     desc "Upload all logs from local folder to remote one"
     task :to_remote do
-      upload("log", "#{shared_path}/log", :via => :scp, :recursive => true)
+      upload("log", "#{shared_path}/", :via => :scp, :recursive => true)
     end
   end
 
   namespace :uploads do
     desc "Download all files from remote web/uploads folder to local one"
     task :to_local do
-      download("#{shared_path}/web/uploads", "web/uploads", :via => :scp, :recursive => true)
+      download("#{shared_path}/web/uploads", "web", :via => :scp, :recursive => true)
     end
 
     desc "Upload all files from local web/uploads folder to remote one"
     task :to_remote do
-      upload("web/uploads", "#{shared_path}/web/uploads", :via => :scp, :recursive => true)
+      upload("web/uploads", "#{shared_path}/web", :via => :scp, :recursive => true)
     end
   end
 end

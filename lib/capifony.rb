@@ -94,6 +94,15 @@ namespace :symlink do
 end
 
 namespace :symfony do
+  desc "Downloads & runs check_configuration.php on remote"
+  task :check_configuration do
+    prompt_with_default(:version, "1.4")
+
+    run "wget  http://sf-to.org/#{version}/check.php -O /tmp/check_configuration.php"
+    run "php /tmp/check_configuration.php"
+    run "rm /tmp/check_configuration.php"
+  end
+
   desc "Clears the cache"
   task :cc do
     run "php #{latest_release}/symfony cache:clear"

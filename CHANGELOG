@@ -1,3 +1,7 @@
+== 0.2.2 / June 6, 2010
+
+* deployment bug with `mkdir shared/config` fixed
+
 == 0.2.1 / June 5, 2010
 
 * dependency fix

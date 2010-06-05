@@ -1,3 +1,5 @@
+require 'yaml'
+
 # Dirs that need to remain the same between deploys (shared dirs)
 set :shared_children, %w(log web/uploads)
 
@@ -6,6 +8,23 @@ def prompt_with_default(var, default)
     Capistrano::CLI.ui.ask "#{var} [#{default}] : "
   end
   set var, default if eval("#{var.to_s}.empty?")
+end
+
+def load_database_config(data, env = 'prod')
+  databases = YAML::load(data)
+
+  if databases[env]
+    db_param = databases[env]['doctrine']['param']
+  else
+    db_param = databases['all']['doctrine']['param']
+  end
+
+  {
+    'type'  => /(\w+)\:/.match(db_param['dsn'])[1],
+    'user'  => db_param['username'],
+    'pass'  => db_param['password'],
+    'db'    => /dbname=([^;$]+)/.match(db_param['dsn'])[1]
+  }
 end
 
 namespace :deploy do
@@ -36,7 +55,7 @@ namespace :deploy do
       end
     end
 
-    run "touch #{shared_path}/databases.yml"
+    run "mkdir #{shared_path}/config && touch #{shared_path}/config/databases.yml"
   end
 
   desc "Customize the finalize_update task to work with symfony."
@@ -70,7 +89,7 @@ end
 namespace :symlink do
   desc "Symlink the database"
   task :db do
-    run "ln -nfs #{shared_path}/databases.yml #{latest_release}/config/databases.yml"
+    run "ln -nfs #{shared_path}/config/databases.yml #{latest_release}/config/databases.yml"
   end
 end
 
@@ -170,16 +189,81 @@ namespace :doctrine do
   end
 end
 
+namespace :database do
+  namespace :move do
+    task :remote_to_local do
+      filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.bz2"
+      file      = "/tmp/#{filename}"
+      sqlfile   = "#{application}_dump.sql"
+      config    = ""
+
+      run "cat #{shared_path}/config/databases.yml" do |ch, st, data|
+        config = load_database_config data, 'prod'
+      end
+
+      case config['type']
+      when 'mysql'
+        run "mysqldump -u#{config['user']} --password='#{config['pass']}' #{config['db']} | bzip2 -c > #{file}" do |ch, stream, data|
+          puts data
+        end
+      end
+
+      `mkdir -p backups`
+      get file, "backups/#{filename}"
+      run "rm #{file}"
+
+      config = load_database_config IO.read('config/databases.yml'), 'dev'
+
+      `bunzip2 -kc backups/#{filename} > backups/#{sqlfile}`
+      case config['type']
+      when 'mysql'
+        `mysql -u#{config['user']} --password='#{config['pass']}' #{config['db']} < backups/#{sqlfile}`
+      end
+      `rm backups/#{sqlfile}`
+    end
+
+    task :local_to_remote do
+      filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.bz2"
+      file      = "backups/#{filename}"
+      config    = load_database_config IO.read('config/databases.yml'), 'dev'
+      sqlfile   = "#{application}_dump.sql"
+
+      `mkdir -p backups`
+      case config['type']
+      when 'mysql'
+        `mysqldump -u#{config['user']} --password='#{config['pass']}' #{config['db']} | bzip2 -c > #{file}`
+      end
+
+      upload(file, "/tmp/#{filename}", :via => :scp)
+      run "bunzip2 -kc /tmp/#{filename} > /tmp/#{sqlfile}"
+
+      run "cat #{shared_path}/config/databases.yml" do |ch, st, data|
+        config = load_database_config data, 'prod'
+      end
+
+      case config['type']
+      when 'mysql'
+        run "mysql -u#{config['user']} --password='#{config['pass']}' #{config['db']} < /tmp/#{sqlfile}" do |ch, stream, data|
+          puts data
+        end
+      end
+
+      run "rm /tmp/#{filename}"
+      run "rm /tmp/#{sqlfile}"
+    end
+  end
+end
+
 namespace :shared do
   namespace :database do
     desc "Download config/databases.yml from remote server"
     task :download do
-      download("#{shared_path}/databases.yml", "config/databases.yml", :via => :scp, :recursive => true)
+      download("#{shared_path}/config/databases.yml", "config/databases.yml", :via => :scp, :recursive => true)
     end
 
     desc "Upload config/databases.yml to remote server"
     task :upload do
-      upload("config/databases.yml", "#{shared_path}/databases.yml", :via => :scp, :recursive => true)
+      upload("config/databases.yml", "#{shared_path}/config/databases.yml", :via => :scp, :recursive => true)
     end
   end
 

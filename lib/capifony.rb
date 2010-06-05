@@ -201,7 +201,7 @@ end
 namespace :database do
   namespace :move do
     desc "Dump remote database, download it to local & populate here"
-    task :remote_to_local do
+    task :to_local do
       filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.bz2"
       file      = "/tmp/#{filename}"
       sqlfile   = "#{application}_dump.sql"
@@ -233,7 +233,7 @@ namespace :database do
     end
 
     desc "Dump local database, load it to remote & populate there"
-    task :local_to_remote do
+    task :to_remote do
       filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.bz2"
       file      = "backups/#{filename}"
       config    = load_database_config IO.read('config/databases.yml'), 'dev'

@@ -1,3 +1,10 @@
+== 0.2.0 / June 5, 2010
+
+* some fixes
+* symfony:check_configuration task
+* database move tasks
+* shared folder tasks (move to_local, move to_remote)
+
 == 0.1.0 / June 3, 2010
 
 First ever working version.

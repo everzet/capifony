@@ -47,6 +47,8 @@ To deploy your application, simply run:
 
 	cap deploy
 
+### Deployment ###
+
 To configure database on production environment, run:
 
 	cap symfony:configure:database
@@ -60,6 +62,28 @@ This will deploy your application, configures databases.yml (will ask you about 
 Now, whenever you need to deploy a new version of your code, just run:
 
 	cap deploy
+
+### Databases ###
+
+If you need to dump remote database & populate this dump on local machine, run:
+
+	cap database:move:to_local
+
+If you need to dump local database & populate this dump on remote server, run:
+
+	cap database:move:to_remote
+
+### Shared folders ###
+
+If you need to download some shared folders from remote server, run:
+
+	cap shared:{databases OR log OR uploads]:to_local
+
+If you need to upload some shared folders to remote server, run:
+
+	cap shared:{databases OR log OR uploads]:to_remote
+
+### Other tasks ###
 
 If you need to deploy and run your migrations you can call:
 

@@ -266,7 +266,7 @@ namespace :database do
 end
 
 namespace :shared do
-  namespace :database do
+  namespace :databases do
     desc "Download config/databases.yml from remote server"
     task :to_local do
       download("#{shared_path}/config/databases.yml", "config/databases.yml", :via => :scp)

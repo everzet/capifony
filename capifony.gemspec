@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.executables << "capifony"
 
   spec.add_dependency 'capistrano', ">= 2.5.10"
+  spec.add_dependency 'yaml'
 
   spec.author = "Konstantin Kudryashov"
   spec.email = "ever.zet@gmail.com"

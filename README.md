@@ -1,18 +1,30 @@
 Deploying symfony Applications with Capistrano
-----------------------------------------------
+==============================================
 
 Capistrano is an open source tool for running scripts on multiple servers. It’s primary use is for easily deploying applications. While it was built specifically for deploying Rails apps, it’s pretty simple to customize it to deploy other types of applications. We’ve been working on creating a deployment “recipe” to work with symfony applications to make our job a lot easier.
 
-### Prerequisites ###
+Prerequisites
+-------------
 
 - Must have SSH access to the server you are deploying to.
 - Must have Ruby and RubyGems installed on your machine (not required for deployment server)’
 
-### Installing Capifony ###
+Installing Capifony
+-------------------
+
+### Through RubyGems.org ###
 
 	sudo gem install capifony
 
-### Setup your project to use Capifony ###
+### Through GitHub ###
+
+	git clone git://github.com/everzet/capifony.git
+	cd capifony
+	gem build capifony.gemspec
+	sudo gem install capifony-{version}.gem
+
+Setup your project to use Capifony
+----------------------------------
 
 CD to your project directory & run:
 
@@ -22,7 +34,8 @@ This will create `Capfile` in your project root & `deploy.rb` config file in `co
 
 Fill up your `config/deploy.rb` with your server connection data
 
-### Server Setup ###
+Server Setup
+------------
 
 Now, you can start the deployment process! To get your server setup with the file structure that Capistrano expects, you can run:
 
@@ -47,7 +60,8 @@ To deploy your application, simply run:
 
 	cap deploy
 
-### Deployment ###
+Deployment
+----------
 
 To configure database on production environment, run:
 
@@ -63,7 +77,8 @@ Now, whenever you need to deploy a new version of your code, just run:
 
 	cap deploy
 
-### Databases ###
+Databases
+---------
 
 If you need to dump remote database & populate this dump on local machine, run:
 
@@ -73,7 +88,8 @@ If you need to dump local database & populate this dump on remote server, run:
 
 	cap database:move:to_remote
 
-### Shared folders ###
+Shared folders
+--------------
 
 If you need to download some shared folders from remote server, run:
 
@@ -83,7 +99,8 @@ If you need to upload some shared folders to remote server, run:
 
 	cap shared:{databases OR log OR uploads]:to_remote
 
-### Other tasks ###
+Other tasks
+-----------
 
 If you need to deploy and run your migrations you can call:
 

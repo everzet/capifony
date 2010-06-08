@@ -200,10 +200,10 @@ namespace :doctrine do
 end
 
 namespace :database do
-  namespace :move do
-    desc "Dump remote database, download it to local & populate here"
-    task :to_local do
-      filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.bz2"
+  namespace :dump do
+    desc "Dump remote database"
+    task :remote do
+      filename  = "#{application}.remote_dump.#{Time.now.to_i}.sql.bz2"
       file      = "/tmp/#{filename}"
       sqlfile   = "#{application}_dump.sql"
       config    = ""
@@ -225,9 +225,36 @@ namespace :database do
 
       `mkdir -p backups`
       get file, "backups/#{filename}"
+      `cd backups && ln -s #{filename} #{application}.remote_dump.latest.sql.bz2`
       run "rm #{file}"
+    end
 
-      config = load_database_config IO.read('config/databases.yml'), 'dev'
+    desc "Dump local database"
+    task :local do
+      filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.bz2"
+      file      = "backups/#{filename}"
+      config    = load_database_config IO.read('config/databases.yml'), 'dev'
+      sqlfile   = "#{application}_dump.sql"
+
+      `mkdir -p backups`
+      case config['type']
+      when 'mysql'
+        `mysqldump -u#{config['user']} --password='#{config['pass']}' #{config['db']} | bzip2 -c > #{file}`
+      when 'pgsql'
+        `pg_dump -U #{config['user']} --password='#{config['pass']}' #{config['db']} | bzip2 -c > #{file}`
+      end
+
+      `cd backups && ln -s #{filename} #{application}.local_dump.latest.sql.bz2`
+    end
+  end
+
+  namespace :move do
+    desc "Dump remote database, download it to local & populate here"
+    task :to_local do
+      filename  = "#{application}.remote_dump.latest.sql.bz2"
+      config    = load_database_config IO.read('config/databases.yml'), 'dev'
+
+      database.dump.remote
 
       `bunzip2 -kc backups/#{filename} > backups/#{sqlfile}`
       case config['type']
@@ -241,18 +268,10 @@ namespace :database do
 
     desc "Dump local database, load it to remote & populate there"
     task :to_remote do
-      filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.bz2"
+      filename  = "#{application}.local_dump.latest.sql.bz2"
       file      = "backups/#{filename}"
-      config    = load_database_config IO.read('config/databases.yml'), 'dev'
-      sqlfile   = "#{application}_dump.sql"
 
-      `mkdir -p backups`
-      case config['type']
-      when 'mysql'
-        `mysqldump -u#{config['user']} --password='#{config['pass']}' #{config['db']} | bzip2 -c > #{file}`
-      when 'pgsql'
-        `pg_dump -U #{config['user']} --password='#{config['pass']}' #{config['db']} | bzip2 -c > #{file}`
-      end
+      database.dump.local
 
       upload(file, "/tmp/#{filename}", :via => :scp)
       run "bunzip2 -kc /tmp/#{filename} > /tmp/#{sqlfile}"

@@ -217,6 +217,10 @@ namespace :database do
         run "mysqldump -u#{config['user']} --password='#{config['pass']}' #{config['db']} | bzip2 -c > #{file}" do |ch, stream, data|
           puts data
         end
+      when 'pgsql'
+        run "pg_dump -U #{config['user']} --password='#{config['pass']}' #{config['db']} | bzip2 -c > #{file}" do |ch, stream, data|
+          puts data
+        end
       end
 
       `mkdir -p backups`
@@ -229,6 +233,8 @@ namespace :database do
       case config['type']
       when 'mysql'
         `mysql -u#{config['user']} --password='#{config['pass']}' #{config['db']} < backups/#{sqlfile}`
+      when 'pgsql'
+        `psql -U #{config['user']} --password='#{config['pass']}' #{config['db']} < backups/#{sqlfile}`
       end
       `rm backups/#{sqlfile}`
     end
@@ -244,6 +250,8 @@ namespace :database do
       case config['type']
       when 'mysql'
         `mysqldump -u#{config['user']} --password='#{config['pass']}' #{config['db']} | bzip2 -c > #{file}`
+      when 'pgsql'
+        `pg_dump -U #{config['user']} --password='#{config['pass']}' #{config['db']} | bzip2 -c > #{file}`
       end
 
       upload(file, "/tmp/#{filename}", :via => :scp)
@@ -256,6 +264,10 @@ namespace :database do
       case config['type']
       when 'mysql'
         run "mysql -u#{config['user']} --password='#{config['pass']}' #{config['db']} < /tmp/#{sqlfile}" do |ch, stream, data|
+          puts data
+        end
+      when 'pgsql'
+        run "psql -U #{config['user']} --password='#{config['pass']}' #{config['db']} < /tmp/#{sqlfile}" do |ch, stream, data|
           puts data
         end
       end

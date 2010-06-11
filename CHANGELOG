@@ -1,3 +1,13 @@
+== 0.3.1 / June 11, 2010
+
+* fixed deployment bug with new shared link instruction
+
+== 0.3.0 / June 11, 2010
+
+* fixed incorrect links bug (thanks to arlo)
+* added database dumpers tasks
+* database:move:* now uses database dumpers to actually dump
+
 == 0.2.2 / June 6, 2010
 
 * deployment bug with `mkdir shared/config` fixed

@@ -80,6 +80,14 @@ Now, whenever you need to deploy a new version of your code, just run:
 Databases
 ---------
 
+If you need to dump remote database & download this dump to local `backups/` folder, run:
+
+	cap database:dump:remote
+
+If you need to dump local database & put this dump to local `backups/` folder, run:
+
+	cap database:dump:local
+
 If you need to dump remote database & populate this dump on local machine, run:
 
 	cap database:move:to_local
@@ -127,3 +135,4 @@ Contributors
 
 * everzet (owner): [http://github.com/everzet](http://github.com/everzet)
 * Travis Roberts (creator of improved version): [http://blog.centresource.com/author/troberts/](http://blog.centresource.com/author/troberts/)
+* Arlo (contributor): [http://github.com/arlo](http://github.com/arlo)

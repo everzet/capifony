@@ -225,7 +225,7 @@ namespace :database do
 
       `mkdir -p backups`
       get file, "backups/#{filename}"
-      `cd backups && ln -s #{filename} #{application}.remote_dump.latest.sql.bz2`
+      `cd backups && ln -nfs #{filename} #{application}.remote_dump.latest.sql.bz2`
       run "rm #{file}"
     end
 
@@ -244,7 +244,7 @@ namespace :database do
         `pg_dump -U #{config['user']} --password='#{config['pass']}' #{config['db']} | bzip2 -c > #{file}`
       end
 
-      `cd backups && ln -s #{filename} #{application}.local_dump.latest.sql.bz2`
+      `cd backups && ln -nfs #{filename} #{application}.local_dump.latest.sql.bz2`
     end
   end
 
@@ -253,6 +253,7 @@ namespace :database do
     task :to_local do
       filename  = "#{application}.remote_dump.latest.sql.bz2"
       config    = load_database_config IO.read('config/databases.yml'), 'dev'
+      sqlfile   = "#{application}_dump.sql"
 
       database.dump.remote
 
@@ -270,6 +271,8 @@ namespace :database do
     task :to_remote do
       filename  = "#{application}.local_dump.latest.sql.bz2"
       file      = "backups/#{filename}"
+      sqlfile   = "#{application}_dump.sql"
+      config    = ""
 
       database.dump.local
 

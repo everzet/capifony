@@ -1,3 +1,7 @@
+== 0.3.1 / June 11, 2010
+
+* fixed deployment bug with new shared link instruction
+
 == 0.3.0 / June 11, 2010
 
 * fixed incorrect links bug (thanks to arlo)

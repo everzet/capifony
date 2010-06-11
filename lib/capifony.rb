@@ -50,7 +50,7 @@ namespace :deploy do
   task :create_dirs do
     if shared_children
       shared_children.each do |link|
-        run "test -d #{release_path}/#{link} && rm -rf #{release_path}/#{link}"
+        run "if [ -d #{release_path}/#{link} ] ; then rm -rf #{release_path}/#{link}; fi"
         run "mkdir -p #{shared_path}/#{link}"
         run "ln -nfs #{shared_path}/#{link} #{release_path}/#{link}"
       end

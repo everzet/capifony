@@ -343,5 +343,5 @@ after "deploy:finalize_update", # After finalizing update:
   "symlink:db",                       # 1. Symlink database
   "symfony:cc",                       # 2. Clear cache
   "symfony:plugin:publish_assets",    # 3. Publish plugin assets
-  "symfony:project:permissions"       # 4. Fix project permissions
+  "symfony:project:permissions",      # 4. Fix project permissions
   "symfony:project:clear_controllers" # 5. Clear controllers

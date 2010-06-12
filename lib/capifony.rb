@@ -2,6 +2,7 @@ require 'yaml'
 
 # Dirs that need to remain the same between deploys (shared dirs)
 set :shared_children, %w(log web/uploads)
+set :php_bin, "php"
 
 def prompt_with_default(var, default)
   set(var) do
@@ -101,20 +102,20 @@ namespace :symfony do
     prompt_with_default(:version, "1.4")
 
     run "wget  http://sf-to.org/#{version}/check.php -O /tmp/check_configuration.php"
-    run "php /tmp/check_configuration.php"
+    run "#{php_bin} /tmp/check_configuration.php"
     run "rm /tmp/check_configuration.php"
   end
 
   desc "Clears the cache"
   task :cc do
-    run "php #{latest_release}/symfony cache:clear"
+    run "#{php_bin} #{latest_release}/symfony cache:clear"
   end
 
   desc "Runs custom symfony task"
   task :run_task do
     prompt_with_default(:task_arguments, "cache:clear")
 
-    run "php #{latest_release}/symfony #{task_arguments}"
+    run "#{php_bin} #{latest_release}/symfony #{task_arguments}"
   end
 
   namespace :configure do
@@ -125,40 +126,40 @@ namespace :symfony do
       prompt_with_default(:pass, "")
       dbclass = "sfDoctrineDatabase"
 
-      run "php #{latest_release}/symfony configure:database --class=#{dbclass} '#{dsn}' '#{user}' '#{pass}'"
+      run "#{php_bin} #{latest_release}/symfony configure:database --class=#{dbclass} '#{dsn}' '#{user}' '#{pass}'"
     end
   end
 
   namespace :project do
     desc "Fixes symfony directory permissions"
     task :permissions do
-      run "php #{latest_release}/symfony project:permissions"
+      run "#{php_bin} #{latest_release}/symfony project:permissions"
     end
 
     desc "Optimizes a project for better performance"
     task :optimize do
       prompt_with_default(:application, "frontend")
 
-      run "php #{latest_release}/symfony project:optimize #{application}"
+      run "#{php_bin} #{latest_release}/symfony project:optimize #{application}"
     end
 
     desc "Clears all non production environment controllers"
     task :clear_controllers do
-      run "php #{latest_release}/symfony project:clear-controllers"
+      run "#{php_bin} #{latest_release}/symfony project:clear-controllers"
     end
   end
 
   namespace :plugin do
     desc "Publishes web assets for all plugins"
     task :publish_assets do
-      run "php #{latest_release}/symfony plugin:publish-assets"
+      run "#{php_bin} #{latest_release}/symfony plugin:publish-assets"
     end
   end
 
   namespace :log do
     desc "Clears log files"
     task :clear do
-      run "php #{latest_release}/symfony log:clear"
+      run "#{php_bin} #{latest_release}/symfony log:clear"
     end
 
     desc "Rotates an application's log files"
@@ -166,14 +167,14 @@ namespace :symfony do
       prompt_with_default(:application, "frontend")
       prompt_with_default(:env, "prod")
 
-      run "php #{latest_release}/symfony log:rotate #{application} #{env}"
+      run "#{php_bin} #{latest_release}/symfony log:rotate #{application} #{env}"
     end
   end
 
   namespace :tests do
     desc "Task to run all the tests for the application."
     task :all do
-      run "php #{latest_release}/symfony test:all"
+      run "#{php_bin} #{latest_release}/symfony test:all"
     end
   end
 end
@@ -181,22 +182,22 @@ end
 namespace :doctrine do
   desc "Migrates database to current version"
   task :migrate do
-    run "php #{latest_release}/symfony doctrine:migrate --env=prod"
+    run "#{php_bin} #{latest_release}/symfony doctrine:migrate --env=prod"
   end
 
   desc "Generate code & database based on your schema"
   task :build_all do
-    run "php #{latest_release}/symfony doctrine:build --all --no-confirmation --env=prod"
+    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --no-confirmation --env=prod"
   end
 
   desc "Generate code & database based on your schema & load fixtures"
   task :build_all_and_load do
-    run "php #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=prod"
+    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=prod"
   end
 
   desc "Generate code & database based on your schema & load fixtures for test environment"
   task :build_all_and_load_test do
-    run "php #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=test"
+    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=test"
   end
 end
 
@@ -338,7 +339,7 @@ namespace :shared do
     end
   end
 end
-
+	
 after "deploy:finalize_update", # After finalizing update:
   "symlink:db",                       # 1. Symlink database
   "symfony:cc",                       # 2. Clear cache

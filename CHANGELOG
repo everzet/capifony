@@ -1,3 +1,7 @@
+== 0.3.2 / June 12, 2010
+
+* fixed :finalize_update hooks (clear_controllers task now runs)
+
 == 0.3.1 / June 11, 2010
 
 * fixed deployment bug with new shared link instruction

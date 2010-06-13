@@ -1,3 +1,7 @@
+== 0.3.3 / June 13, 2010
+
+* added ability to change called php binary (thanks to http://github.com/xgorse)
+
 == 0.3.2 / June 12, 2010
 
 * fixed :finalize_update hooks (clear_controllers task now runs)

@@ -136,3 +136,4 @@ Contributors
 * everzet (owner): [http://github.com/everzet](http://github.com/everzet)
 * Travis Roberts (creator of improved version): [http://blog.centresource.com/author/troberts/](http://blog.centresource.com/author/troberts/)
 * Arlo (contributor): [http://github.com/arlo](http://github.com/arlo)
+* Xavier Gorse (contributor): [http://github.com/xgorse](http://github.com/xgorse)

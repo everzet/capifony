@@ -2,7 +2,8 @@ require 'yaml'
 
 # Dirs that need to remain the same between deploys (shared dirs)
 set :shared_children, %w(log web/uploads)
-set :php_bin, "php"
+# PHP binary to execute
+set :php_bin,         "php"
 
 def prompt_with_default(var, default)
   set(var) do
@@ -339,7 +340,7 @@ namespace :shared do
     end
   end
 end
-	
+
 after "deploy:finalize_update", # After finalizing update:
   "symlink:db",                       # 1. Symlink database
   "symfony:cc",                       # 2. Clear cache

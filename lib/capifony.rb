@@ -4,10 +4,16 @@ require 'yaml'
 set :shared_children, %w(log web/uploads)
 
 # Files that need to remain the same between deploys
-set :shared_files, %w(config/databases.yml)
+set :shared_files,    %w(config/databases.yml)
+
+# Asset folders (that need to be timestamped)
+set :asset_children,  %w(web/css web/images web/js)
 
 # PHP binary to execute
 set :php_bin,         "php"
+
+# Symfony environment
+set :symfony_env,     "prod"
 
 def prompt_with_default(var, default)
   set(var) do
@@ -16,7 +22,7 @@ def prompt_with_default(var, default)
   set var, default if eval("#{var.to_s}.empty?")
 end
 
-def load_database_config(data, env = 'prod')
+def load_database_config(data, env)
   databases = YAML::load(data)
 
   if databases[env]
@@ -34,7 +40,7 @@ def load_database_config(data, env = 'prod')
 end
 
 namespace :deploy do
-  desc "Overwrite the restart task because symfony doesn't need it."
+  desc "Overwrite the start task because symfony doesn't need it."
   task :start do ; end
 
   desc "Overwrite the restart task because symfony doesn't need it."
@@ -50,23 +56,18 @@ namespace :deploy do
 
   desc "Symlink static directories and static files that need to remain between deployments."
   task :share_childs do
-    # create shared dir
     if shared_children
       shared_children.each do |link|
-        run "mkdir -p #{release_path}/#{link}"
-      end
-    end
-    # create dir for shared files
-    if shared_files
-      shared_files.each do |file_path|
-        link_dir = File.dirname("#{shared_path}/#{file_path}")
-        run "mkdir -p #{link_dir}"
-      end
-    end
-    # symlink all
-    if shared_children || shared_files
-      (shared_children + shared_files).each do |link|
+        run "mkdir -p #{shared_path}/#{link}"
         run "if [ -d #{release_path}/#{link} ] ; then rm -rf #{release_path}/#{link}; fi"
+        run "ln -nfs #{shared_path}/#{link} #{release_path}/#{link}"
+      end
+    end
+    if shared_files
+      shared_files.each do |link|
+        link_dir = File.dirname("#{shared_path}/#{link}")
+        run "mkdir -p #{link_dir}"
+        run "touch #{shared_path}/#{link}"
         run "ln -nfs #{shared_path}/#{link} #{release_path}/#{link}"
       end
     end
@@ -75,16 +76,14 @@ namespace :deploy do
   desc "Customize the finalize_update task to work with symfony."
   task :finalize_update, :except => { :no_release => true } do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
-    
-    # symlinks shared directory and shared files
-    share_childs
-    
-    # create cache dir
     run "mkdir -p #{latest_release}/cache"
-    
+
+    # Share common files & folders
+    share_childs
+
     if fetch(:normalize_asset_timestamps, true)
       stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
-      asset_paths = %w(css images js).map { |p| "#{latest_release}/web/#{p}" }.join(" ")
+      asset_paths = asset_children.map { |p| "#{latest_release}/#{p}" }.join(" ")
       run "find #{asset_paths} -exec touch -t #{stamp} {} ';'; true", :env => { "TZ" => "UTC" }
     end
   end
@@ -131,9 +130,9 @@ namespace :symfony do
   namespace :configure do
     desc "Configure database DSN"
     task :database do
-      prompt_with_default(:dsn, "mysql:host=localhost;dbname=example_dev")
-      prompt_with_default(:user, "root")
-      prompt_with_default(:pass, "")
+      prompt_with_default(:dsn,   "mysql:host=localhost;dbname=example_dev")
+      prompt_with_default(:user,  "root")
+      prompt_with_default(:pass,  "")
 
       run "#{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{user}' '#{pass}'"
     end
@@ -174,9 +173,8 @@ namespace :symfony do
     desc "Rotates an application's log files"
     task :rotate do
       prompt_with_default(:application, "frontend")
-      prompt_with_default(:env, "prod")
 
-      run "#{php_bin} #{latest_release}/symfony log:rotate #{application} #{env}"
+      run "#{php_bin} #{latest_release}/symfony log:rotate #{application} #{symfony_env}"
     end
   end
 
@@ -191,27 +189,27 @@ end
 namespace :doctrine do
   desc "Migrates database to current version"
   task :migrate do
-    run "#{php_bin} #{latest_release}/symfony doctrine:migrate --env=prod"
+    run "#{php_bin} #{latest_release}/symfony doctrine:migrate --env=#{symfony_env}"
   end
 
   desc "Generate model lib form and filters classes based on your schema"
   task :build_classes do
-    run "php #{latest_release}/symfony doctrine:build --all-classes --env=prod"
+    run "#{php_bin} #{latest_release}/symfony doctrine:build --all-classes --env=#{symfony_env}"
   end
 
   desc "Generate code & database based on your schema"
   task :build_all do
-    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --no-confirmation --env=prod"
+    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --no-confirmation --env=#{symfony_env}"
   end
 
   desc "Generate code & database based on your schema & load fixtures"
   task :build_all_and_load do
-    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=prod"
+    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env}"
   end
 
   desc "Generate code & database based on your schema & load fixtures for test environment"
   task :build_all_and_load_test do
-    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=test"
+    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env}"
   end
 end
 
@@ -225,7 +223,7 @@ namespace :database do
       config    = ""
 
       run "cat #{shared_path}/config/databases.yml" do |ch, st, data|
-        config = load_database_config data, 'prod'
+        config = load_database_config data, symfony_env
       end
 
       case config['type']
@@ -296,7 +294,7 @@ namespace :database do
       run "bunzip2 -kc /tmp/#{filename} > /tmp/#{sqlfile}"
 
       run "cat #{shared_path}/config/databases.yml" do |ch, st, data|
-        config = load_database_config data, 'prod'
+        config = load_database_config data, symfony_env
       end
 
       case config['type']

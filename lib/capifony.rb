@@ -1,7 +1,11 @@
 require 'yaml'
 
 # Dirs that need to remain the same between deploys (shared dirs)
-set :shared_children, %w(log web/uploads config)
+set :shared_children, %w(log web/uploads)
+
+# Files that need to remain the same between deploys
+set :shared_files, %w(config/databases.yml)
+
 # PHP binary to execute
 set :php_bin,         "php"
 
@@ -44,25 +48,36 @@ namespace :deploy do
     doctrine.migrate
   end
 
+  desc "Symlink static directories and static files that need to remain between deployments."
+  task :share_childs do
+    # create shared dir
+    if shared_children
+      shared_children.each do |link|
+        run "mkdir -p #{release_path}/#{link}"
+      end
+    end
+    # create dir for shared files
+    if shared_files
+      shared_files.each do |file_path|
+        link_dir = File.dirname("#{shared_path}/#{file_path}")
+        run "mkdir -p #{link_dir}"
+      end
+    end
+    # symlink all
+    if shared_children || shared_files
+      (shared_children + shared_files).each do |link|
+        run "if [ -d #{release_path}/#{link} ] ; then rm -rf #{release_path}/#{link}; fi"
+        run "ln -nfs #{shared_path}/#{link} #{release_path}/#{link}"
+      end
+    end
+  end
 
   desc "Customize the finalize_update task to work with symfony."
   task :finalize_update, :except => { :no_release => true } do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
     
-    # symlinks shared directory
-    run <<-CMD
-      rm -rf #{latest_release}/log #{latest_release}/web/uploads &&
-      mkdir -p #{latest_release}/cache &&
-      ln -s #{shared_path}/web/uploads #{latest_release}/web/uploads &&
-      ln -s #{shared_path}/log #{latest_release}/log
-    CMD
-    
-    # symlink database.yml
-    run <<-CMD
-      if [ -f #{shared_path}/config/database.yml ] ; then
-        ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml ;
-      fi
-    CMD
+    # symlinks shared directory and shared files
+    share_childs
     
     if fetch(:normalize_asset_timestamps, true)
       stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
@@ -117,13 +132,7 @@ namespace :symfony do
       prompt_with_default(:user, "root")
       prompt_with_default(:pass, "")
 
-      run <<-CMD
-            #{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{user}' '#{pass}'  &&
-            if [ ! -L #{latest_release}/config/databases.yml ] ; then
-              mv #{release_path}/config/databases.yml #{shared_path}/config/databases.yml ;
-              ln -nfs #{shared_path}/config/databases.yml #{release_path}/config/databases.yml ;
-            fi
-          CMD
+      run "#{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{user}' '#{pass}'"
     end
   end
 

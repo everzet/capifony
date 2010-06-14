@@ -106,6 +106,13 @@ namespace :deploy do
 end
 
 namespace :symfony do
+  desc "Runs custom symfony task"
+  task :default do
+    prompt_with_default(:task_arguments, "cache:clear")
+
+    run "#{php_bin} #{latest_release}/symfony #{task_arguments}"
+  end
+
   desc "Downloads & runs check_configuration.php on remote"
   task :check_configuration do
     prompt_with_default(:version, "1.4")
@@ -120,13 +127,6 @@ namespace :symfony do
     run "#{php_bin} #{latest_release}/symfony cache:clear"
   end
 
-  desc "Runs custom symfony task"
-  task :run_task do
-    prompt_with_default(:task_arguments, "cache:clear")
-
-    run "#{php_bin} #{latest_release}/symfony #{task_arguments}"
-  end
-
   namespace :configure do
     desc "Configure database DSN"
     task :database do
@@ -139,6 +139,16 @@ namespace :symfony do
   end
 
   namespace :project do
+    desc "Disables an application in a given environment"
+    task :disable do
+      run "#{php_bin} #{latest_release}/symfony project:disable #{symfony_env}"
+    end
+
+    desc "Enables an application in a given environment"
+    task :enable do
+      run "#{php_bin} #{latest_release}/symfony project:enable #{symfony_env}"
+    end
+
     desc "Fixes symfony directory permissions"
     task :permissions do
       run "#{php_bin} #{latest_release}/symfony project:permissions"
@@ -154,6 +164,14 @@ namespace :symfony do
     desc "Clears all non production environment controllers"
     task :clear_controllers do
       run "#{php_bin} #{latest_release}/symfony project:clear-controllers"
+    end
+
+    desc "Sends emails stored in a queue"
+    task :send_emails do
+      prompt_with_default(:message_limit, 10)
+      prompt_with_default(:time_limit,    10)
+
+      run "#{php_bin} #{latest_release}/symfony project:send-emails --message-limit=#{message_limit} --time-limit=#{time_limit} --env=#{symfony_env}"
     end
   end
 
@@ -179,14 +197,48 @@ namespace :symfony do
   end
 
   namespace :tests do
-    desc "Task to run all the tests for the application."
+    desc "Launches all tests"
     task :all do
       run "#{php_bin} #{latest_release}/symfony test:all"
+    end
+
+    desc "Launches functional tests"
+    task :functional do
+      prompt_with_default(:application, "frontend")
+
+      run "#{php_bin} #{latest_release}/symfony test:functional #{application}"
+    end
+
+    desc "Launches unit tests"
+    task :unit do
+      run "#{php_bin} #{latest_release}/symfony test:unit"
     end
   end
 end
 
 namespace :doctrine do
+  desc "Execute a DQL query and view the results"
+  task :dql do
+    prompt_with_default(:query, "")
+
+    run "#{php_bin} #{latest_release}/symfony doctrine:dql #{query} --env=#{symfony_env}"
+  end
+
+  desc "Dumps data to the fixtures directory"
+  task :data_dump do
+    run "#{php_bin} #{latest_release}/symfony doctrine:data-dump --env=#{symfony_env}"
+  end
+
+  desc "Loads YAML fixture data"
+  task :data_load do
+    run "#{php_bin} #{latest_release}/symfony doctrine:data-load --env=#{symfony_env}"
+  end
+
+  desc "Loads YAML fixture data without remove"
+  task :data_load_append do
+    run "#{php_bin} #{latest_release}/symfony doctrine:data-load --append --env=#{symfony_env}"
+  end
+
   desc "Migrates database to current version"
   task :migrate do
     run "#{php_bin} #{latest_release}/symfony doctrine:migrate --env=#{symfony_env}"

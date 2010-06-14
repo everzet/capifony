@@ -50,6 +50,7 @@ This command will create the following folder structure on your server:
 	    |-- 20100509150741
 	    |-- 20100509145325
 	  |-- shared
+	    |-- config
 	    |-- log
 	    |-- web
 	      |-- uploads

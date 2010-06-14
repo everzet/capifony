@@ -1,7 +1,7 @@
 require 'yaml'
 
 # Dirs that need to remain the same between deploys (shared dirs)
-set :shared_children, %w(log web/uploads)
+set :shared_children, %w(log web/uploads config)
 # PHP binary to execute
 set :php_bin,         "php"
 
@@ -30,12 +30,8 @@ def load_database_config(data, env = 'prod')
 end
 
 namespace :deploy do
-  desc "Overwrite the start task to set the permissions on the project."
-  task :start do
-    symfony.configure.database
-    symfony.project.permissions
-    doctrine.build_all_and_load
-  end
+  desc "Overwrite the restart task because symfony doesn't need it."
+  task :start do ; end
 
   desc "Overwrite the restart task because symfony doesn't need it."
   task :restart do ; end
@@ -48,26 +44,26 @@ namespace :deploy do
     doctrine.migrate
   end
 
-  desc "Symlink static directories that need to remain between deployments."
-  task :create_dirs do
-    if shared_children
-      shared_children.each do |link|
-        run "if [ -d #{release_path}/#{link} ] ; then rm -rf #{release_path}/#{link}; fi"
-        run "mkdir -p #{shared_path}/#{link}"
-        run "ln -nfs #{shared_path}/#{link} #{release_path}/#{link}"
-      end
-    end
-
-    run "mkdir -p #{shared_path}/config"
-    run "touch #{shared_path}/config/databases.yml"
-  end
 
   desc "Customize the finalize_update task to work with symfony."
   task :finalize_update, :except => { :no_release => true } do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
-    run "mkdir -p #{latest_release}/cache"
-    create_dirs
-
+    
+    # symlinks shared directory
+    run <<-CMD
+      rm -rf #{latest_release}/log #{latest_release}/web/uploads &&
+      mkdir -p #{latest_release}/cache &&
+      ln -s #{shared_path}/web/uploads #{latest_release}/web/uploads &&
+      ln -s #{shared_path}/log #{latest_release}/log
+    CMD
+    
+    # symlink database.yml
+    run <<-CMD
+      if [ -f #{shared_path}/config/database.yml ] ; then
+        ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml ;
+      fi
+    CMD
+    
     if fetch(:normalize_asset_timestamps, true)
       stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
       asset_paths = %w(css images js).map { |p| "#{latest_release}/web/#{p}" }.join(" ")
@@ -78,6 +74,8 @@ namespace :deploy do
   desc "Need to overwrite the deploy:cold task so it doesn't try to run the migrations."
   task :cold do
     update
+    symfony.configure.database
+    doctrine.build_all_and_load
     start
   end
 
@@ -87,13 +85,6 @@ namespace :deploy do
     symlink
     doctrine.build_all_and_load_test
     symfony.tests.all
-  end
-end
-
-namespace :symlink do
-  desc "Symlink the database"
-  task :db do
-    run "ln -nfs #{shared_path}/config/databases.yml #{latest_release}/config/databases.yml"
   end
 end
 
@@ -125,9 +116,14 @@ namespace :symfony do
       prompt_with_default(:dsn, "mysql:host=localhost;dbname=example_dev")
       prompt_with_default(:user, "root")
       prompt_with_default(:pass, "")
-      dbclass = "sfDoctrineDatabase"
 
-      run "#{php_bin} #{latest_release}/symfony configure:database --class=#{dbclass} '#{dsn}' '#{user}' '#{pass}'"
+      run <<-CMD
+            #{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{user}' '#{pass}'  &&
+            if [ ! -L #{latest_release}/config/databases.yml ] ; then
+              mv #{release_path}/config/databases.yml #{shared_path}/config/databases.yml ;
+              ln -nfs #{shared_path}/config/databases.yml #{release_path}/config/databases.yml ;
+            fi
+          CMD
     end
   end
 
@@ -184,6 +180,11 @@ namespace :doctrine do
   desc "Migrates database to current version"
   task :migrate do
     run "#{php_bin} #{latest_release}/symfony doctrine:migrate --env=prod"
+  end
+
+  desc "Generate model lib form and filters classes based on your schema"
+  task :build_classes do
+    run "php #{latest_release}/symfony doctrine:build --all-classes --env=prod"
   end
 
   desc "Generate code & database based on your schema"
@@ -342,7 +343,7 @@ namespace :shared do
 end
 
 after "deploy:finalize_update", # After finalizing update:
-  "symlink:db",                       # 1. Symlink database
+  "doctrine:build_classes",           # 1. (Re)build the model
   "symfony:cc",                       # 2. Clear cache
   "symfony:plugin:publish_assets",    # 3. Publish plugin assets
   "symfony:project:permissions",      # 4. Fix project permissions

@@ -79,6 +79,9 @@ namespace :deploy do
     # symlinks shared directory and shared files
     share_childs
     
+    # create cache dir
+    run "mkdir -p #{latest_release}/cache"
+    
     if fetch(:normalize_asset_timestamps, true)
       stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
       asset_paths = %w(css images js).map { |p| "#{latest_release}/web/#{p}" }.join(" ")

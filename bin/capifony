@@ -38,16 +38,16 @@ end
 files = {
   "Capfile" => unindent(<<-FILE),
     load 'deploy' if respond_to?(:namespace) # cap2 differentiator
-    Dir['vendor/plugins/*/recipes/*.rb'].each { |plugin| load(plugin) }
+    Dir['plugins/*/lib/recipes/*.rb'].each { |plugin| load(plugin) }
     load Gem.required_location('capifony', 'capifony.rb')
     load 'config/deploy' # remove this line to skip loading any of the default tasks
   FILE
 
   "config/deploy.rb" => 'set :application, "set your application name here"
 set :domain,      "#{application}.com"
-set :deploy_to,   "/path/to/www/#{domain}"
+set :deploy_to,   "/var/www/#{domain}"
 
-set :repository,  "#{domain}:/reps/#{application}.git"
+set :repository,  "#{domain}:/var/repos/#{application}.git"
 set :scm,         :git
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `subversion`, `mercurial`, `perforce`, `subversion` or `none`
 

@@ -234,7 +234,7 @@ namespace :orm do
     find_and_execute_task("#{symfony_orm}:build_classes")
   end
 
-  desc "Generate database based on your schema & load fixtures"
+  desc "Generate database based on your schema"
   task :build_db do
     find_and_execute_task("#{symfony_orm}:build_db")
   end

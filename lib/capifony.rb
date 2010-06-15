@@ -61,10 +61,6 @@ def load_database_config(data, env)
   }
 end
 
-task :guess_sf_path do
-  puts guess_symfony_path
-end
-
 namespace :deploy do
   desc "Overwrite the start task because symfony doesn't need it."
   task :start do ; end

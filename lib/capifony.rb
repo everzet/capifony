@@ -15,6 +15,12 @@ set :php_bin,         "php"
 # Symfony environment
 set :symfony_env,     "prod"
 
+# Symfony default ORM
+set(:symfony_orm)     { guess_symfony_orm }
+
+# Symfony lib path
+set(:symfony_lib)     { guess_symfony_lib }
+
 def prompt_with_default(var, default)
   set(var) do
     Capistrano::CLI.ui.ask "#{var} [#{default}] : "
@@ -22,13 +28,29 @@ def prompt_with_default(var, default)
   set var, default if eval("#{var.to_s}.empty?")
 end
 
+def guess_symfony_orm
+  databases = YAML::load(IO.read('config/databases.yml'))
+
+  if databases['dev']
+    databases['dev'].keys[0].to_s
+  else
+    databases['all'].keys[0].to_s
+  end
+end
+
+def guess_symfony_lib
+  symfony_version = capture("#{php_bin} #{latest_release}/symfony -V")
+
+  /\((.*)\)/.match(symfony_version)[1]
+end
+
 def load_database_config(data, env)
   databases = YAML::load(data)
 
   if databases[env]
-    db_param = databases[env]['doctrine']['param']
+    db_param = databases[env][symfony_orm]['param']
   else
-    db_param = databases['all']['doctrine']['param']
+    db_param = databases['all'][symfony_orm]['param']
   end
 
   {
@@ -37,6 +59,10 @@ def load_database_config(data, env)
     'pass'  => db_param['password'],
     'db'    => /dbname=([^;$]+)/.match(db_param['dsn'])[1]
   }
+end
+
+task :guess_sf_path do
+  puts guess_symfony_path
 end
 
 namespace :deploy do
@@ -51,8 +77,7 @@ namespace :deploy do
 
   desc "Customize migrate task because symfony doesn't need it."
   task :migrate do
-    symfony.doctrine.migrate
-    symfony.doctrine.build_classes
+    symfony.orm.migrate
   end
 
   desc "Symlink static directories and static files that need to remain between deployments."
@@ -92,8 +117,7 @@ namespace :deploy do
   desc "Need to overwrite the deploy:cold task so it doesn't try to run the migrations."
   task :cold do
     update
-    symfony.configure.database
-    symfony.doctrine.build_all_and_load
+    symfony.orm.build_all_and_load
     start
   end
 
@@ -101,7 +125,7 @@ namespace :deploy do
   task :testall do
     update_code
     symlink
-    symfony.doctrine.build_all_and_load_test
+    symfony.orm.build_all_and_load
     symfony.tests.all
   end
 end
@@ -216,7 +240,42 @@ namespace :symfony do
     end
   end
 
+  namespace :orm do
+    desc "Ensure symfony ORM is properly configured"
+    task :setup do
+      find_and_execute_task("symfony:#{symfony_orm}:setup")
+    end
+  
+    desc "Migrates database to current version"
+    task :migrate do
+      find_and_execute_task("symfony:#{symfony_orm}:migrate")
+    end
+
+    desc "Generate model lib form and filters classes based on your schema"
+    task :build_classes do
+      find_and_execute_task("symfony:#{symfony_orm}:build_classes")
+    end
+
+    desc "Generate database based on your schema"
+    task :build_all do
+      find_and_execute_task("symfony:#{symfony_orm}:build_all")
+    end
+
+    desc "Generate database based on your schema & load fixtures"
+    task :build_all_and_load do
+      find_and_execute_task("symfony:#{symfony_orm}:build_all_and_load")
+    end
+  end
+
   namespace :doctrine do
+    desc "Ensure Doctrine is correctly configured"
+    task :setup do 
+      conf_files_exists = capture("if test -s #{shared_path}/config/databases.yml ; then echo 'exists' ; fi").strip
+      if (!conf_files_exists.eql?("exists"))
+        symfony.configure.database
+      end
+    end
+
     desc "Execute a DQL query and view the results"
     task :dql do
       prompt_with_default(:query, "")
@@ -258,10 +317,38 @@ namespace :symfony do
     task :build_all_and_load do
       run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env}"
     end
+  end
 
-    desc "Generate code & database based on your schema & load fixtures for test environment"
-    task :build_all_and_load_test do
-      run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env}"
+  namespace :propel do
+    desc "Ensure Propel is correctly configured"
+    task :setup do
+      shared_files << "config/propel.ini"
+      conf_files_exists = capture("if test -s #{shared_path}/config/propel.ini -a -s #{shared_path}/config/databases.yml ; then echo 'exists' ; fi").strip
+      if (!conf_files_exists.eql?("exists"))
+        run "cp #{symfony_lib}/plugins/sfPropelPlugin/config/skeleton/config/propel.ini #{shared_path}/config/propel.ini" ;
+        deploy.share_childs
+        symfony.configure.database
+      end
+    end
+
+    desc "Migrates database to current version"
+    task :migrate do
+      puts "propel doesn't have built-in migration for now"
+    end
+
+    desc "Generate model lib form and filters classes based on your schema"
+    task :build_classes do
+      run "php #{latest_release}/symfony propel:build --all-classes --env=#{symfony_env}"
+    end
+
+    desc "Generate database based on your schema"
+    task :build_all do
+      run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --no-confirmation --env=#{symfony_env}"
+    end
+
+    desc "Generate database based on your schema & load fixtures"
+    task :build_all_and_load do
+      run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env}"
     end
   end
 end
@@ -406,7 +493,9 @@ namespace :shared do
 end
 
 after "deploy:finalize_update", # After finalizing update:
-  "symfony:cc",                       # 1. Clear cache
-  "symfony:plugin:publish_assets",    # 2. Publish plugin assets
-  "symfony:project:permissions",      # 3. Fix project permissions
-  "symfony:project:clear_controllers" # 4. Clear controllers
+  "symfony:orm:setup",                # 0. Ensure that ORM is configured
+  "symfony:orm:build_classes",        # 1. (Re)build the model
+  "symfony:cc",                       # 2. Clear cache
+  "symfony:plugin:publish_assets",    # 3. Publish plugin assets
+  "symfony:project:permissions",      # 4. Fix project permissions
+  "symfony:project:clear_controllers" # 5. Clear controllers

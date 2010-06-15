@@ -270,9 +270,9 @@ namespace :symfony do
   namespace :doctrine do
     desc "Ensure Doctrine is correctly configured"
     task :setup do 
-      conf_files_exists = capture("if test -s #{shared_path}/config/databases.yml ; then echo 'exists' ; fi")
+      conf_files_exists = capture("if test -s #{shared_path}/config/databases.yml ; then echo 'exists' ; fi").strip
       if (!conf_files_exists.eql?("exists"))
-        symfony.configure.database 
+        symfony.configure.database
       end
     end
 
@@ -323,7 +323,7 @@ namespace :symfony do
     desc "Ensure Propel is correctly configured"
     task :setup do
       shared_files << "config/propel.ini"
-      conf_files_exists = capture("if test -s #{shared_path}/config/propel.ini -a -s #{shared_path}/config/databases.yml ; then echo 'exists' ; fi")
+      conf_files_exists = capture("if test -s #{shared_path}/config/propel.ini -a -s #{shared_path}/config/databases.yml ; then echo 'exists' ; fi").strip
       if (!conf_files_exists.eql?("exists"))
         run "cp #{symfony_lib}/plugins/sfPropelPlugin/config/skeleton/config/propel.ini #{shared_path}/config/propel.ini" ;
         deploy.share_childs

@@ -51,7 +51,8 @@ namespace :deploy do
 
   desc "Customize migrate task because symfony doesn't need it."
   task :migrate do
-    doctrine.migrate
+    symfony.doctrine.migrate
+    symfony.doctrine.build_classes
   end
 
   desc "Symlink static directories and static files that need to remain between deployments."
@@ -92,7 +93,7 @@ namespace :deploy do
   task :cold do
     update
     symfony.configure.database
-    doctrine.build_all_and_load
+    symfony.doctrine.build_all_and_load
     start
   end
 
@@ -100,7 +101,7 @@ namespace :deploy do
   task :testall do
     update_code
     symlink
-    doctrine.build_all_and_load_test
+    symfony.doctrine.build_all_and_load_test
     symfony.tests.all
   end
 end
@@ -110,7 +111,7 @@ namespace :symfony do
   task :default do
     prompt_with_default(:task_arguments, "cache:clear")
 
-    run "#{php_bin} #{latest_release}/symfony #{task_arguments}"
+    stream "#{php_bin} #{latest_release}/symfony #{task_arguments}"
   end
 
   desc "Downloads & runs check_configuration.php on remote"
@@ -118,7 +119,7 @@ namespace :symfony do
     prompt_with_default(:version, "1.4")
 
     run "wget  http://sf-to.org/#{version}/check.php -O /tmp/check_configuration.php"
-    run "#{php_bin} /tmp/check_configuration.php"
+    stream "#{php_bin} /tmp/check_configuration.php"
     run "rm /tmp/check_configuration.php"
   end
 
@@ -171,7 +172,7 @@ namespace :symfony do
       prompt_with_default(:message_limit, 10)
       prompt_with_default(:time_limit,    10)
 
-      run "#{php_bin} #{latest_release}/symfony project:send-emails --message-limit=#{message_limit} --time-limit=#{time_limit} --env=#{symfony_env}"
+      stream "#{php_bin} #{latest_release}/symfony project:send-emails --message-limit=#{message_limit} --time-limit=#{time_limit} --env=#{symfony_env}"
     end
   end
 
@@ -214,54 +215,54 @@ namespace :symfony do
       run "#{php_bin} #{latest_release}/symfony test:unit"
     end
   end
-end
 
-namespace :doctrine do
-  desc "Execute a DQL query and view the results"
-  task :dql do
-    prompt_with_default(:query, "")
+  namespace :doctrine do
+    desc "Execute a DQL query and view the results"
+    task :dql do
+      prompt_with_default(:query, "")
 
-    run "#{php_bin} #{latest_release}/symfony doctrine:dql #{query} --env=#{symfony_env}"
-  end
+      stream "#{php_bin} #{latest_release}/symfony doctrine:dql #{query} --env=#{symfony_env}"
+    end
 
-  desc "Dumps data to the fixtures directory"
-  task :data_dump do
-    run "#{php_bin} #{latest_release}/symfony doctrine:data-dump --env=#{symfony_env}"
-  end
+    desc "Dumps data to the fixtures directory"
+    task :data_dump do
+      run "#{php_bin} #{latest_release}/symfony doctrine:data-dump --env=#{symfony_env}"
+    end
 
-  desc "Loads YAML fixture data"
-  task :data_load do
-    run "#{php_bin} #{latest_release}/symfony doctrine:data-load --env=#{symfony_env}"
-  end
+    desc "Loads YAML fixture data"
+    task :data_load do
+      run "#{php_bin} #{latest_release}/symfony doctrine:data-load --env=#{symfony_env}"
+    end
 
-  desc "Loads YAML fixture data without remove"
-  task :data_load_append do
-    run "#{php_bin} #{latest_release}/symfony doctrine:data-load --append --env=#{symfony_env}"
-  end
+    desc "Loads YAML fixture data without remove"
+    task :data_load_append do
+      run "#{php_bin} #{latest_release}/symfony doctrine:data-load --append --env=#{symfony_env}"
+    end
 
-  desc "Migrates database to current version"
-  task :migrate do
-    run "#{php_bin} #{latest_release}/symfony doctrine:migrate --env=#{symfony_env}"
-  end
+    desc "Migrates database to current version"
+    task :migrate do
+      run "#{php_bin} #{latest_release}/symfony doctrine:migrate --env=#{symfony_env}"
+    end
 
-  desc "Generate model lib form and filters classes based on your schema"
-  task :build_classes do
-    run "#{php_bin} #{latest_release}/symfony doctrine:build --all-classes --env=#{symfony_env}"
-  end
+    desc "Generate model lib form and filters classes based on your schema"
+    task :build_classes do
+      run "#{php_bin} #{latest_release}/symfony doctrine:build --all-classes --env=#{symfony_env}"
+    end
 
-  desc "Generate code & database based on your schema"
-  task :build_all do
-    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --no-confirmation --env=#{symfony_env}"
-  end
+    desc "Generate code & database based on your schema"
+    task :build_all do
+      run "#{php_bin} #{latest_release}/symfony doctrine:build --all --no-confirmation --env=#{symfony_env}"
+    end
 
-  desc "Generate code & database based on your schema & load fixtures"
-  task :build_all_and_load do
-    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env}"
-  end
+    desc "Generate code & database based on your schema & load fixtures"
+    task :build_all_and_load do
+      run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env}"
+    end
 
-  desc "Generate code & database based on your schema & load fixtures for test environment"
-  task :build_all_and_load_test do
-    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env}"
+    desc "Generate code & database based on your schema & load fixtures for test environment"
+    task :build_all_and_load_test do
+      run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env}"
+    end
   end
 end
 
@@ -405,8 +406,7 @@ namespace :shared do
 end
 
 after "deploy:finalize_update", # After finalizing update:
-  "doctrine:build_classes",           # 1. (Re)build the model
-  "symfony:cc",                       # 2. Clear cache
-  "symfony:plugin:publish_assets",    # 3. Publish plugin assets
-  "symfony:project:permissions",      # 4. Fix project permissions
-  "symfony:project:clear_controllers" # 5. Clear controllers
+  "symfony:cc",                       # 1. Clear cache
+  "symfony:plugin:publish_assets",    # 2. Publish plugin assets
+  "symfony:project:permissions",      # 3. Fix project permissions
+  "symfony:project:clear_controllers" # 4. Clear controllers

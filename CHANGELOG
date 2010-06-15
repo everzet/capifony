@@ -1,3 +1,10 @@
+== 0.4.0 / June 16, 2010
+
+* added propel tasks (thanks to http://github.com/arlo)
+* added orm abstraction
+* added doctrine/symfony tasks
+* huge refactoring of mostly everything (thanks to http://github.com/arlo)
+
 == 0.3.3 / June 13, 2010
 
 * added ability to change called php binary (thanks to http://github.com/xgorse)

@@ -94,7 +94,7 @@ namespace :deploy do
   desc "Need to overwrite the deploy:cold task so it doesn't try to run the migrations."
   task :cold do
     update
-    orm.build_all_and_load
+    orm.build_db_and_load
     start
   end
 
@@ -234,9 +234,14 @@ namespace :orm do
     find_and_execute_task("#{symfony_orm}:build_classes")
   end
 
-  desc "Generate code & database based on your schema & load fixtures"
-  task :build_all_and_load do
-    find_and_execute_task("#{symfony_orm}:build_all_and_load")
+  desc "Generate database based on your schema & load fixtures"
+  task :build_db do
+    find_and_execute_task("#{symfony_orm}:build_db")
+  end
+
+  desc "Generate database based on your schema & load fixtures"
+  task :build_db_and_load do
+    find_and_execute_task("#{symfony_orm}:build_db_and_load")
   end
 
   desc "Generate code & database based on your schema & load fixtures for test environment"
@@ -286,13 +291,13 @@ namespace :doctrine do
     run "#{php_bin} #{latest_release}/symfony doctrine:build --all-classes --env=#{symfony_env}"
   end
 
-  desc "Generate code & database based on your schema"
-  task :build_all do
+  desc "Generate database based on your schema"
+  task :build_db do
     run "#{php_bin} #{latest_release}/symfony doctrine:build --all --no-confirmation --env=#{symfony_env}"
   end
 
-  desc "Generate code & database based on your schema & load fixtures"
-  task :build_all_and_load do
+  desc "Generate database based on your schema & load fixtures"
+  task :build_db_and_load do
     run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env}"
   end
 
@@ -327,14 +332,14 @@ namespace :propel do
     run "php #{latest_release}/symfony propel:build --all-classes --env=#{symfony_env}"
   end
 
-  desc "Generate code & database based on your schema"
-  task :build_all do
-    run "#{php_bin} #{latest_release}/symfony propel:build --all --no-confirmation --env=#{symfony_env}"
+  desc "Generate database based on your schema"
+  task :build_db do
+    run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --no-confirmation --env=#{symfony_env}"
   end
 
-  desc "Generate code & database based on your schema & load fixtures"
-  task :build_all_and_load do
-    run "#{php_bin} #{latest_release}/symfony propel:build --all --and-load --no-confirmation --env=#{symfony_env}"
+  desc "Generate database based on your schema & load fixtures"
+  task :build_db_and_load do
+    run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env}"
   end
 
   desc "Generate code & database based on your schema & load fixtures for test environment"

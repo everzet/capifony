@@ -16,13 +16,32 @@ set :php_bin,         "php"
 set :symfony_env,     "prod"
 
 # Symfony default ORM
-set :symfony_orm,     "doctrine"
+set(:symfony_orm)     { guess_symfony_orm }
+
+# Symfony lib path
+set(:symfony_lib)     { guess_symfony_lib }
 
 def prompt_with_default(var, default)
   set(var) do
     Capistrano::CLI.ui.ask "#{var} [#{default}] : "
   end
   set var, default if eval("#{var.to_s}.empty?")
+end
+
+def guess_symfony_orm
+  databases = YAML::load(IO.read('config/databases.yml'))
+
+  if databases['dev']
+    databases['dev'].keys[0].to_s
+  else
+    databases['all'].keys[0].to_s
+  end
+end
+
+def guess_symfony_lib
+  symfony_version = capture("#{php_bin} #{latest_release}/symfony -V")
+
+  /\((.*)\)/.match(symfony_version)[1]
 end
 
 def load_database_config(data, env)
@@ -42,6 +61,10 @@ def load_database_config(data, env)
   }
 end
 
+task :guess_sf_path do
+  puts guess_symfony_path
+end
+
 namespace :deploy do
   desc "Overwrite the start task because symfony doesn't need it."
   task :start do ; end
@@ -54,7 +77,7 @@ namespace :deploy do
 
   desc "Customize migrate task because symfony doesn't need it."
   task :migrate do
-    orm.migrate
+    symfony.orm.migrate
   end
 
   desc "Symlink static directories and static files that need to remain between deployments."
@@ -94,7 +117,7 @@ namespace :deploy do
   desc "Need to overwrite the deploy:cold task so it doesn't try to run the migrations."
   task :cold do
     update
-    orm.build_db_and_load
+    symfony.orm.build_all_and_load
     start
   end
 
@@ -102,7 +125,7 @@ namespace :deploy do
   task :testall do
     update_code
     symlink
-    orm.build_all_and_load_test
+    symfony.orm.build_all_and_load
     symfony.tests.all
   end
 end
@@ -112,7 +135,7 @@ namespace :symfony do
   task :default do
     prompt_with_default(:task_arguments, "cache:clear")
 
-    run "#{php_bin} #{latest_release}/symfony #{task_arguments}"
+    stream "#{php_bin} #{latest_release}/symfony #{task_arguments}"
   end
 
   desc "Downloads & runs check_configuration.php on remote"
@@ -120,7 +143,7 @@ namespace :symfony do
     prompt_with_default(:version, "1.4")
 
     run "wget  http://sf-to.org/#{version}/check.php -O /tmp/check_configuration.php"
-    run "#{php_bin} /tmp/check_configuration.php"
+    stream "#{php_bin} /tmp/check_configuration.php"
     run "rm /tmp/check_configuration.php"
   end
 
@@ -173,7 +196,7 @@ namespace :symfony do
       prompt_with_default(:message_limit, 10)
       prompt_with_default(:time_limit,    10)
 
-      run "#{php_bin} #{latest_release}/symfony project:send-emails --message-limit=#{message_limit} --time-limit=#{time_limit} --env=#{symfony_env}"
+      stream "#{php_bin} #{latest_release}/symfony project:send-emails --message-limit=#{message_limit} --time-limit=#{time_limit} --env=#{symfony_env}"
     end
   end
 
@@ -216,135 +239,117 @@ namespace :symfony do
       run "#{php_bin} #{latest_release}/symfony test:unit"
     end
   end
-end
 
-namespace :orm do
-  desc "Ensure symfony ORM is properly configured"
-  task :setup do
-    find_and_execute_task("#{symfony_orm}:setup")
-  end
+  namespace :orm do
+    desc "Ensure symfony ORM is properly configured"
+    task :setup do
+      find_and_execute_task("symfony:#{symfony_orm}:setup")
+    end
   
-  desc "Migrates database to current version"
-  task :migrate do
-    find_and_execute_task("#{symfony_orm}:migrate")
-  end
+    desc "Migrates database to current version"
+    task :migrate do
+      find_and_execute_task("symfony:#{symfony_orm}:migrate")
+    end
 
-  desc "Generate model lib form and filters classes based on your schema"
-  task :build_classes do
-    find_and_execute_task("#{symfony_orm}:build_classes")
-  end
+    desc "Generate model lib form and filters classes based on your schema"
+    task :build_classes do
+      find_and_execute_task("symfony:#{symfony_orm}:build_classes")
+    end
 
-  desc "Generate database based on your schema"
-  task :build_db do
-    find_and_execute_task("#{symfony_orm}:build_db")
-  end
+    desc "Generate database based on your schema"
+    task :build_all do
+      find_and_execute_task("symfony:#{symfony_orm}:build_all")
+    end
 
-  desc "Generate database based on your schema & load fixtures"
-  task :build_db_and_load do
-    find_and_execute_task("#{symfony_orm}:build_db_and_load")
-  end
-
-  desc "Generate code & database based on your schema & load fixtures for test environment"
-  task :build_all_and_load_test do
-    find_and_execute_task("#{symfony_orm}:build_all_and_load_test")
-  end
-end
-
-namespace :doctrine do
-  desc "Ensure Doctrine is correctly configured"
-  task :setup do 
-    conf_files_exists = capture("if test -e shared/config/databases.yml ; then echo 'exists' ; fi")    
-    if (!conf_files_exists.eql?("exists"))
-      symfony.configure.database 
+    desc "Generate database based on your schema & load fixtures"
+    task :build_all_and_load do
+      find_and_execute_task("symfony:#{symfony_orm}:build_all_and_load")
     end
   end
 
-  desc "Execute a DQL query and view the results"
-  task :dql do
-    prompt_with_default(:query, "")
+  namespace :doctrine do
+    desc "Ensure Doctrine is correctly configured"
+    task :setup do 
+      conf_files_exists = capture("if test -s #{shared_path}/config/databases.yml ; then echo 'exists' ; fi")
+      if (!conf_files_exists.eql?("exists"))
+        symfony.configure.database 
+      end
+    end
 
-    run "#{php_bin} #{latest_release}/symfony doctrine:dql #{query} --env=#{symfony_env}"
-  end
+    desc "Execute a DQL query and view the results"
+    task :dql do
+      prompt_with_default(:query, "")
 
-  desc "Dumps data to the fixtures directory"
-  task :data_dump do
-    run "#{php_bin} #{latest_release}/symfony doctrine:data-dump --env=#{symfony_env}"
-  end
+      stream "#{php_bin} #{latest_release}/symfony doctrine:dql #{query} --env=#{symfony_env}"
+    end
 
-  desc "Loads YAML fixture data"
-  task :data_load do
-    run "#{php_bin} #{latest_release}/symfony doctrine:data-load --env=#{symfony_env}"
-  end
+    desc "Dumps data to the fixtures directory"
+    task :data_dump do
+      run "#{php_bin} #{latest_release}/symfony doctrine:data-dump --env=#{symfony_env}"
+    end
 
-  desc "Loads YAML fixture data without remove"
-  task :data_load_append do
-    run "#{php_bin} #{latest_release}/symfony doctrine:data-load --append --env=#{symfony_env}"
-  end
+    desc "Loads YAML fixture data"
+    task :data_load do
+      run "#{php_bin} #{latest_release}/symfony doctrine:data-load --env=#{symfony_env}"
+    end
 
-  desc "Migrates database to current version"
-  task :migrate do
-    run "#{php_bin} #{latest_release}/symfony doctrine:migrate --env=#{symfony_env}"
-  end
+    desc "Loads YAML fixture data without remove"
+    task :data_load_append do
+      run "#{php_bin} #{latest_release}/symfony doctrine:data-load --append --env=#{symfony_env}"
+    end
 
-  desc "Generate model lib form and filters classes based on your schema"
-  task :build_classes do
-    run "#{php_bin} #{latest_release}/symfony doctrine:build --all-classes --env=#{symfony_env}"
-  end
+    desc "Migrates database to current version"
+    task :migrate do
+      run "#{php_bin} #{latest_release}/symfony doctrine:migrate --env=#{symfony_env}"
+    end
 
-  desc "Generate database based on your schema"
-  task :build_db do
-    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --no-confirmation --env=#{symfony_env}"
-  end
+    desc "Generate model lib form and filters classes based on your schema"
+    task :build_classes do
+      run "#{php_bin} #{latest_release}/symfony doctrine:build --all-classes --env=#{symfony_env}"
+    end
 
-  desc "Generate database based on your schema & load fixtures"
-  task :build_db_and_load do
-    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env}"
-  end
+    desc "Generate code & database based on your schema"
+    task :build_all do
+      run "#{php_bin} #{latest_release}/symfony doctrine:build --all --no-confirmation --env=#{symfony_env}"
+    end
 
-  desc "Generate code & database based on your schema & load fixtures for test environment"
-  task :build_all_and_load_test do
-    run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env}"
-  end
-end
-
-namespace :propel do
-  desc "Ensure Propel is correctly configured"
-  task :setup do
-    shared_files << "config/propel.ini"
-    conf_files_exists = capture("if test -e shared/config/propel.ini -a -e shared/config/databases.yml ; then echo 'exists' ; fi")    
-    if (!conf_files_exists.eql?("exists"))
-      # Initialize propel.ini and databases.yml files with their skeleton
-      run "cp #{latest_release}/lib/vendor/symfony/lib/plugins/sfPropelPlugin/config/skeleton/config/propel.ini #{shared_path}/config/propel.ini" ;
-      run "cp #{latest_release}/lib/vendor/symfony/lib/plugins/sfPropelPlugin/config/skeleton/config/databases.yml #{shared_path}/config/databases.yml" ;
-      # Link propel.ini since share_childs task is already done
-      run "ln -nfs #{shared_path}/config/propel.ini #{release_path}/config/propel.ini"
-      symfony.configure.database 
+    desc "Generate code & database based on your schema & load fixtures"
+    task :build_all_and_load do
+      run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env}"
     end
   end
-  
-  desc "Migrates database to current version"
-  task :migrate do
-    puts "propel doesn't have built-in migration for now"
-  end
 
-  desc "Generate model lib form and filters classes based on your schema"
-  task :build_classes do
-    run "php #{latest_release}/symfony propel:build --all-classes --env=#{symfony_env}"
-  end
+  namespace :propel do
+    desc "Ensure Propel is correctly configured"
+    task :setup do
+      shared_files << "config/propel.ini"
+      conf_files_exists = capture("if test -s #{shared_path}/config/propel.ini -a -s #{shared_path}/config/databases.yml ; then echo 'exists' ; fi")
+      if (!conf_files_exists.eql?("exists"))
+        run "cp #{symfony_lib}/plugins/sfPropelPlugin/config/skeleton/config/propel.ini #{shared_path}/config/propel.ini" ;
+        deploy.share_childs
+        symfony.configure.database
+      end
+    end
 
-  desc "Generate database based on your schema"
-  task :build_db do
-    run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --no-confirmation --env=#{symfony_env}"
-  end
+    desc "Migrates database to current version"
+    task :migrate do
+      puts "propel doesn't have built-in migration for now"
+    end
 
-  desc "Generate database based on your schema & load fixtures"
-  task :build_db_and_load do
-    run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env}"
-  end
+    desc "Generate model lib form and filters classes based on your schema"
+    task :build_classes do
+      run "php #{latest_release}/symfony propel:build --all-classes --env=#{symfony_env}"
+    end
 
-  desc "Generate code & database based on your schema & load fixtures for test environment"
-  task :build_all_and_load_test do
-    run "#{php_bin} #{latest_release}/symfony propel:build --all --and-load --no-confirmation --env=#{symfony_env}"
+    desc "Generate database based on your schema"
+    task :build_all do
+      run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --no-confirmation --env=#{symfony_env}"
+    end
+
+    desc "Generate database based on your schema & load fixtures"
+    task :build_all_and_load do
+      run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env}"
+    end
   end
 end
 
@@ -488,8 +493,8 @@ namespace :shared do
 end
 
 after "deploy:finalize_update", # After finalizing update:
-  "orm:setup",                        # 0. Ensure that ORM is configured
-  "orm:build_classes",                # 1. (Re)build the model
+  "symfony:orm:setup",                # 0. Ensure that ORM is configured
+  "symfony:orm:build_classes",        # 1. (Re)build the model
   "symfony:cc",                       # 2. Clear cache
   "symfony:plugin:publish_assets",    # 3. Publish plugin assets
   "symfony:project:permissions",      # 4. Fix project permissions

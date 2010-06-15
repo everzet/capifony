@@ -318,13 +318,14 @@ namespace :symfony do
   namespace :propel do
     desc "Ensure Propel is correctly configured"
     task :setup do
-      shared_files << "config/propel.ini"
       conf_files_exists = capture("if test -s #{shared_path}/config/propel.ini -a -s #{shared_path}/config/databases.yml ; then echo 'exists' ; fi").strip
       if (!conf_files_exists.eql?("exists"))
-        run "cp #{symfony_lib}/plugins/sfPropelPlugin/config/skeleton/config/propel.ini #{shared_path}/config/propel.ini" ;
-        deploy.share_childs
+        run "cp #{symfony_lib}/plugins/sfPropelPlugin/config/skeleton/config/propel.ini #{shared_path}/config/propel.ini"
         symfony.configure.database
       end
+      # share childs again (for propel.ini file)
+      shared_files << "config/propel.ini"
+      deploy.share_childs
     end
 
     desc "Migrates database to current version"

@@ -244,7 +244,9 @@ namespace :symfony do
   
     desc "Migrates database to current version"
     task :migrate do
-      find_and_execute_task("symfony:#{symfony_orm}:migrate")
+      if Capistrano::CLI.ui.agree("Do you really want to migrate your #{symfony_env}'s database ? (type yes or no)")
+        find_and_execute_task("symfony:#{symfony_orm}:migrate")
+      end
     end
 
     desc "Generate model lib form and filters classes based on your schema"
@@ -254,22 +256,30 @@ namespace :symfony do
 
     desc "Generate code & database based on your schema"
     task :build_all do
-      find_and_execute_task("symfony:#{symfony_orm}:build_all")
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database ? (type yes or no)")
+        find_and_execute_task("symfony:#{symfony_orm}:build_all")
+      end
     end
 
     desc "Generate code & database based on your schema & load fixtures"
     task :build_all_and_load do
-      find_and_execute_task("symfony:#{symfony_orm}:build_all_and_load")
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database and load #{symfony_env}'s fixtures ? (type yes or no)")
+        find_and_execute_task("symfony:#{symfony_orm}:build_all_and_load")
+      end
     end
 
     desc "Generate sql & database based on your schema"
     task :build_db do
-      find_and_execute_task("symfony:#{symfony_orm}:build_db")
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database ? (type yes or no)")
+        find_and_execute_task("symfony:#{symfony_orm}:build_db")
+      end
     end
 
     desc "Generate sql & database based on your schema & load fixtures"
     task :build_db_and_load do
-      find_and_execute_task("symfony:#{symfony_orm}:build_db_and_load")
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database and load #{symfony_env}'s fixtures ? (type yes or no)")
+        find_and_execute_task("symfony:#{symfony_orm}:build_db_and_load")
+      end
     end
   end
 

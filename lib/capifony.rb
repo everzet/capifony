@@ -153,7 +153,7 @@ namespace :symfony do
     task :database do
       prompt_with_default(:dsn,   "mysql:host=localhost;dbname=example_dev")
       prompt_with_default(:user,  "root")
-      prompt_with_default(:pass,  "")
+      prompt_with_default(:pass,  "") { |q| q.echo = "x" }
 
       run "#{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{user}' '#{pass}'"
     end

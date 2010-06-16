@@ -519,10 +519,14 @@ namespace :shared do
   end
 end
 
-after "deploy:finalize_update", # After finalizing update:
-  "symfony:orm:setup",                # 0. Ensure that ORM is configured
-  "symfony:orm:build_classes",        # 1. (Re)build the model
-  "symfony:cc",                       # 2. Clear cache
-  "symfony:plugin:publish_assets",    # 3. Publish plugin assets
-  "symfony:project:permissions",      # 4. Fix project permissions
-  "symfony:project:clear_controllers" # 5. Clear controllers
+# After finalizing update:
+after "deploy:finalize_update" do
+  symfony.orm.setup                       # 0. Ensure that ORM is configured
+  symfony.orm.build_classes               # 1. (Re)build the model
+  symfony.cc                              # 2. Clear cache
+  symfony.plugin.publish_assets           # 3. Publish plugin assets
+  symfony.project.permissions             # 4. Fix project permissions
+  if symfony_env.eql?("prod")
+    symfony.project.clear_controllers     # 5. Clear controllers in production environment
+  end
+end

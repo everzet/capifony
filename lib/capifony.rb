@@ -151,11 +151,11 @@ namespace :symfony do
   namespace :configure do
     desc "Configure database DSN"
     task :database do
-      prompt_with_default(:dsn,   "mysql:host=localhost;dbname=example_dev")
-      prompt_with_default(:user,  "root")
-      prompt_with_default(:pass,  "") { |q| q.echo = "x" }
+      prompt_with_default(:dsn,         "mysql:host=localhost;dbname=example_dev")
+      prompt_with_default(:db_username, "root")
+      prompt_with_default(:db_password, "") { |q| q.echo = "x" }
 
-      run "#{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{user}' '#{pass}'"
+      run "#{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{db_username}' '#{db_password}'"
     end
   end
 

@@ -21,9 +21,9 @@ set(:symfony_orm)     { guess_symfony_orm }
 # Symfony lib path
 set(:symfony_lib)     { guess_symfony_lib }
 
-def prompt_with_default(var, default)
+def prompt_with_default(var, default, &block)
   set(var) do
-    Capistrano::CLI.ui.ask "#{var} [#{default}] : "
+    Capistrano::CLI.ui.ask("#{var} [#{default}] : ", &block)
   end
   set var, default if eval("#{var.to_s}.empty?")
 end

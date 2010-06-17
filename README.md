@@ -39,7 +39,7 @@ Now, you can start the deployment process! To get your server setup with the fil
 This command will create the following folder structure on your server:
 
 	`-- /var/www/demo.everzet.com
-	  |-- current (symlink)
+	  |-- current → /var/www/demo.everzet.com/releases/20100512131539
 	  |-- releases
 	    |-- 20100512131539
 	    |-- 20100509150741

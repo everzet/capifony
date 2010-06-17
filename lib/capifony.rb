@@ -156,9 +156,19 @@ namespace :symfony do
     task :database do
       prompt_with_default(:dsn,         "mysql:host=localhost;dbname=#{application}")
       prompt_with_default(:db_username, "root")
-      prompt_with_default(:db_password, "") { |q| q.echo = "x" }
+      db_password = Capistrano::CLI.password_prompt("db_password : ")
+
+      # surpress debug log output to hide the password
+      current_logger_level = self.logger.level
+      if current_logger_level >= Capistrano::Logger::DEBUG
+        logger.debug %(executing "#{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{db_username}' ***")
+        self.logger.level = Capistrano::Logger::INFO 
+      end
 
       run "#{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{db_username}' '#{db_password}'"
+
+      # restore logger level
+      self.logger.level = current_logger_level
     end
   end
 

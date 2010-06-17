@@ -1,19 +1,22 @@
 require 'yaml'
 
 # Dirs that need to remain the same between deploys (shared dirs)
-set :shared_children, %w(log web/uploads)
+set :shared_children,   %w(log web/uploads)
 
 # Files that need to remain the same between deploys
-set :shared_files,    %w(config/databases.yml)
+set :shared_files,      %w(config/databases.yml)
 
 # Asset folders (that need to be timestamped)
-set :asset_children,  %w(web/css web/images web/js)
+set :asset_children,    %w(web/css web/images web/js)
 
 # PHP binary to execute
-set :php_bin,         "php"
+set :php_bin,           "php"
+
+# Symfony local app environment
+set :symfony_env_local, "dev"
 
 # Symfony environment
-set :symfony_env,     "prod"
+set :symfony_env,       "prod"
 
 # Symfony default ORM
 set(:symfony_orm)     { guess_symfony_orm }
@@ -31,8 +34,8 @@ end
 def guess_symfony_orm
   databases = YAML::load(IO.read('config/databases.yml'))
 
-  if databases['dev']
-    databases['dev'].keys[0].to_s
+  if databases[symfony_env_local]
+    databases[symfony_env_local].keys[0].to_s
   else
     databases['all'].keys[0].to_s
   end
@@ -424,7 +427,7 @@ namespace :database do
     task :local do
       filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.bz2"
       file      = "backups/#{filename}"
-      config    = load_database_config IO.read('config/databases.yml'), 'dev'
+      config    = load_database_config IO.read('config/databases.yml'), symfony_env_local
       sqlfile   = "#{application}_dump.sql"
 
       `mkdir -p backups`
@@ -443,7 +446,7 @@ namespace :database do
     desc "Dump remote database, download it to local & populate here"
     task :to_local do
       filename  = "#{application}.remote_dump.latest.sql.bz2"
-      config    = load_database_config IO.read('config/databases.yml'), 'dev'
+      config    = load_database_config IO.read('config/databases.yml'), symfony_env_local
       sqlfile   = "#{application}_dump.sql"
 
       database.dump.remote

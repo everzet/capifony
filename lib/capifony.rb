@@ -12,7 +12,7 @@ set :asset_children,    %w(web/css web/images web/js)
 # PHP binary to execute
 set :php_bin,           "php"
 
-# Symfony local app environment
+# Symfony environment on local
 set :symfony_env_local, "dev"
 
 # Symfony environment
@@ -247,9 +247,7 @@ namespace :symfony do
   
     desc "Migrates database to current version"
     task :migrate do
-      if Capistrano::CLI.ui.agree("Do you really want to migrate your #{symfony_env}'s database ? (type yes or no)")
-        find_and_execute_task("symfony:#{symfony_orm}:migrate")
-      end
+      find_and_execute_task("symfony:#{symfony_orm}:migrate")
     end
 
     desc "Generate model lib form and filters classes based on your schema"
@@ -259,30 +257,22 @@ namespace :symfony do
 
     desc "Generate code & database based on your schema"
     task :build_all do
-      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database ? (type yes or no)")
-        find_and_execute_task("symfony:#{symfony_orm}:build_all")
-      end
+      find_and_execute_task("symfony:#{symfony_orm}:build_all")
     end
 
     desc "Generate code & database based on your schema & load fixtures"
     task :build_all_and_load do
-      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database and load #{symfony_env}'s fixtures ? (type yes or no)")
-        find_and_execute_task("symfony:#{symfony_orm}:build_all_and_load")
-      end
+      find_and_execute_task("symfony:#{symfony_orm}:build_all_and_load")
     end
 
     desc "Generate sql & database based on your schema"
     task :build_db do
-      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database ? (type yes or no)")
-        find_and_execute_task("symfony:#{symfony_orm}:build_db")
-      end
+      find_and_execute_task("symfony:#{symfony_orm}:build_db")
     end
 
     desc "Generate sql & database based on your schema & load fixtures"
     task :build_db_and_load do
-      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database and load #{symfony_env}'s fixtures ? (type yes or no)")
-        find_and_execute_task("symfony:#{symfony_orm}:build_db_and_load")
-      end
+      find_and_execute_task("symfony:#{symfony_orm}:build_db_and_load")
     end
   end
 
@@ -329,17 +319,23 @@ namespace :symfony do
 
     desc "Generate code & database based on your schema"
     task :build_all do
-      run "#{php_bin} #{latest_release}/symfony doctrine:build --all --no-confirmation --env=#{symfony_env}"
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database ? (type yes or no)")
+        run "#{php_bin} #{latest_release}/symfony doctrine:build --all --no-confirmation --env=#{symfony_env}"
+      end
     end
 
     desc "Generate code & database based on your schema & load fixtures"
     task :build_all_and_load do
-      run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env}"
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database and load #{symfony_env}'s fixtures ? (type yes or no)")
+        run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env}"
+      end
     end
 
     desc "Generate sql & database based on your schema"
     task :build_db do
-      run "#{php_bin} #{latest_release}/symfony doctrine:build --sql --db --no-confirmation --env=#{symfony_env}"
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database ? (type yes or no)")
+        run "#{php_bin} #{latest_release}/symfony doctrine:build --sql --db --no-confirmation --env=#{symfony_env}"
+      end
     end
 
     desc "Generate sql & database based on your schema & load fixtures"
@@ -373,22 +369,30 @@ namespace :symfony do
 
     desc "Generate code & database based on your schema"
     task :build_all do
-      run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --no-confirmation --env=#{symfony_env}"
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database ? (type yes or no)")
+        run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --no-confirmation --env=#{symfony_env}"
+      end
     end
 
     desc "Generate code & database based on your schema & load fixtures"
     task :build_all_and_load do
-      run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env}"
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database and load #{symfony_env}'s fixtures ? (type yes or no)")
+        run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env}"
+      end
     end
 
     desc "Generate sql & database based on your schema"
     task :build_db do
-      run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --no-confirmation --env=#{symfony_env}"
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database ? (type yes or no)")
+        run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --no-confirmation --env=#{symfony_env}"
+      end
     end
 
     desc "Generate sql & database based on your schema & load fixtures"
     task :build_db_and_load do
-      run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env}"
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database and load #{symfony_env}'s fixtures ? (type yes or no)")
+        run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env}"
+      end
     end
   end
 end

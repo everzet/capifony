@@ -1,3 +1,11 @@
+== 0.4.1 / June 17, 2010
+
+* added `symfony_env_local` variable, specifying local symfony environment to work with
+* added third parameter (blocks) to `prompt_with_default` (as in `ask`)
+* hided password from input & logs in `symfony:configure:database` task
+* added confirmation dialogs to destructive ORM tasks
+* run `project:clear-controllers` only on `prod` environment
+
 == 0.4.0 / June 16, 2010
 
 * added propel tasks (thanks to http://github.com/arlo)

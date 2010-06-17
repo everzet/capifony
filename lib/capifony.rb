@@ -21,9 +21,9 @@ set(:symfony_orm)     { guess_symfony_orm }
 # Symfony lib path
 set(:symfony_lib)     { guess_symfony_lib }
 
-def prompt_with_default(var, default)
+def prompt_with_default(var, default, &block)
   set(var) do
-    Capistrano::CLI.ui.ask "#{var} [#{default}] : "
+    Capistrano::CLI.ui.ask("#{var} [#{default}] : ", &block)
   end
   set var, default if eval("#{var.to_s}.empty?")
 end
@@ -151,11 +151,11 @@ namespace :symfony do
   namespace :configure do
     desc "Configure database DSN"
     task :database do
-      prompt_with_default(:dsn,   "mysql:host=localhost;dbname=example_dev")
-      prompt_with_default(:user,  "root")
-      prompt_with_default(:pass,  "")
+      prompt_with_default(:dsn,         "mysql:host=localhost;dbname=example_dev")
+      prompt_with_default(:db_username, "root")
+      prompt_with_default(:db_password, "") { |q| q.echo = "x" }
 
-      run "#{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{user}' '#{pass}'"
+      run "#{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{db_username}' '#{db_password}'"
     end
   end
 
@@ -244,7 +244,9 @@ namespace :symfony do
   
     desc "Migrates database to current version"
     task :migrate do
-      find_and_execute_task("symfony:#{symfony_orm}:migrate")
+      if Capistrano::CLI.ui.agree("Do you really want to migrate your #{symfony_env}'s database ? (type yes or no)")
+        find_and_execute_task("symfony:#{symfony_orm}:migrate")
+      end
     end
 
     desc "Generate model lib form and filters classes based on your schema"
@@ -254,22 +256,30 @@ namespace :symfony do
 
     desc "Generate code & database based on your schema"
     task :build_all do
-      find_and_execute_task("symfony:#{symfony_orm}:build_all")
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database ? (type yes or no)")
+        find_and_execute_task("symfony:#{symfony_orm}:build_all")
+      end
     end
 
     desc "Generate code & database based on your schema & load fixtures"
     task :build_all_and_load do
-      find_and_execute_task("symfony:#{symfony_orm}:build_all_and_load")
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database and load #{symfony_env}'s fixtures ? (type yes or no)")
+        find_and_execute_task("symfony:#{symfony_orm}:build_all_and_load")
+      end
     end
 
     desc "Generate sql & database based on your schema"
     task :build_db do
-      find_and_execute_task("symfony:#{symfony_orm}:build_db")
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database ? (type yes or no)")
+        find_and_execute_task("symfony:#{symfony_orm}:build_db")
+      end
     end
 
     desc "Generate sql & database based on your schema & load fixtures"
     task :build_db_and_load do
-      find_and_execute_task("symfony:#{symfony_orm}:build_db_and_load")
+      if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env}'s database and load #{symfony_env}'s fixtures ? (type yes or no)")
+        find_and_execute_task("symfony:#{symfony_orm}:build_db_and_load")
+      end
     end
   end
 
@@ -519,10 +529,14 @@ namespace :shared do
   end
 end
 
-after "deploy:finalize_update", # After finalizing update:
-  "symfony:orm:setup",                # 0. Ensure that ORM is configured
-  "symfony:orm:build_classes",        # 1. (Re)build the model
-  "symfony:cc",                       # 2. Clear cache
-  "symfony:plugin:publish_assets",    # 3. Publish plugin assets
-  "symfony:project:permissions",      # 4. Fix project permissions
-  "symfony:project:clear_controllers" # 5. Clear controllers
+# After finalizing update:
+after "deploy:finalize_update" do
+  symfony.orm.setup                       # 0. Ensure that ORM is configured
+  symfony.orm.build_classes               # 1. (Re)build the model
+  symfony.cc                              # 2. Clear cache
+  symfony.plugin.publish_assets           # 3. Publish plugin assets
+  symfony.project.permissions             # 4. Fix project permissions
+  if symfony_env.eql?("prod")
+    symfony.project.clear_controllers     # 5. Clear controllers in production environment
+  end
+end

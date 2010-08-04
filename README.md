@@ -5,6 +5,7 @@ Capistrano is an open source tool for running scripts on multiple servers. It’
 
 ## Prerequisites ##
 
+- Symfony 1.4+ (1.2 can work with small manual changes)
 - Must have SSH access to the server you are deploying to.
 - Must have Ruby and RubyGems installed on your machine (not required for deployment server)’
 

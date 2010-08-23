@@ -115,7 +115,7 @@ If your host complains about the entire project being group-writable you can add
 
 ## Git Specific Options ##
 
-If you are using Git Submodule you'll want to add the following to your `config/deploy.rb` file or the submodule files won't be brought down with your project:
+If you are using Git submoduleis you'll want to add the following to your `config/deploy.rb` file or the submodule files won't be brought down with your project:
 
     set :git_enable_submodules, 1
 

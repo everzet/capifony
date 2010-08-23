@@ -103,6 +103,22 @@ If you need to upload some shared folders to remote server, run:
 
 	cap shared:{databases OR log OR uploads]:to_remote
 
+## Host Permissions ##
+
+If you are not allowed sudo ability on your host you can add the following configuration to your `config/deploy.rb` file:
+
+    set :use_sudo, false
+    
+If your host complains about the entire project being group-writable you can add the following configuration to your `config/deploy.rb` file:
+
+    set :group_writable, false
+
+## Git Specific Options ##
+
+If you are using Git Submodule you'll want to add the following to your `config/deploy.rb` file or the submodule files won't be brought down with your project:
+
+    set :git_enable_submodules, 1
+
 ## Other tasks ##
 
 If you need to deploy and run your migrations you can call:

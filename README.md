@@ -61,6 +61,11 @@ To deploy your application, simply run:
 
 ## Deployment ##
 
+To specify the username/password to use over SSH, add the following configuration to your `config/deploy.rb` file:
+
+    set :user, 'username'
+    set :password, 'password'
+
 To configure database on production environment, run:
 
 	cap symfony:configure:database

@@ -1,3 +1,7 @@
+== 0.4.2 / September 23, 2010
+
+* added `symfony:doctrine:compile` task
+
 == 0.4.1 / June 17, 2010
 
 * added `symfony_env_local` variable, specifying local symfony environment to work with

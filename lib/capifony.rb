@@ -287,6 +287,11 @@ namespace :symfony do
   end
 
   namespace :doctrine do
+    desc "Compile doctrine"
+    task :compile do
+      run "#{php_bin} #{latest_release}/symfony doctrine:compile"
+    end
+
     desc "Ensure Doctrine is correctly configured"
     task :setup do 
       conf_files_exists = capture("if test -s #{shared_path}/config/databases.yml ; then echo 'exists' ; fi").strip

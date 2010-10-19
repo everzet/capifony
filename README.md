@@ -152,3 +152,4 @@ We’ve been using this setup for a little while now, and it’s saved us a ton 
 * Arlo (contributor): [http://github.com/arlo](http://github.com/arlo)
 * Xavier Gorse (contributor): [http://github.com/xgorse](http://github.com/xgorse)
 * Travis Roberts (creator of improved version): [http://blog.centresource.com/author/troberts/](http://blog.centresource.com/author/troberts/)
+* Brent Shaffer (contributor): [http://github.com/bshaffer](http://github.com/bshaffer)

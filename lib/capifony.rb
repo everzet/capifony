@@ -207,6 +207,26 @@ namespace :symfony do
 
       stream "#{php_bin} #{latest_release}/symfony project:send-emails --message-limit=#{message_limit} --time-limit=#{time_limit} --env=#{symfony_env}"
     end
+    
+    desc 'Task to set all front controllers to a specific environment'
+    task :set_environment do
+      if (env = fetch(:symfony_env, nil)) && env != 'prod'
+        cmd   = []
+        apps  = fetch(:symfony_apps, ['frontend'])
+
+        # First application listed becomes index.php
+        if app = apps.shift
+          cmd << "cp #{release_path}/web/#{app}_#{env}.php #{release_path}/web/index.php"
+        end
+        
+        # All other apps are copied to their default controllers
+        for app in apps
+          cmd << "cp #{release_path}/web/#{app}_#{env}.php #{release_path}/web/#{app}.php"
+        end
+    
+        run cmd.join(';') if cmd.join(';')
+      end
+    end
   end
 
   namespace :plugin do

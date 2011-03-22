@@ -1,77 +1,153 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset='utf-8'>
+    <meta charset='utf-8'>
 
-  <title>everzet/capifony @ GitHub</title>
+    <title>capifony &mdash; symfony1 and Symfony2 deployment</title>
 
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #2cac5f;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #ffffff;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #d353a0; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #d353a0; }
-    h3 { text-align: center; color: #d353a0; }
-    a { color: #d353a0; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
+    <style type="text/css">
+        body {
+            margin-top: 1.0em;
+            margin:30px 40px;
+            background-color: #fff;
+            font-family: Helvetica, Arial, FreeSans, san-serif;
+            color: #7a7a7a;
+        }
+        #logo {
+            float:left;
+            width:220px;
+        }
+        pre {
+            overflow-y:hidden;
+            overflow-x:auto;
+        }
+        p, pre {
+            width:500px;
+            margin-left:220px;
+            padding:10px 20px;
+            border-left:1px dashed #ccc;
+            margin-top:0px;
+            margin-bottom:0px;
+            line-height:22px;
+            font-size:16px;
+        }
+        pre {
+            color:#000;
+            font-family:Courier;
+            line-height:20px;
+            font-size:12px;
+        }
+        pre, code {
+            background:#f2f2f2;
+        }
+        code {
+            padding:2px 3px;
+            color:#000;
+        }
+        pre .prompt {
+            color:#7a7a7a;
+        }
+        p.intro {
+            font-style:italic;
+            color: #ccc;
+        }
+        p.intro a {
+            color:#c9c9c9;
+        }
+        a {
+            color:#000;
+            text-decoration:underline;
+        }
+        a:hover {
+            text-decoration:none;
+        }
+        h2, h3, h4 {
+            float:left;
+            text-align:right;
+            padding-right:20px;
+            width:200px;
+            font-family:georgia;
+            font-size:28px;
+            font-weight:normal;
+            color:#000;
+            margin:5px 0px;
+        }
+        .step {
+            margin-bottom:50px;
+        }
+    </style>
 </head>
 
 <body>
-  <a href="http://github.com/everzet/capifony"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+    <a href="http://github.com/everzet/capifony"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
 
-  <div id="container">
+    <div class="step">
+        <a id="logo" href="/">
+            <img src="images/logo.png" alt="capifony"/>
+        </a>
 
-    <div class="download">
-      <a href="http://github.com/everzet/capifony/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
-      <a href="http://github.com/everzet/capifony/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
+        <p class="intro">
+            <a href="https://github.com/capistrano/capistrano">Capistrano</a> is an open source tool for running scripts on multiple servers. It’s primary use is for easily deploying applications. While it was built specifically for deploying <a href="http://rubyonrails.org/">Rails</a> apps, it’s pretty simple to customize it to deploy other types of applications. This package is a deployment “recipe” to work with <a href="http://www.symfony-project.org/">symfony</a> and <a href="http://symfony.com/">Symfony2</a> applications.
+        </p>
     </div>
 
-    <h1><a href="http://github.com/everzet/capifony">capifony</a>
-      <span class="small">by <a href="http://github.com/everzet">everzet</a></span></h1>
-
-    <div class="description">
-      Deploying symfony1 Applications with Capistrano
+    <div class="step">
+        <h2>1. Install script</h2>
+        <p>
+            First, install <code>capifony</code> itself with <a href="http://rubygems.org/">RubyGems</a>:
+        </p>
+        <pre>
+<span class="prompt">$&gt;</span> gem install capifony</pre>
     </div>
 
-    <h2>Authors</h2>
-<p>Arlo (arlo@free.fr)<br/>Brent Shaffer (bshafs@gmail.com)<br/>ever.zet (ever.zet@gmail.com)<br/>hidenorigoto (hidenorigoto@gmail.com)<br/>Lacy Rhoades (lacyrhoades@gmail.com)<br/>Xavier Gorse (xavier.gorse@elao.com)<br/><br/>      </p>
-<h2>Contact</h2>
-<p>Konstantin Kudryashov (ever.zet@gmail.com)<br/>      </p>
-
-
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="http://github.com/everzet/capifony/zipball/master">zip</a> or
-      <a href="http://github.com/everzet/capifony/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/everzet/capifony</pre>
-    </p>
-
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/everzet/capifony">everzet/capifony</a>
+    <div class="step">
+        <h2>2. Setup project</h2>
+        <p>Setup initial deployment configuration for your project:</p>
+        <pre>
+<span class="prompt">$&gt;</span> cd to/symfony1/or/Symfony2/project/path
+<span class="prompt">$&gt;</span> capifony .</pre>
+        <p>
+            This will create <code>Capfile</code> in your project root &amp; <code>deploy.rb</code> config file in <code>config</code> for symfony1 and <code>app/config</code> for Symfony2 directory.
+        </p>
+        <p>
+            Fill up your <code>config/deploy.rb</code> with your server connection data
+        </p>
     </div>
 
-  </div>
+    <div class="step">
+        <h2>3. Setup server</h2>
+        <p>
+            Now, you can start the deployment process! To get your server setup with the file structure that Capistrano expects, you can run:
+        </p>
+        <pre>
+<span class="prompt">$&gt;</span> cap deploy:setup</pre>
+        <p>
+            This command will create the following folder structure on your server:
+        </p>
+        <pre>
+`-- /var/www/demo.everzet.com
+  |-- current → /var/www/demo.everzet.com/releases/20100512131539
+  |-- releases
+    |-- 20100512131539
+    |-- 20100509150741
+    `-- 20100509145325
+  `-- shared
+    |-- log
+    |-- config
+      `-- databases.yml
+    `-- web
+      `-- uploads
+        </pre>
+        <p>
+            The folders in the releases directory will be the actual deployed code, timestamped. Capistrano symlinks your <code>log</code> &amp; <code>web/uploads</code> directories from your app to the directories in the shared folder so that it doesn’t get erased when you deploy a new version of your code.
+        </p>
+    </div>
 
-  
+    <div class="step">
+        <h2>4. Deploy!</h2>
+        <p>To deploy your application, simply run:</p>
+        <pre>
+<span class="prompt">$&gt;</span> cap deploy</pre>
+    </div>
 </body>
 </html>

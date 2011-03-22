@@ -9,6 +9,9 @@
         body {
             margin-top: 1.0em;
             margin:30px 40px;
+            margin-left:100px;
+            margin-top:70px;
+            margin-bottom:10px;
             background-color: #fff;
             font-family: Helvetica, Arial, FreeSans, san-serif;
             color: #7a7a7a;
@@ -16,6 +19,16 @@
         #logo {
             float:left;
             width:220px;
+            border:0px none;
+        }
+        #developedby {
+            border:0px none;
+            float:left;
+            margin-left:610px;
+            margin-bottom:0px;
+        }
+        #logo img, #developedby img {
+            border:0px none;
         }
         pre {
             overflow-y:hidden;
@@ -79,7 +92,7 @@
 </head>
 
 <body>
-    <a href="http://github.com/everzet/capifony"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+    <a href="http://github.com/everzet/capifony"><img style="position: absolute; top: 0; left: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Fork me on GitHub" /></a>
 
     <div class="step">
         <a id="logo" href="/">
@@ -150,6 +163,9 @@
 <span class="prompt">$&gt;</span> cap deploy</pre>
     </div>
 
-    <span id="copyright">&copy; 2011 Konstantin Kudryashov (ever.zet)</span>
+    <a id="developedby" href="#">
+        <img src="images/developedby.png" alt="knpLabs product"/>
+    </a>
+    <div style="clear:both"></div>
 </body>
 </html>

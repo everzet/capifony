@@ -1,4 +1,4 @@
-== 1.9.0 / March 22, 2011
+== 2.0.0 / March 22, 2011
 
 * optimized shared commands in symfony1 scripts
 * added symfony2 deployment strategy

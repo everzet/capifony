@@ -1,3 +1,9 @@
+== 1.9.0 / March 22, 2011
+
+* optimized shared commands in symfony1 scripts
+* added symfony2 deployment strategy
+* added `use_orm` option to symfony1 recipes. Turn it off if you don't use ORM
+
 == 0.4.2 / September 23, 2010
 
 * added `symfony:doctrine:compile` task

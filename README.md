@@ -5,7 +5,7 @@ Capistrano is an open source tool for running scripts on multiple servers. It’
 
 ## Prerequisites ##
 
-- Symfony 1.4+ (1.2 can work with small manual changes)
+- Symfony 1.4+ OR Symfony2
 - Must have SSH access to the server you are deploying to.
 - Must have Ruby and RubyGems installed on your machine (not required for deployment server)’
 
@@ -28,7 +28,8 @@ CD to your project directory & run:
 
 	capifony .
 
-This will create `Capfile` in your project root & `deploy.rb` config file in `config` directory
+This will create `Capfile` in your project root & `deploy.rb` config file in `config` (for symfony)
+and `app/config` (for Symfony2) directory
 
 Fill up your `config/deploy.rb` with your server connection data
 

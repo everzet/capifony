@@ -34,7 +34,7 @@
             overflow-y:hidden;
             overflow-x:auto;
         }
-        p, pre {
+        p, pre, h3, h4, ol, ul {
             width:500px;
             margin-left:220px;
             padding:10px 20px;
@@ -43,6 +43,16 @@
             margin-bottom:0px;
             line-height:22px;
             font-size:16px;
+        }
+        ol, ul {
+            padding:0px;
+            padding-bottom:10px;
+            padding-left:40px;
+        }
+        p img {
+            display:block;
+            margin-bottom:10px;
+            margin-top:10px;
         }
         pre {
             color:#000;
@@ -74,7 +84,7 @@
         a:hover {
             text-decoration:none;
         }
-        h2, h3, h4 {
+        h2 {
             float:left;
             text-align:right;
             padding-right:20px;
@@ -84,6 +94,12 @@
             font-weight:normal;
             color:#000;
             margin:5px 0px;
+        }
+        h3 {
+            font-size:22px;
+            color:#c0c0c0;
+            padding-top:15px;
+            padding-bottom:15px;
         }
         .step {
             margin-bottom:50px;
@@ -122,13 +138,153 @@
         <p>
             This will create <code>Capfile</code> in your project root &amp; <code>deploy.rb</code> config file in <code>config</code> for symfony1 and <code>app/config</code> for Symfony2 directory.
         </p>
-        <p>
-            Fill up your <code>config/deploy.rb</code> with your server connection data
-        </p>
     </div>
 
     <div class="step">
-        <h2>3. Setup server</h2>
+        <h2>3. Configure strategy</h2>
+        <p>
+            Fill up your <code>config/deploy.rb</code> with your server connection data. But before, you must choose your deployment strategy.
+        </p>
+        <h3>a) deployment &rarr; scm &rarr; production</h3>
+        <p>
+            First strategy is deployment to production server via intermediate git repository server. In this case, production server <strong>must</strong> have access to git repository (remote or not) and be able to make pulls from it. Deployment server <strong>must</strong> have ssh access to production server application path:
+            <img src="images/strategy_a.png" alt="deployment strategy a">
+        </p>
+        <pre>
+# deploy.rb
+
+set   :application,   "my-app.com"
+set   :deploy_to,     "/www/#{application}"
+set   :domain,        "ssh-deployment-domain"
+
+set   :scm,           :git
+set   :repository,    "ssh-gitrepo-domain:~/repos/#{application}.git"
+
+role  :web,           domain
+role  :app,           domain
+role  :db,            domain, :primary => true
+
+set   :use_sudo,      false
+set   :keep_releases, 3</pre>
+        <p>
+            In this case on every <code>cap deploy</code>, capifony will:
+        </p>
+        <ol>
+            <li>ssh to production (<code>ssh-deployment-domain</code>)</li>
+            <li>create new release path (<code>/www/my-app.com/releases/...</code>)</li>
+            <li>clone latest project version from remote git repo (<code>ssh-gitrepo-domain</code>)</li>
+            <li>copy source code, recieved from git into release path</li>
+            <li>run deployment hooks (<code>cache:warmup</code>, <code>cc</code>, etc.)</li>
+        </ol>
+
+
+        <h3>b) deployment &rarr; production (via copy)</h3>
+        <p>
+            Second strategy is deployment to production server right from your deployment machine via copy. In this case, deployment server <strong>must</strong> have access to git repository (remote or not) and be able to make pulls from it, also it <strong>must</strong> have ssh access to production server application path:
+            <img src="images/strategy_b.png" alt="deployment strategy a">
+        </p>
+        <pre>
+# deploy.rb
+
+set   :application,   "my-app.com"
+set   :deploy_to,     "/www/#{application}"
+set   :domain,        "ssh-deployment-domain"
+
+set   :scm,           :git
+set   :repository,    "file:///Users/deployer/sites/my-app.com.git"
+set   :deploy_via,    :copy
+
+role  :web,           domain
+role  :app,           domain
+role  :db,            domain, :primary => true
+
+set   :use_sudo,      false
+set   :keep_releases, 3</pre>
+        <p>
+            In this case on every <code>cap deploy</code>, capifony will:
+        </p>
+        <ol>
+            <li>ssh to production (<code>ssh-deployment-domain</code>)</li>
+            <li>create new release path (<code>/www/my-app.com/releases/...</code>)</li>
+            <li>clone latest project version from <strong>local</strong> git repo</li>
+            <li>copy source code, recieved from git into production server via wires</li>
+            <li>run deployment hooks (<code>cache:warmup</code>, <code>cc</code>, etc.)</li>
+        </ol>
+        <p>
+            Copy of whole project on every deploy is very expensive and slow task. But you can optimize things with <code>capistrano_rsync_with_remote_cache</code> gem:
+        </p>
+        <pre>
+<span class="prompt">$&gt;</span> gem install capistrano_rsync_with_remote_cache</pre>
+        <p>
+            And change your strategy in <code>deploy.rb</code>:
+        </p>
+        <pre>
+set :deploy_via, :rsync_with_remote_cache</pre>
+        <p>
+            In this case, rsync will create cache on your production server and will push <strong>only</strong> changes on deploys.
+        </p>
+
+
+        <h3>useful configuration parameters</h3>
+        <p>
+            By default, capifony will ssh with your current system user, but you can change this behavior with <code>set :user</code> parameter:
+        </p>
+        <pre>
+set :user, "deployer"</pre>
+        <p>
+            If you’re using your own private keys for git you might want to tell Capistrano to use agent forwarding with this command. Agent forwarding can make key management much simpler as it uses your local keys instead of keys installed on the server:
+        </p>
+        <pre>
+ssh_options[:forward_agent] = true</pre>
+        <p>
+            You can tell cap the branch to checkout during deployment:
+        </p>
+        <pre>
+set :branch, "v0.2.0"</pre>
+        <p>
+            If you’re using git submodules you must tell cap to fetch them:
+        </p>
+        <pre>
+set :git_enable_submodules, 1</pre>
+        <p></p>
+
+
+        <h3>symfony configuration parameters</h3>
+        <p>
+            All symfony tasks (both <strong>symfony 1.4</strong> and <strong>Symfony2</strong>) runs with default <code>php</code> bin on production server. You can change this with:
+        </p>
+        <pre>
+set :php_bin, "/path/to/php"</pre>
+        <p>
+            All symfony tasks (both <strong>symfony 1.4</strong> and <strong>Symfony2</strong>) runs inside <code>prod</code> environment on production server. You can change this with:
+        </p>
+        <pre>
+set :symfony_env_prod, "new_prod_env"</pre>
+        <p>
+            By default, capifony will try to configure your <code>config/databases.yml</code> on every <strong>symfony 1.4</strong> project deployment (if it's not) on production. You can turn this behavior off with:
+        </p>
+        <pre>
+set :use_orm, false</pre>
+        <p>
+            If you want to use shared symfony library instead of bundled one inside <strong>symfony 1.4</strong> project, define path to it with:
+        </p>
+        <pre>
+set :symfony_lib, "/path/to/symfony"</pre>
+        <p>
+            If your <code>app</code> or <code>web</code> <strong>Symfony2</strong> paths differs from default ones, you can specify them with:
+        </p>
+        <pre>
+set :app_path, "my_app"
+set :web_path, "my_web"</pre>
+        <p>
+            If you use <strong>AsseticBundle</strong> with <strong>Symfony2</strong>, then you may want to dump assets on every deploy. Turn next option off to enable assets autodumping on every deploy:
+        </p>
+        <pre>
+set :dump_assetic_assets, true</pre>
+    </div>
+
+    <div class="step">
+        <h2>4. Setup server</h2>
         <p>
             Now, you can start the deployment process! To get your server setup with the file structure that Capistrano expects, you can run:
         </p>
@@ -157,15 +313,19 @@
     </div>
 
     <div class="step">
-        <h2>4. Deploy!</h2>
+        <h2>5. Deploy!</h2>
         <p>To deploy your application, simply run:</p>
         <pre>
 <span class="prompt">$&gt;</span> cap deploy</pre>
     </div>
 
+
+
+
     <a id="developedby" href="http://www.knplabs.com/en">
         <img src="images/developedby.png" alt="knpLabs product"/>
     </a>
+
     <div style="clear:both"></div>
     <script type="text/javascript">
 

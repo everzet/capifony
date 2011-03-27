@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
     Deploying symfony PHP applications with Capistrano.
   DESC
 
-  spec.files = Dir.glob("{bin,lib}/**/*") + %w(README LICENSE CHANGELOG)
+  spec.files = Dir.glob("{bin,lib}/**/*") + %w(README.md LICENSE CHANGELOG)
   spec.require_path = 'lib'
   spec.has_rdoc = false
 

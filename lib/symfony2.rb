@@ -90,7 +90,7 @@ namespace :symfony do
   namespace :assetic do
     desc "Dumps all assets to the filesystem"
     task :dump do
-      run "cd #{latest_release} && #{php_bin} #{app_path}/console assets:install #{web_path} --env=#{symfony_env_prod}"
+      run "cd #{latest_release} && #{php_bin} #{app_path}/console assetic:dump #{web_path} --env=#{symfony_env_prod}"
     end
   end
 

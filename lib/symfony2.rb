@@ -68,7 +68,34 @@ namespace :deploy do
 
   desc "Migrate Symfony2 Doctrine ORM database."
   task :migrate do
-    symfony.doctrine.migrations.migrate
+    currentVersion = nil
+    run "#{php-bin} #{app-path}/console doctrine:migrations:status" do |ch, stream, out|
+      if stream == :out and out =~ /Current Version:[^$]+\(([0-9]+)\)/
+        currentVersion = Regexp.last_match(1)
+      end
+      if stream == :out and out =~ /Current Version:\s*0\s*$/
+        currentVersion = 0
+      end
+    end
+    
+    if currentVersion == nil
+      raise "Could not find current database migration version"
+    end
+    puts "Current database version #{currentVersion}"
+    
+    on_rollback {
+      run "#{php-bin} #{app-path}/console doctrine:migrations:migrate #{currentVersion}" do |ch, stream, out|
+        if out =~ /Are you sure you wish to continue/
+          ch.send_data("y\r\n")
+        end
+      end
+    }
+    
+    run "#{php-bin} #{app-path}/console doctrine:migrations:migrate" do |ch, stream, out|
+      if out =~ /Are you sure you wish to continue/
+        ch.send_data("y\r\n")
+      end
+    end
   end
 end
 

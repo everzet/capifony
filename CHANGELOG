@@ -1,3 +1,7 @@
+== 2.0.2 / April 6, 2011
+
+* db migration task refactoring (thanks @schmittjoh)
+
 == 2.0.1 / March 30, 2011
 
 * fixed wrong assetic command

@@ -1,3 +1,7 @@
+== 2.0.3 / April 16, 2011
+
+* windows support for symfony1 database: tasks (thanks @akloboucnik)
+
 == 2.0.2 / April 6, 2011
 
 * db migration task refactoring (thanks @schmittjoh)

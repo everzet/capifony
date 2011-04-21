@@ -144,7 +144,7 @@ namespace :symfony do
         self.logger.level = Capistrano::Logger::INFO 
       end
 
-      run "#{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{db_username}' '#{db_password}'"
+      stream "#{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{db_username}' '#{db_password}'"
 
       # restore logger level
       self.logger.level = current_logger_level

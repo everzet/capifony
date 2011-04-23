@@ -1,3 +1,7 @@
+== 2.0.4 / April 23, 2011
+
+* shared lib support in symfony1 (thanks @jakzal)
+
 == 2.0.3 / April 16, 2011
 
 * windows support for symfony1 database: tasks (thanks @akloboucnik)

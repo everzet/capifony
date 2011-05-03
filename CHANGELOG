@@ -1,3 +1,8 @@
+== 2.0.5 / May 3, 2011
+
+* made the Symfony2 console command configurable (symfony_console) (thanks @ruudk)
+* added --env=#{symfony_env_prod} to every Symfony2 console command (thanks @ruudk)
+
 == 2.0.4 / April 23, 2011
 
 * shared lib support in symfony1 (thanks @jakzal)

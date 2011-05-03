@@ -18,6 +18,9 @@ set :shared_files,        false
 # Asset folders (that need to be timestamped)
 set :asset_children,      [web_path + "/css", web_path + "/images", web_path + "/js"]
 
+# Symfony2 console file
+set :symfony_console,     "console"
+
 namespace :deploy do
   desc "Symlink static directories and static files that need to remain between deployments."
   task :share_childs do

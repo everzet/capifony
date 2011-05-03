@@ -4,6 +4,9 @@ set :symfony_env_local, "dev"
 # Symfony environment
 set :symfony_env_prod,  "prod"
 
+# Symfony2 console file
+set :symfony_console,  "console"
+
 # PHP binary to execute
 set :php_bin,           "php"
 

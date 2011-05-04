@@ -129,11 +129,13 @@ namespace :symfony do
     desc "Clears project cache."
     task :clear do
       run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} cache:clear --env=#{symfony_env_prod}"
+      run "chmod -R g+w #{latest_release}/#{app_path}/cache"
     end
 
     desc "Warms up an empty cache."
     task :warmup do
       run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} cache:warmup --env=#{symfony_env_prod}"
+      run "chmod -R g+w #{latest_release}/#{app_path}/cache"
     end
   end
 

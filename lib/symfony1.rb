@@ -85,6 +85,7 @@ namespace :deploy do
   task :finalize_update, :except => { :no_release => true } do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
     run "mkdir -p #{latest_release}/cache"
+    run "chmod -R g+w #{latest_release}/cache"
 
     # Share common files & folders
     share_childs
@@ -132,6 +133,7 @@ namespace :symfony do
   desc "Clears the cache"
   task :cc do
     run "#{php_bin} #{latest_release}/symfony cache:clear"
+    run "chmod -R g+w #{latest_release}/cache"
   end
 
   desc "Creates symbolic link to symfony lib in shared"

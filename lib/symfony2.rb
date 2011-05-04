@@ -46,6 +46,7 @@ namespace :deploy do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
     run "if [ -d #{latest_release}/#{app_path}/cache ] ; then rm -rf #{latest_release}/#{app_path}/cache; fi"
     run "mkdir -p #{latest_release}/#{app_path}/cache && chmod -R 0777 #{latest_release}/#{app_path}/cache"
+    run "chmod -R g+w #{latest_release}/#{app_path}/cache"
 
     share_childs
 

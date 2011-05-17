@@ -132,7 +132,7 @@ namespace :symfony do
 
   desc "Clears the cache"
   task :cc do
-    run "#{php_bin} #{latest_release}/symfony cache:clear"
+    run "cd #{latest_release} && #{php_bin} ./symfony cache:clear"
     run "chmod -R g+w #{latest_release}/cache"
   end
 

@@ -1,3 +1,16 @@
+== 2.0.6 / May 4, 2011
+
+* add write access to cache folder for deployer's usergroup
+
+== 2.0.5 / May 3, 2011
+
+* made the Symfony2 console command configurable (symfony_console) (thanks @ruudk)
+* added --env=#{symfony_env_prod} to every Symfony2 console command (thanks @ruudk)
+
+== 2.0.4 / April 23, 2011
+
+* shared lib support in symfony1 (thanks @jakzal)
+
 == 2.0.3 / April 16, 2011
 
 * windows support for symfony1 database: tasks (thanks @akloboucnik)

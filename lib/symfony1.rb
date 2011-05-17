@@ -19,6 +19,10 @@ set(:symfony_orm)     { guess_symfony_orm }
 # Symfony lib path
 set(:symfony_lib)     { guess_symfony_lib }
 
+# Shared symfony lib
+set :use_shared_symfony, false
+set :symfony_version, "1.4.11"
+
 def guess_symfony_orm
   databases = YAML::load(IO.read('config/databases.yml'))
 
@@ -81,6 +85,7 @@ namespace :deploy do
   task :finalize_update, :except => { :no_release => true } do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
     run "mkdir -p #{latest_release}/cache"
+    run "chmod -R g+w #{latest_release}/cache"
 
     # Share common files & folders
     share_childs
@@ -127,7 +132,17 @@ namespace :symfony do
 
   desc "Clears the cache"
   task :cc do
-    run "cd #{latest_release} && #{php_bin} ./symfony cache:clear"
+    run "#{php_bin} #{latest_release}/symfony cache:clear"
+    run "chmod -R g+w #{latest_release}/cache"
+  end
+
+  desc "Creates symbolic link to symfony lib in shared"
+  task :create_lib_symlink do 
+    prompt_with_default(:version, symfony_version)
+    symlink_path = "#{latest_release}/lib/vendor/symfony"
+
+    run "if [ ! -d #{shared_path}/symfony-#{version} ]; then exit 1; fi;"
+    run "ln -nfs #{shared_path}/symfony-#{version} #{symlink_path};"
   end
 
   namespace :configure do
@@ -577,6 +592,33 @@ namespace :shared do
     task :to_remote do
       upload("web/uploads", "#{shared_path}/web", :via => :scp, :recursive => true)
     end
+  end
+
+  namespace :symfony do
+    desc "Downloads symfony framework to shared directory"
+    task :download do 
+      prompt_with_default(:version, symfony_version)
+  
+      run <<-CMD
+        if [ ! -d #{shared_path}/symfony-#{version} ]; then
+          wget -q http://www.symfony-project.org/get/symfony-#{version}.tgz -O- | tar -zxf - -C #{shared_path};
+        fi
+      CMD
+    end
+  end
+end
+
+# After setup
+after "deploy:setup" do
+  if use_shared_symfony
+    shared.symfony.download
+  end
+end
+
+# Before finalizing update
+before "deploy:finalize_update" do
+  if use_shared_symfony
+    symfony.create_lib_symlink
   end
 end
 

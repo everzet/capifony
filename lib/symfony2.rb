@@ -6,6 +6,9 @@ set :app_path,            "app"
 # Symfony web path
 set :web_path,            "web"
 
+# Symfony console bin
+set :symfony_console,     "console"
+
 # Use AsseticBundle
 set :dump_assetic_assets, false
 
@@ -43,6 +46,7 @@ namespace :deploy do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
     run "if [ -d #{latest_release}/#{app_path}/cache ] ; then rm -rf #{latest_release}/#{app_path}/cache; fi"
     run "mkdir -p #{latest_release}/#{app_path}/cache && chmod -R 0777 #{latest_release}/#{app_path}/cache"
+    run "chmod -R g+w #{latest_release}/#{app_path}/cache"
 
     share_childs
 
@@ -69,7 +73,7 @@ namespace :deploy do
   desc "Migrate Symfony2 Doctrine ORM database."
   task :migrate do
     currentVersion = nil
-    run "#{php-bin} #{app-path}/console doctrine:migrations:status" do |ch, stream, out|
+    run "#{php-bin} #{app-path}/#{symfony_console} doctrine:migrations:status --env=#{symfony_env_prod}" do |ch, stream, out|
       if stream == :out and out =~ /Current Version:[^$]+\(([0-9]+)\)/
         currentVersion = Regexp.last_match(1)
       end
@@ -84,14 +88,14 @@ namespace :deploy do
     puts "Current database version #{currentVersion}"
     
     on_rollback {
-      run "#{php-bin} #{app-path}/console doctrine:migrations:migrate #{currentVersion}" do |ch, stream, out|
+      run "#{php-bin} #{app-path}/#{symfony_console} doctrine:migrations:migrate #{currentVersion} --env=#{symfony_env_prod}" do |ch, stream, out|
         if out =~ /Are you sure you wish to continue/
           ch.send_data("y\r\n")
         end
       end
     }
     
-    run "#{php-bin} #{app-path}/console doctrine:migrations:migrate" do |ch, stream, out|
+    run "#{php-bin} #{app-path}/#{symfony_console} doctrine:migrations:migrate --env=#{symfony_env_prod}" do |ch, stream, out|
       if out =~ /Are you sure you wish to continue/
         ch.send_data("y\r\n")
       end
@@ -104,32 +108,34 @@ namespace :symfony do
   task :default do
     prompt_with_default(:task_arguments, "cache:clear")
 
-    stream "cd #{latest_release} && #{php_bin} #{app_path}/console #{task_arguments}"
+    stream "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} #{task_arguments} --env=#{symfony_env_prod}"
   end
 
   namespace :assets do
     desc "Install bundle's assets"
     task :install do
-      run "cd #{latest_release} && #{php_bin} #{app_path}/console assets:install #{web_path}"
+      run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} assets:install #{web_path} --env=#{symfony_env_prod}"
     end
   end
 
   namespace :assetic do
     desc "Dumps all assets to the filesystem"
     task :dump do
-      run "cd #{latest_release} && #{php_bin} #{app_path}/console assetic:dump #{web_path} --env=#{symfony_env_prod}"
+      run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} assetic:dump #{web_path} --env=#{symfony_env_prod}"
     end
   end
 
   namespace :cache do
     desc "Clears project cache."
     task :clear do
-      run "cd #{latest_release} && #{php_bin} #{app_path}/console cache:clear"
+      run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} cache:clear --env=#{symfony_env_prod}"
+      run "chmod -R g+w #{latest_release}/#{app_path}/cache"
     end
 
     desc "Warms up an empty cache."
     task :warmup do
-      run "cd #{latest_release} && #{php_bin} #{app_path}/console cache:warmup"
+      run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} cache:warmup --env=#{symfony_env_prod}"
+      run "chmod -R g+w #{latest_release}/#{app_path}/cache"
     end
   end
 
@@ -137,65 +143,65 @@ namespace :symfony do
     namespace :cache do
       desc "Clear all metadata cache for a entity manager."
       task :clear_metadata do
-        run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:cache:clear-metadata"
+        run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:cache:clear-metadata --env=#{symfony_env_prod}"
       end
 
       desc "Clear all query cache for a entity manager."
       task :clear_query do
-        run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:cache:clear-query"
+        run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:cache:clear-query --env=#{symfony_env_prod}"
       end
 
       desc "Clear result cache for a entity manager."
       task :clear_result do
-        run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:cache:clear-result"
+        run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:cache:clear-result --env=#{symfony_env_prod}"
       end
     end
 
     namespace :database do
       desc "Create the configured databases."
       task :create do
-        run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:database:create"
+        run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:database:create --env=#{symfony_env_prod}"
       end
 
       desc "Drop the configured databases."
       task :drop do
-        run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:database:drop"
+        run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:database:drop --env=#{symfony_env_prod}"
       end
     end
 
     namespace :generate do
       desc "Generates proxy classes for entity classes."
       task :hydrators do
-        run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:generate:proxies"
+        run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:generate:proxies --env=#{symfony_env_prod}"
       end
 
       desc "Generate repository classes from your mapping information."
       task :hydrators do
-        run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:generate:repositories"
+        run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:generate:repositories --env=#{symfony_env_prod}"
       end
     end
 
     namespace :schema do
       desc "Processes the schema and either create it directly on EntityManager Storage Connection or generate the SQL output."
       task :create do
-        run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:schema:create"
+        run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:schema:create --env=#{symfony_env_prod}"
       end
 
       desc "Drop the complete database schema of EntityManager Storage Connection or generate the corresponding SQL output."
       task :drop do
-        run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:schema:drop"
+        run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:schema:drop --env=#{symfony_env_prod}"
       end
     end
 
     namespace :migrations do
       desc "Execute a migration to a specified version or the latest available version."
       task :migrate do
-        run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:migrations:migrate"
+        run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:migrations:migrate --env=#{symfony_env_prod}"
       end
 
       desc "View the status of a set of migrations."
       task :status do
-        run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:migrations:status"
+        run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:migrations:status --env=#{symfony_env_prod}"
       end
     end
 
@@ -203,29 +209,29 @@ namespace :symfony do
       namespace :generate do
         desc "Generates hydrator classes for document classes."
         task :hydrators do
-          run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:mongodb:generate:hydrators"
+          run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:mongodb:generate:hydrators --env=#{symfony_env_prod}"
         end
 
         desc "Generates proxy classes for document classes."
         task :hydrators do
-          run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:mongodb:generate:proxies"
+          run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:mongodb:generate:proxies --env=#{symfony_env_prod}"
         end
 
         desc "Generates repository classes for document classes."
         task :hydrators do
-          run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:mongodb:generate:repositories"
+          run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:mongodb:generate:repositories --env=#{symfony_env_prod}"
         end
       end
 
       namespace :schema do
         desc "Allows you to create databases, collections and indexes for your documents."
         task :create do
-          run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:mongodb:schema:create"
+          run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:mongodb:schema:create --env=#{symfony_env_prod}"
         end
 
         desc "Allows you to drop databases, collections and indexes for your documents."
         task :drop do
-          run "cd #{latest_release} && #{php_bin} #{app_path}/console doctrine:mongodb:schema:drop"
+          run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} doctrine:mongodb:schema:drop --env=#{symfony_env_prod}"
         end
       end
     end

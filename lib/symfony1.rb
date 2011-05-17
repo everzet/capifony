@@ -34,7 +34,7 @@ def guess_symfony_orm
 end
 
 def guess_symfony_lib
-  symfony_version = capture("#{php_bin} #{latest_release}/symfony -V")
+  symfony_version = capture("cd #{latest_release} && #{php_bin} ./symfony -V")
 
   /\((.*)\)/.match(symfony_version)[1]
 end
@@ -118,7 +118,7 @@ namespace :symfony do
   task :default do
     prompt_with_default(:task_arguments, "cache:clear")
 
-    stream "#{php_bin} #{latest_release}/symfony #{task_arguments}"
+    stream "cd #{latest_release} && #{php_bin} ./symfony #{task_arguments}"
   end
 
   desc "Downloads & runs check_configuration.php on remote"
@@ -132,7 +132,7 @@ namespace :symfony do
 
   desc "Clears the cache"
   task :cc do
-    run "#{php_bin} #{latest_release}/symfony cache:clear"
+    run "cd #{latest_release} && #{php_bin} ./symfony cache:clear"
     run "chmod -R g+w #{latest_release}/cache"
   end
 
@@ -155,11 +155,11 @@ namespace :symfony do
       # surpress debug log output to hide the password
       current_logger_level = self.logger.level
       if current_logger_level >= Capistrano::Logger::DEBUG
-        logger.debug %(executing "#{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{db_username}' ***")
+        logger.debug %(executing "cd #{latest_release} && #{php_bin} ./symfony configure:database '#{dsn}' '#{db_username}' ***")
         self.logger.level = Capistrano::Logger::INFO 
       end
 
-      run "#{php_bin} #{latest_release}/symfony configure:database '#{dsn}' '#{db_username}' '#{db_password}'"
+      stream "cd #{latest_release} && #{php_bin} ./symfony configure:database '#{dsn}' '#{db_username}' '#{db_password}'"
 
       # restore logger level
       self.logger.level = current_logger_level
@@ -169,29 +169,29 @@ namespace :symfony do
   namespace :project do
     desc "Disables an application in a given environment"
     task :disable do
-      run "#{php_bin} #{latest_release}/symfony project:disable #{symfony_env_prod}"
+      run "cd #{latest_release} && #{php_bin} ./symfony project:disable #{symfony_env_prod}"
     end
 
     desc "Enables an application in a given environment"
     task :enable do
-      run "#{php_bin} #{latest_release}/symfony project:enable #{symfony_env_prod}"
+      run "cd #{latest_release} && #{php_bin} ./symfony project:enable #{symfony_env_prod}"
     end
 
     desc "Fixes symfony directory permissions"
     task :permissions do
-      run "#{php_bin} #{latest_release}/symfony project:permissions"
+      run "cd #{latest_release} && #{php_bin} ./symfony project:permissions"
     end
 
     desc "Optimizes a project for better performance"
     task :optimize do
       prompt_with_default(:application, "frontend")
 
-      run "#{php_bin} #{latest_release}/symfony project:optimize #{application}"
+      run "cd #{latest_release} && #{php_bin} ./symfony project:optimize #{application}"
     end
 
     desc "Clears all non production environment controllers"
     task :clear_controllers do
-      run "#{php_bin} #{latest_release}/symfony project:clear-controllers"
+      run "cd #{latest_release} && #{php_bin} ./symfony project:clear-controllers"
     end
 
     desc "Sends emails stored in a queue"
@@ -199,7 +199,7 @@ namespace :symfony do
       prompt_with_default(:message_limit, 10)
       prompt_with_default(:time_limit,    10)
 
-      stream "#{php_bin} #{latest_release}/symfony project:send-emails --message-limit=#{message_limit} --time-limit=#{time_limit} --env=#{symfony_env_prod}"
+      stream "cd #{latest_release} && #{php_bin} ./symfony project:send-emails --message-limit=#{message_limit} --time-limit=#{time_limit} --env=#{symfony_env_prod}"
     end
     
     desc 'Task to set all front controllers to a specific environment'
@@ -226,40 +226,40 @@ namespace :symfony do
   namespace :plugin do
     desc "Publishes web assets for all plugins"
     task :publish_assets do
-      run "#{php_bin} #{latest_release}/symfony plugin:publish-assets"
+      run "cd #{latest_release} && #{php_bin} ./symfony plugin:publish-assets"
     end
   end
 
   namespace :log do
     desc "Clears log files"
     task :clear do
-      run "#{php_bin} #{latest_release}/symfony log:clear"
+      run "cd #{latest_release} && #{php_bin} ./symfony log:clear"
     end
 
     desc "Rotates an application's log files"
     task :rotate do
       prompt_with_default(:application, "frontend")
 
-      run "#{php_bin} #{latest_release}/symfony log:rotate #{application} #{symfony_env_prod}"
+      run "cd #{latest_release} && #{php_bin} ./symfony log:rotate #{application} #{symfony_env_prod}"
     end
   end
 
   namespace :tests do
     desc "Launches all tests"
     task :all do
-      run "#{php_bin} #{latest_release}/symfony test:all"
+      run "cd #{latest_release} && #{php_bin} ./symfony test:all"
     end
 
     desc "Launches functional tests"
     task :functional do
       prompt_with_default(:application, "frontend")
 
-      run "#{php_bin} #{latest_release}/symfony test:functional #{application}"
+      run "cd #{latest_release} && #{php_bin} ./symfony test:functional #{application}"
     end
 
     desc "Launches unit tests"
     task :unit do
-      run "#{php_bin} #{latest_release}/symfony test:unit"
+      run "cd #{latest_release} && #{php_bin} ./symfony test:unit"
     end
   end
 
@@ -303,7 +303,7 @@ namespace :symfony do
   namespace :doctrine do
     desc "Compile doctrine"
     task :compile do
-      run "#{php_bin} #{latest_release}/symfony doctrine:compile"
+      run "cd #{latest_release} && #{php_bin} ./symfony doctrine:compile"
     end
 
     desc "Ensure Doctrine is correctly configured"
@@ -318,59 +318,59 @@ namespace :symfony do
     task :dql do
       prompt_with_default(:query, "")
 
-      stream "#{php_bin} #{latest_release}/symfony doctrine:dql #{query} --env=#{symfony_env_prod}"
+      stream "cd #{latest_release} && #{php_bin} ./symfony doctrine:dql #{query} --env=#{symfony_env_prod}"
     end
 
     desc "Dumps data to the fixtures directory"
     task :data_dump do
-      run "#{php_bin} #{latest_release}/symfony doctrine:data-dump --env=#{symfony_env_prod}"
+      run "cd #{latest_release} && #{php_bin} ./symfony doctrine:data-dump --env=#{symfony_env_prod}"
     end
 
     desc "Loads YAML fixture data"
     task :data_load do
-      run "#{php_bin} #{latest_release}/symfony doctrine:data-load --env=#{symfony_env_prod}"
+      run "cd #{latest_release} && #{php_bin} ./symfony doctrine:data-load --env=#{symfony_env_prod}"
     end
 
     desc "Loads YAML fixture data without remove"
     task :data_load_append do
-      run "#{php_bin} #{latest_release}/symfony doctrine:data-load --append --env=#{symfony_env_prod}"
+      run "cd #{latest_release} && #{php_bin} ./symfony doctrine:data-load --append --env=#{symfony_env_prod}"
     end
 
     desc "Migrates database to current version"
     task :migrate do
-      run "#{php_bin} #{latest_release}/symfony doctrine:migrate --env=#{symfony_env_prod}"
+      run "cd #{latest_release} && #{php_bin} ./symfony doctrine:migrate --env=#{symfony_env_prod}"
     end
 
     desc "Generate model lib form and filters classes based on your schema"
     task :build_classes do
-      run "#{php_bin} #{latest_release}/symfony doctrine:build --all-classes --env=#{symfony_env_prod}"
+      run "cd #{latest_release} && #{php_bin} ./symfony doctrine:build --all-classes --env=#{symfony_env_prod}"
     end
 
     desc "Generate code & database based on your schema"
     task :build_all do
       if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env_prod}'s database? (y/N)")
-        run "#{php_bin} #{latest_release}/symfony doctrine:build --all --no-confirmation --env=#{symfony_env_prod}"
+        run "cd #{latest_release} && #{php_bin} ./symfony doctrine:build --all --no-confirmation --env=#{symfony_env_prod}"
       end
     end
 
     desc "Generate code & database based on your schema & load fixtures"
     task :build_all_and_load do
       if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env_prod}'s database and load #{symfony_env_prod}'s fixtures? (y/N)")
-        run "#{php_bin} #{latest_release}/symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env_prod}"
+        run "cd #{latest_release} && #{php_bin} ./symfony doctrine:build --all --and-load --no-confirmation --env=#{symfony_env_prod}"
       end
     end
 
     desc "Generate sql & database based on your schema"
     task :build_db do
       if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env_prod}'s database? (y/N)")
-        run "#{php_bin} #{latest_release}/symfony doctrine:build --sql --db --no-confirmation --env=#{symfony_env_prod}"
+        run "cd #{latest_release} && #{php_bin} ./symfony doctrine:build --sql --db --no-confirmation --env=#{symfony_env_prod}"
       end
     end
 
     desc "Generate sql & database based on your schema & load fixtures"
     task :build_db_and_load do
       if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env_prod}'s database and load #{symfony_env_prod}'s fixtures? (y/N)")
-        run "#{php_bin} #{latest_release}/symfony doctrine:build --sql --db --and-load --no-confirmation --env=#{symfony_env_prod}"
+        run "cd #{latest_release} && #{php_bin} ./symfony doctrine:build --sql --db --and-load --no-confirmation --env=#{symfony_env_prod}"
       end
     end
   end
@@ -403,28 +403,28 @@ namespace :symfony do
     desc "Generate code & database based on your schema"
     task :build_all do
       if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env_prod}'s database? (y/N)")
-        run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --no-confirmation --env=#{symfony_env_prod}"
+        run "cd #{latest_release} && #{php_bin} ./symfony propel:build --sql --db --no-confirmation --env=#{symfony_env_prod}"
       end
     end
 
     desc "Generate code & database based on your schema & load fixtures"
     task :build_all_and_load do
       if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env_prod}'s database and load #{symfony_env_prod}'s fixtures? (y/N)")
-        run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env_prod}"
+        run "cd #{latest_release} && #{php_bin} ./symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env_prod}"
       end
     end
 
     desc "Generate sql & database based on your schema"
     task :build_db do
       if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env_prod}'s database? (y/N)")
-        run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --no-confirmation --env=#{symfony_env_prod}"
+        run "cd #{latest_release} && #{php_bin} ./symfony propel:build --sql --db --no-confirmation --env=#{symfony_env_prod}"
       end
     end
 
     desc "Generate sql & database based on your schema & load fixtures"
     task :build_db_and_load do
       if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env_prod}'s database and load #{symfony_env_prod}'s fixtures? (y/N)")
-        run "#{php_bin} #{latest_release}/symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env_prod}"
+        run "cd #{latest_release} && #{php_bin} ./symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env_prod}"
       end
     end
   end

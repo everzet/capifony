@@ -28,7 +28,7 @@ Capistranoは、複数のサーバーでスクリプトを実行するための�
 
 	capifony .
 
-このコマンドを実行すると、プロジェクトのルートディレクトリに`Capfile`が作成され、`config`ディレクトリに`deploy.rb`設定ファイルが作成されます。
+このコマンドを実行すると、プロジェクトのルートディレクトリに`Capfile`が作成され、symfony では`config`ディレクトリに、Symfony2では`app/config`ディレクトリに`deploy.rb`設定ファイルが作成されます。
 
 `config/deploy.rb`ファイルに、デプロイ先サーバーへの接続情報などを設定してください。
 

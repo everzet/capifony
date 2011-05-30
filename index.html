@@ -298,18 +298,12 @@ end</pre>
         
         <p>Now, each time you deploy, the vendors will be fully updated.</p>
         
-        <p>The final step is to configure your <code>app/config/parameters.ini</code> file. The best way to do this is to start by deploying once:</p>
+        <p>The final step is to configure your <code>app/config/parameters.ini</code> file. The best way to do this is to create this file in shared folder on server manually:</p>
         
         <pre>
-cap deploy</pre>
-        
-        <p>If you receive any errors, don't worry - Symfony isn't happy that your <code>parameters.ini</code> file isn't configured yet. Now, ssh onto your server and customize your <code>app/config/parameters.ini</code> file:</p>
-        
-        <pre>
-ssh myuser@my-app.com
-        
-cd /var/www/my-app.com/shared/app/config
-vim parameters.ini</pre>
+<span class="prompt">$&gt;</span> ssh your_deploy_server
+<span class="prompt">$&gt;</span> mkdir -p /var/www/my-app.com/shared/app/config
+<span class="prompt">$&gt;</span> vim /var/www/my-app.com/shared/app/config/parameters.ini</pre>
         
         <p>Once your <code>parameters.ini</code> file is correctly configured, you should be able to test your deployed application. On every subsequent deploy, that same <code>app/config/parameters.ini</code> file will by symlinked into your application, meaning you only need to configure after the initial deploy.
     </div>

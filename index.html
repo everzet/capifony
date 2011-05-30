@@ -271,45 +271,45 @@ set :deploy_via, :rsync_with_remote_cache</pre>
         <p>First, add the following to your <code>app/config/deploy.rb</code> file so that the <code>parameters.ini</code> file is shared between all deployments:</p>
         
         <pre>
-    set :shared_files,      ["app/config/parameters.ini"]</pre>
+set :shared_files,      ["app/config/parameters.ini"]</pre>
         
         <p>Next, share the <code>vendor</code> directory between all deployments to make deploying faster:</p>
         
         <pre>
-    set :shared_children,     [app_path + "/logs", web_path + "/uploads", "vendor"]</pre>
+set :shared_children,     [app_path + "/logs", web_path + "/uploads", "vendor"]</pre>
         
         <p>Finally, each time you deploy, capistrano must run <code>php bin/vendors.php</code> so that all of the vendor libraries are updated. Add the following code to <code>deploy.rb</code> to make this happen:</p>
         
         <pre>
-    namespace :symfony do
-      desc "Update the vendor libraries"
-      task :update_vendors do
-        run "cd #{latest_release} && #{php_bin} bin/vendors.php"
-      end
-    end
+namespace :symfony do
+  desc "Update the vendor libraries"
+  task :update_vendors do
+    run "cd #{latest_release} && #{php_bin} bin/vendors.php"
+  end
+end
 
-    before "deploy:finalize_update" do
-      # share the children first (to get the vendor symlink)
-      deploy.share_childs
+before "deploy:finalize_update" do
+  # share the children first (to get the vendor symlink)
+  deploy.share_childs
 
-      # update the vendors
-      symfony.update_vendors
-    end</pre>
+  # update the vendors
+  symfony.update_vendors
+end</pre>
         
         <p>Now, each time you deploy, the vendors will be fully updated.</p>
         
         <p>The final step is to configure your <code>app/config/parameters.ini</code> file. The best way to do this is to start by deploying once:</p>
         
         <pre>
-    cap deploy</pre>
+cap deploy</pre>
         
         <p>If you receive any errors, don't worry - Symfony isn't happy that your <code>parameters.ini</code> file isn't configured yet. Now, ssh onto your server and customize your <code>app/config/parameters.ini</code> file:</p>
         
         <pre>
-    ssh myuser@my-app.com
-            
-    cd /var/www/my-app.com/shared/app/config
-    vim parameters.ini</pre>
+ssh myuser@my-app.com
+        
+cd /var/www/my-app.com/shared/app/config
+vim parameters.ini</pre>
         
         <p>Once your <code>parameters.ini</code> file is correctly configured, you should be able to test your deployed application. On every subsequent deploy, that same <code>app/config/parameters.ini</code> file will by symlinked into your application, meaning you only need to configure after the initial deploy.
     </div>
@@ -323,27 +323,27 @@ set :deploy_via, :rsync_with_remote_cache</pre>
                 By default, capifony will ssh with your current system user, but you can change this behavior with <code>set :user</code> parameter:
             </p>
             <pre>
-    set :user, "deployer"</pre>
+set :user, "deployer"</pre>
             <p>
                 If you’re using your own private keys for git, you might want to tell Capistrano to use agent forwarding (which means that the production server uses your local keys to pull from git):
             </p>
             <pre>
-    ssh_options[:forward_agent] = true</pre>
+ssh_options[:forward_agent] = true</pre>
             <p>
                 You can also tell cap the exact branch to pull from during deployment:
             </p>
             <pre>
-    set :branch, "v0.2.0"</pre>
+set :branch, "v0.2.0"</pre>
             <p>
                 If you’re using git submodules, you must tell cap to fetch them:
             </p>
             <pre>
-    set :git_enable_submodules, 1</pre>
+set :git_enable_submodules, 1</pre>
             <p>
                 If you connect to your production server using a non-traditional port, set the port manually:
             </p>
             <pre>
-    ssh_options[:port] = "22123"</pre>
+ssh_options[:port] = "22123"</pre>
             <p></p>
 
 
@@ -352,33 +352,33 @@ set :deploy_via, :rsync_with_remote_cache</pre>
                 All symfony tasks (both <strong>symfony 1.4</strong> and <strong>Symfony2</strong>) run using the default <code>php</code> binary on the production server. You can change this via:
             </p>
             <pre>
-    set :php_bin, "/path/to/php"</pre>
+set :php_bin, "/path/to/php"</pre>
             <p>
                 All symfony tasks (both <strong>symfony 1.4</strong> and <strong>Symfony2</strong>) also run inside the <code>prod</code> environment on production server. You can change this via:
             </p>
             <pre>
-    set :symfony_env_prod, "staging"</pre>
+set :symfony_env_prod, "staging"</pre>
             <p>
                 By default, capifony will try to configure your <code>config/databases.yml</code> on every <strong>symfony 1.4</strong> project deployment (if it's not present) on production. You can turn this behavior off with:
             </p>
             <pre>
-    set :use_orm, false</pre>
+set :use_orm, false</pre>
             <p>
                 If you want to use a shared symfony library instead of one bundled inside a <strong>symfony 1.4</strong> project, define the path to it with:
             </p>
             <pre>
-    set :symfony_lib, "/path/to/symfony"</pre>
+set :symfony_lib, "/path/to/symfony"</pre>
             <p>
                 If your <code>app</code> or <code>web</code> paths in <strong>Symfony2</strong> differ from default the default paths, you can specify them with:
             </p>
             <pre>
-    set :app_path, "my_app"
-    set :web_path, "my_web"</pre>
+set :app_path, "my_app"
+set :web_path, "my_web"</pre>
             <p>
                 If you use <strong>AsseticBundle</strong> with <strong>Symfony2</strong>, then you probably want to dump assets on every deploy. Turn the next option off to *disable* the automatic dumping of assetic assets on every deploy:
             </p>
             <pre>
-    set :dump_assetic_assets, true</pre>
+set :dump_assetic_assets, true</pre>
 
     </div>
 

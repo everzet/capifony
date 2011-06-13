@@ -12,6 +12,9 @@ set :symfony_console,     "console"
 # Use AsseticBundle
 set :dump_assetic_assets, false
 
+# Whether to run the bin/vendors script to update vendors
+set :update_vendors, false
+
 # Dirs that need to remain the same between deploys (shared dirs)
 set :shared_children,     [app_path + "/logs", web_path + "/uploads"]
 
@@ -122,6 +125,13 @@ namespace :symfony do
     desc "Dumps all assets to the filesystem"
     task :dump do
       run "cd #{latest_release} && #{php_bin} #{app_path}/#{symfony_console} assetic:dump #{web_path} --env=#{symfony_env_prod}"
+    end
+  end
+
+  namespace :vendors do
+    desc "Runs the bin/vendors script to update the vendors"
+    task :update do
+      run "cd #{latest_release} && ./bin/vendors install"
     end
   end
 
@@ -240,9 +250,15 @@ end
 
 # After finalizing update:
 after "deploy:finalize_update" do
-  symfony.cache.warmup                    # 1. Warmup clean cache
-  symfony.assets.install                  # 2. Publish bundle assets
+  if update_vendors
+    # share the children first (to get the vendor symlink)
+    deploy.share_childs
+    symfony.vendors.update                # 1. Update vendors
+  end
+
+  symfony.cache.warmup                    # 2. Warmup clean cache
+  symfony.assets.install                  # 3. Publish bundle assets
   if dump_assetic_assets
-    symfony.assetic.dump                  # 3. Dump assetic assets
+    symfony.assetic.dump                  # 4. Dump assetic assets
   end
 end

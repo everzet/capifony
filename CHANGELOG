@@ -1,3 +1,7 @@
+== 2.0.9 / June 15, 2011
+
+* migrations fixed in Symfony2
+
 == 2.0.8 / June 14, 2011
 
 * update_vendors functionality support (via @weaverryan)

@@ -90,24 +90,20 @@ namespace :deploy do
         currentVersion = 0
       end
     end
-    
+
     if currentVersion == nil
       raise "Could not find current database migration version"
     end
-    puts "Current database version #{currentVersion}"
-    
+    puts "Current database version: #{currentVersion}"
+
     on_rollback {
-      run "#{php-bin} #{symfony_console} doctrine:migrations:migrate #{currentVersion} --env=#{symfony_env_prod}" do |ch, stream, out|
-        if out =~ /Are you sure you wish to continue/
-          ch.send_data("y\r\n")
-        end
+      if Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database back to version #{currentVersion}? (y/N)")
+        run "#{php-bin} #{symfony_console} doctrine:migrations:migrate #{currentVersion} --env=#{symfony_env_prod} --no-interaction"
       end
     }
-    
-    run "#{php-bin} #{symfony_console} doctrine:migrations:migrate --env=#{symfony_env_prod}" do |ch, stream, out|
-      if out =~ /Are you sure you wish to continue/
-        ch.send_data("y\r\n")
-      end
+
+    if Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database? (y/N)")
+      run "#{php-bin} #{symfony_console} doctrine:migrations:migrate --env=#{symfony_env_prod} --no-interaction"
     end
   end
 end

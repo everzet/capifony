@@ -82,7 +82,7 @@ namespace :deploy do
   desc "Migrate Symfony2 Doctrine ORM database."
   task :migrate do
     currentVersion = nil
-    run "#{php-bin} #{symfony_console} doctrine:migrations:status --env=#{symfony_env_prod}" do |ch, stream, out|
+    run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:status --env=#{symfony_env_prod}" do |ch, stream, out|
       if stream == :out and out =~ /Current Version:[^$]+\(([0-9]+)\)/
         currentVersion = Regexp.last_match(1)
       end
@@ -98,12 +98,12 @@ namespace :deploy do
 
     on_rollback {
       if Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database back to version #{currentVersion}? (y/N)")
-        run "#{php-bin} #{symfony_console} doctrine:migrations:migrate #{currentVersion} --env=#{symfony_env_prod} --no-interaction"
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate #{currentVersion} --env=#{symfony_env_prod} --no-interaction"
       end
     }
 
     if Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database? (y/N)")
-      run "#{php-bin} #{symfony_console} doctrine:migrations:migrate --env=#{symfony_env_prod} --no-interaction"
+      run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate --env=#{symfony_env_prod} --no-interaction"
     end
   end
 end

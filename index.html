@@ -266,7 +266,7 @@ set :deploy_via, :rsync_with_remote_cache</pre>
     <div class="step">
         <h2>Symfony2 Deployment</h2>
         
-        <p>If you're deploying a Symfony2 application, then this section is probably for you. This section explains how to configure capifony to deploy an application that uses the <code>bin/vendors.php</code> file to manage vendor libraries and the <code>app/config/parameters.ini</code> file for server-specific configuration (like database connection information).</p>
+        <p>If you're deploying a Symfony2 application, then this section is probably for you. This section explains how to configure capifony to deploy an application that uses the <code>bin/vendors</code> file to manage vendor libraries and the <code>app/config/parameters.ini</code> file for server-specific configuration (like database connection information).</p>
         
         <p>First, add the following to your <code>app/config/deploy.rb</code> file so that the <code>parameters.ini</code> file is shared between all deployments:</p>
         
@@ -278,25 +278,12 @@ set :shared_files,      ["app/config/parameters.ini"]</pre>
         <pre>
 set :shared_children,     [app_path + "/logs", web_path + "/uploads", "vendor"]</pre>
         
-        <p>Finally, each time you deploy, capistrano must run <code>php bin/vendors.php</code> so that all of the vendor libraries are updated. Add the following code to <code>deploy.rb</code> to make this happen:</p>
+        <p>Finally, each time you deploy, capistrano must run <code>./bin/vendors</code> so that all of the vendor libraries are updated. Add the following code to <code>deploy.rb</code> to make this happen:</p>
         
         <pre>
-namespace :symfony do
-  desc "Update the vendor libraries"
-  task :update_vendors do
-    run "cd #{latest_release} && #{php_bin} bin/vendors.php"
-  end
-end
-
-before "deploy:finalize_update" do
-  # share the children first (to get the vendor symlink)
-  deploy.share_childs
-
-  # update the vendors
-  symfony.update_vendors
-end</pre>
+set :update_vendors, true</pre>
         
-        <p>Now, each time you deploy, the vendors will be fully updated.</p>
+        <p>Now, each time you deploy, the vendors will be fully updated. This functionality is new in capifony 2.0.8</p>
         
         <p>The final step is to configure your <code>app/config/parameters.ini</code> file. The best way to do this is to create this file in shared folder on server manually:</p>
         

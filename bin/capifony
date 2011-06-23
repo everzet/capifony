@@ -3,7 +3,8 @@
 require 'optparse'
 require 'fileutils'
 
-symfony_version_option = nil
+symfony_version  = nil
+symfony_app_path = 'app'
 
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename($0)} [path]"
@@ -14,7 +15,11 @@ OptionParser.new do |opts|
   end
 
   opts.on("-s", "--symfony VERSION", "Capify specific symfony verion (1|2)") do |version|
-    symfony_version_option = version.to_i
+    symfony_version = version.to_i
+  end
+
+  opts.on("-p", "--app NAME", "Specify app name (folder) to capify") do |path|
+    symfony_app_path = path
   end
 
   begin
@@ -42,8 +47,7 @@ def unindent(string)
 end
 
 base = ARGV.shift
-symfony_version = (File.directory? File.join(base, 'config')) ? 1 : 2
-symfony_version = symfony_version_option == nil ? symfony_version : symfony_version_option
+symfony_version = symfony_version || ((File.directory? File.join(base, 'config')) ? 1 : 2)
 
 if symfony_version == 2
   files = {
@@ -51,22 +55,25 @@ if symfony_version == 2
       load 'deploy' if respond_to?(:namespace) # cap2 differentiator
       Dir['vendor/bundles/*/*/recipes/*.rb'].each { |bundle| load(bundle) }
       load Gem.required_location('capifony', 'symfony2.rb')
-      load 'app/config/deploy'
+      load '#{symfony_app_path}/config/deploy'
     FILE
 
-    "app/config/deploy.rb" => 'set :application, "set your application name here"
-set :domain,      "#{application}.com"
-set :deploy_to,   "/var/www/#{domain}"
+    "#{symfony_app_path}/config/deploy.rb" => unindent(<<-FILE)
+      set :application, "set your application name here"
+      set :domain,      "\#{application}.com"
+      set :deploy_to,   "/var/www/\#{domain}"
+      set :app_path,    "#{symfony_app_path}"
 
-set :repository,  "#{domain}:/var/repos/#{application}.git"
-set :scm,         :git
-# Or: `accurev`, `bzr`, `cvs`, `darcs`, `subversion`, `mercurial`, `perforce`, `subversion` or `none`
+      set :repository,  "\#{domain}:/var/repos/\#{application}.git"
+      set :scm,         :git
+      # Or: `accurev`, `bzr`, `cvs`, `darcs`, `subversion`, `mercurial`, `perforce`, `subversion` or `none`
 
-role :web,        domain                         # Your HTTP server, Apache/etc
-role :app,        domain                         # This may be the same as your `Web` server
-role :db,         domain, :primary => true       # This is where Rails migrations will run
+      role :web,        domain                         # Your HTTP server, Apache/etc
+      role :app,        domain                         # This may be the same as your `Web` server
+      role :db,         domain, :primary => true       # This is where Rails migrations will run
 
-set  :keep_releases,  3'
+      set  :keep_releases,  3
+    FILE
   }
 else
   files = {

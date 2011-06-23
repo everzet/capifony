@@ -1,3 +1,7 @@
+== 2.1.0 / June 24, 2011
+
+* fully support different app path
+
 == 2.0.9 / June 15, 2011
 
 * migrations fixed in Symfony2

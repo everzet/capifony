@@ -1,3 +1,7 @@
+== 2.1.1 / July 13, 2011
+
+* support for rubygems 1.8
+
 == 2.1.0 / June 24, 2011
 
 * fully support different app path

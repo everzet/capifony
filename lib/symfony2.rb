@@ -1,4 +1,4 @@
-load Gem.required_location('capifony', 'capifony.rb')
+load Gem.find_files('capifony.rb').last.to_s
 
 # Symfony application path
 set :app_path,            "app"

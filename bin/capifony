@@ -54,7 +54,7 @@ if symfony_version == 2
     "Capfile" => unindent(<<-FILE),
       load 'deploy' if respond_to?(:namespace) # cap2 differentiator
       Dir['vendor/bundles/*/*/recipes/*.rb'].each { |bundle| load(bundle) }
-      load Gem.required_location('capifony', 'symfony2.rb')
+      load Gem.find_files('symfony2.rb').last.to_s
       load '#{symfony_app_path}/config/deploy'
     FILE
 
@@ -80,7 +80,7 @@ else
     "Capfile" => unindent(<<-FILE),
       load 'deploy' if respond_to?(:namespace) # cap2 differentiator
       Dir['plugins/*/lib/recipes/*.rb'].each { |plugin| load(plugin) }
-      load Gem.required_location('capifony', 'symfony1.rb')
+      load Gem.find_files('symfony1.rb').last.to_s
       load 'config/deploy'
     FILE
 

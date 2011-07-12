@@ -1,5 +1,5 @@
 require 'yaml'
-load Gem.required_location('capifony', 'capifony.rb')
+load Gem.find_files('capifony.rb').last.to_s
 
 # Dirs that need to remain the same between deploys (shared dirs)
 set :shared_children,   %w(log web/uploads)

@@ -30,6 +30,9 @@ set :shared_files,        false
 # Asset folders (that need to be timestamped)
 set :asset_children,      [web_path + "/css", web_path + "/images", web_path + "/js"]
 
+set :model_manager, "doctrine"
+# Or: `propel`
+
 namespace :deploy do
   desc "Symlink static directories and static files that need to remain between deployments."
   task :share_childs do
@@ -248,6 +251,37 @@ namespace :symfony do
       end
     end
   end
+
+  namespace :propel do
+    namespace :database do
+      desc "Create the configured databases."
+      task :create do
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:database:create --env=#{symfony_env_prod}"
+      end
+
+      desc "Drop the configured databases."
+      task :drop do
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:database:drop --env=#{symfony_env_prod}"
+      end
+    end
+
+    namespace :build do
+      desc "Build the Model classes."
+      task :model do
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:build-model --env=#{symfony_env_prod}"
+      end
+
+      desc "Build SQL statements."
+      task :sql do
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:build-sql --env=#{symfony_env_prod}"
+      end
+
+      desc "Build the Model classes, SQL statements and insert SQL."
+      task :all_and_load do
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:build --insert-sql --env=#{symfony_env_prod}"
+      end
+    end
+  end
 end
 
 # After finalizing update:
@@ -262,5 +296,9 @@ after "deploy:finalize_update" do
   symfony.assets.install                  # 3. Publish bundle assets
   if dump_assetic_assets
     symfony.assetic.dump                  # 4. Dump assetic assets
+  end
+
+  if model_manager == "propel"
+    symfony.propel.build.model
   end
 end

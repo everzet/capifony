@@ -21,6 +21,12 @@ set :dump_assetic_assets, false
 # Whether to run the bin/vendors script to update vendors
 set :update_vendors, false
 
+# Whether to run cache warmup 
+set :cache_warmup, true 
+
+# Assets install
+set :assets_install, true 
+
 # Dirs that need to remain the same between deploys (shared dirs)
 set :shared_children,     [log_path, web_path + "/uploads"]
 
@@ -289,13 +295,19 @@ after "deploy:finalize_update" do
   if update_vendors
     # share the children first (to get the vendor symlink)
     deploy.share_childs
-    symfony.vendors.update                # 1. Update vendors
+    symfony.vendors.update  # 1. Update vendors
+  end
+  
+  if assets_install
+    symfony.assets.install  # 2. Publish bundle assets
   end
 
-  symfony.assets.install                  # 2. Publish bundle assets
-  symfony.cache.warmup                    # 3. Warmup clean cache
+  if cache_warmup
+    symfony.cache.warmup    # 3. Warmup clean cache
+  end
+
   if dump_assetic_assets
-    symfony.assetic.dump                  # 4. Dump assetic assets
+    symfony.assetic.dump    # 4. Dump assetic assets
   end
 
   if model_manager == "propel"

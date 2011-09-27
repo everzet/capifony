@@ -258,8 +258,8 @@ after "deploy:finalize_update" do
     symfony.vendors.update                # 1. Update vendors
   end
 
-  symfony.cache.warmup                    # 2. Warmup clean cache
-  symfony.assets.install                  # 3. Publish bundle assets
+  symfony.assets.install                  # 2. Publish bundle assets
+  symfony.cache.warmup                    # 3. Warmup clean cache
   if dump_assetic_assets
     symfony.assetic.dump                  # 4. Dump assetic assets
   end

@@ -1,3 +1,4 @@
+require 'inifile'
 load Gem.find_files('capifony.rb').last.to_s
 
 # Symfony application path
@@ -38,6 +39,18 @@ set :asset_children,      [web_path + "/css", web_path + "/images", web_path + "
 
 set :model_manager, "doctrine"
 # Or: `propel`
+
+def load_database_config(data, env)
+  ini = IniFile::load(data)
+  section = ini[parameters]
+
+  {
+    'type'  => 'mysql',
+    'user'  => section['database_user'],
+    'pass'  => section['database_password'],
+    'db'    => section['database_name']
+  }
+end
 
 namespace :deploy do
   desc "Symlink static directories and static files that need to remain between deployments."
@@ -289,6 +302,134 @@ namespace :symfony do
     end
   end
 end
+
+namespace :database do
+  namespace :dump do
+    desc "Dump remote database"
+    task :remote do
+      filename  = "#{application}.remote_dump.#{Time.now.to_i}.sql.gz"
+      file      = "/tmp/#{filename}"
+      sqlfile   = "#{application}_dump.sql"
+      config    = ""
+
+      run "cat #{shared_path}/app/config/parameters.ini" do |ch, st, data|
+        config = load_database_config data, symfony_env_prod
+      end
+
+      case config['type']
+      when 'mysql'
+        run "mysqldump -u#{config['user']} --password='#{config['pass']}' #{config['db']} | gzip -c > #{file}" do |ch, stream, data|
+          puts data
+        end
+      when 'pgsql'
+        run "pg_dump -U #{config['user']} --password='#{config['pass']}' #{config['db']} | gzip -c > #{file}" do |ch, stream, data|
+          puts data
+        end
+      end
+
+      require "FileUtils"
+      FileUtils.mkdir_p("backups")
+      get file, "backups/#{filename}"
+      begin
+        FileUtils.ln_sf(filename, "backups/#{application}.remote_dump.latest.sql.gz")
+      rescue NotImplementedError # hack for windows which doesnt support symlinks
+        FileUtils.cp_r("backups/#{filename}", "backups/#{application}.remote_dump.latest.sql.gz")
+      end
+      run "rm #{file}"
+    end
+
+    desc "Dump local database"
+    task :local do
+      filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.gz"
+      tmpfile   = "backups/#{application}_dump_tmp.sql"
+      file      = "backups/#{filename}"
+      config    = load_database_config IO.read('app/config/parameters.ini'), symfony_env_local
+      sqlfile   = "#{application}_dump.sql"
+
+      require "FileUtils"
+      FileUtils::mkdir_p("backups")
+      case config['type']
+      when 'mysql'
+        `mysqldump -u#{config['user']} --password=\"#{config['pass']}\" #{config['db']} > #{tmpfile}`
+      when 'pgsql'
+        `pg_dump -U #{config['user']} --password=\"#{config['pass']}\" #{config['db']} > #{tmpfile}`
+      end
+      File.open(tmpfile, "r+") do |f|
+        gz = Zlib::GzipWriter.open(file)
+        while (line = f.gets)
+          gz << line
+        end
+        gz.flush
+        gz.close
+      end
+
+      begin
+        FileUtils.ln_sf(filename, "backups/#{application}.local_dump.latest.sql.gz")
+      rescue NotImplementedError # hack for windows which doesnt support symlinks
+        FileUtils.cp_r("backups/#{filename}", "backups/#{application}.local_dump.latest.sql.gz")
+      end
+      FileUtils.rm(tmpfile)
+    end
+  end
+
+  namespace :move do
+    desc "Dump remote database, download it to local & populate here"
+    task :to_local do
+      filename  = "#{application}.remote_dump.latest.sql.gz"
+      config    = load_database_config IO.read('app/config/parameters.ini'), symfony_env_local
+      sqlfile   = "#{application}_dump.sql"
+
+      database.dump.remote
+
+      require "FileUtils"
+      f = File.new("backups/#{sqlfile}", "a+")
+      require "zlib"
+      gz = Zlib::GzipReader.new(File.open("backups/#{filename}", "r"))
+      f << gz.read
+      f.close
+
+      case config['type']
+      when 'mysql'
+        `mysql -u#{config['user']} --password=\"#{config['pass']}\" #{config['db']} < backups/#{sqlfile}`
+      when 'pgsql'
+        `psql -U #{config['user']} --password=\"#{config['pass']}\" #{config['db']} < backups/#{sqlfile}`
+      end
+      FileUtils.rm("backups/#{sqlfile}")
+    end
+
+    desc "Dump local database, load it to remote & populate there"
+    task :to_remote do
+      filename  = "#{application}.local_dump.latest.sql.gz"
+      file      = "backups/#{filename}"
+      sqlfile   = "#{application}_dump.sql"
+      config    = ""
+
+      database.dump.local
+
+      upload(file, "/tmp/#{filename}", :via => :scp)
+      run "gunzip -c /tmp/#{filename} > /tmp/#{sqlfile}"
+
+      run "cat #{shared_path}/app/config/parameters.ini" do |ch, st, data|
+        config = load_database_config data, symfony_env_prod
+      end
+
+      case config['type']
+      when 'mysql'
+        run "mysql -u#{config['user']} --password='#{config['pass']}' #{config['db']} < /tmp/#{sqlfile}" do |ch, stream, data|
+          puts data
+        end
+      when 'pgsql'
+        run "psql -U #{config['user']} --password='#{config['pass']}' #{config['db']} < /tmp/#{sqlfile}" do |ch, stream, data|
+          puts data
+        end
+      end
+
+      run "rm /tmp/#{filename}"
+      run "rm /tmp/#{sqlfile}"
+    end
+  end
+end
+
 
 # After finalizing update:
 after "deploy:finalize_update" do

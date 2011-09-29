@@ -53,7 +53,7 @@ def load_database_config(data, env)
   section = ini['parameters']
 
   {
-    'type'  => 'mysql',
+    'type'  => section['database_type'],
     'user'  => section['database_user'],
     'pass'  => section['database_password'],
     'db'    => section['database_name']

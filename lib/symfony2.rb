@@ -21,6 +21,9 @@ set :dump_assetic_assets, false
 # Whether to run the bin/vendors script to update vendors
 set :update_vendors, false
 
+# run bin/vendors script in mode (upgrade, install (faster if shared /vendor folder) or reinstall)
+set :vendors_mode, reinstall
+
 # Whether to run cache warmup 
 set :cache_warmup, true 
 
@@ -140,9 +143,19 @@ namespace :symfony do
   end
 
   namespace :vendors do
-    desc "Runs the bin/vendors script to update the vendors"
-    task :update do
+    desc "Runs the bin/vendors script to install the vendors (fast if already installed)"
+    task :install do
+      run "cd #{latest_release} && #{php_bin} bin/vendors install"
+    end
+
+    desc "Runs the bin/vendors script to reinstall the vendors"
+    task :reinstall do
       run "cd #{latest_release} && #{php_bin} bin/vendors install --reinstall"
+    end
+
+    desc "Runs the bin/vendors script to upgrade the vendors"
+    task :upgrade do
+      run "cd #{latest_release} && #{php_bin} bin/vendors update"
     end
   end
 
@@ -295,7 +308,15 @@ after "deploy:finalize_update" do
   if update_vendors
     # share the children first (to get the vendor symlink)
     deploy.share_childs
-    symfony.vendors.update  # 1. Update vendors
+    if vendors_mode == "upgrade"
+        symfony.vendors.upgrade           # 1. Upgrade vendors (upgrade to latest)
+    elseif vendors_mode == "install"
+        symfony.vendors.install           # 1. Install vendors (fast when shared vendors)
+    elseif vendors_mode == "reinstall"
+        symfony.vendors.reinstall         # 1. Reinstall vendors (slow)
+    else
+        symfony.vendors.reinstall         # 1. Reinstall vendors (slow)
+    end
   end
   
   if assets_install

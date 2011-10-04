@@ -399,7 +399,7 @@ namespace :symfony do
     task :build_classes do
       run "php #{latest_release}/symfony propel:build --model --env=#{symfony_env_prod}"
       run "php #{latest_release}/symfony propel:build --forms --env=#{symfony_env_prod}"
-      run "php #{latest_release}/symfony propel:build --filter --env=#{symfony_env_prod}"
+      run "php #{latest_release}/symfony propel:build --filters --env=#{symfony_env_prod}"
     end
 
     desc "Generate code & database based on your schema"

@@ -142,7 +142,7 @@ namespace :symfony do
   namespace :vendors do
     desc "Runs the bin/vendors script to update the vendors"
     task :update do
-      run "cd #{latest_release} && #{php_bin} bin/vendors install --update"
+      run "cd #{latest_release} && #{php_bin} bin/vendors install"
     end
     task :reinstall do
       run "cd #{latest_release} && #{php_bin} bin/vendors install --reinstall"

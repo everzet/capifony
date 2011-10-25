@@ -22,7 +22,7 @@ set :dump_assetic_assets, false
 set :update_vendors, false
 
 # run bin/vendors script in mode (upgrade, install (faster if shared /vendor folder) or reinstall)
-set :vendors_mode, reinstall
+set :vendors_mode, "reinstall"
 
 # Whether to run cache warmup 
 set :cache_warmup, true 
@@ -308,14 +308,11 @@ after "deploy:finalize_update" do
   if update_vendors
     # share the children first (to get the vendor symlink)
     deploy.share_childs
-    if vendors_mode == "upgrade"
-        symfony.vendors.upgrade           # 1. Upgrade vendors (upgrade to latest)
-    elseif vendors_mode == "install"
-        symfony.vendors.install           # 1. Install vendors (fast when shared vendors)
-    elseif vendors_mode == "reinstall"
-        symfony.vendors.reinstall         # 1. Reinstall vendors (slow)
-    else
-        symfony.vendors.reinstall         # 1. Reinstall vendors (slow)
+    vendors_mode.chomp # To remove trailing whiteline
+    case vendors_mode
+     when "upgrade" then symfony.vendors.upgrade
+     when "install" then symfony.vendors.install
+     when "reinstall" then symfony.vendors.reinstall
     end
   end
   

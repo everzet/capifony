@@ -22,7 +22,7 @@ set :dump_assetic_assets, false
 set :update_vendors, false
 
 # run bin/vendors script in mode (upgrade, install (faster if shared /vendor folder) or reinstall)
-set :vendors_mode, reinstall
+set :vendors_mode, "reinstall"
 
 # Whether to run cache warmup 
 set :cache_warmup, true 
@@ -44,7 +44,7 @@ set :model_manager, "doctrine"
 
 namespace :deploy do
   desc "Symlink static directories and static files that need to remain between deployments."
-  task :share_childs do
+  task :share_childs, :roles  => [:app]do
     if shared_children
       shared_children.each do |link|
         run "mkdir -p #{shared_path}/#{link}"
@@ -63,7 +63,7 @@ namespace :deploy do
   end
 
   desc "Update latest release source path."
-  task :finalize_update, :except => { :no_release => true } do
+  task :finalize_update, :roles  => [:app], :except => { :no_release => true } do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
     run "if [ -d #{latest_release}/#{cache_path} ] ; then rm -rf #{latest_release}/#{cache_path}; fi"
     run "mkdir -p #{latest_release}/#{cache_path} && chmod -R 0777 #{latest_release}/#{cache_path}"
@@ -85,14 +85,14 @@ namespace :deploy do
   end
 
   desc "Deploy the application and run the test suite."
-  task :testall do
+  task :testall, :roles  => [:app] do
     update_code
     symlink
     run "cd #{latest_release} && phpunit -c #{app_path} src"
   end
 
   desc "Migrate Symfony2 Doctrine ORM database."
-  task :migrate do
+  task :migrate, :roles  => [:app] do
     currentVersion = nil
     run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:status --env=#{symfony_env_prod}" do |ch, stream, out|
       if stream == :out and out =~ /Current Version:[^$]+\(([0-9]+)\)/
@@ -122,7 +122,7 @@ end
 
 namespace :symfony do
   desc "Runs custom symfony task"
-  task :default do
+  task :default, :roles  => [:app] do
     prompt_with_default(:task_arguments, "cache:clear")
 
     stream "cd #{latest_release} && #{php_bin} #{symfony_console} #{task_arguments} --env=#{symfony_env_prod}"
@@ -130,44 +130,44 @@ namespace :symfony do
 
   namespace :assets do
     desc "Install bundle's assets"
-    task :install do
+    task :install, :roles => [:web] do
       run "cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{web_path} --env=#{symfony_env_prod}"
     end
   end
 
   namespace :assetic do
     desc "Dumps all assets to the filesystem"
-    task :dump do
+    task :dump, :roles  => [:web] do
       run "cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump #{web_path} --env=#{symfony_env_prod} --no-debug"
     end
   end
 
   namespace :vendors do
     desc "Runs the bin/vendors script to install the vendors (fast if already installed)"
-    task :install do
+    task :install, :roles  => [:app] do
       run "cd #{latest_release} && #{php_bin} bin/vendors install"
     end
 
     desc "Runs the bin/vendors script to reinstall the vendors"
-    task :reinstall do
+    task :reinstall, :roles  => [:app] do
       run "cd #{latest_release} && #{php_bin} bin/vendors install --reinstall"
     end
 
     desc "Runs the bin/vendors script to upgrade the vendors"
-    task :upgrade do
+    task :upgrade, :roles  => [:app] do
       run "cd #{latest_release} && #{php_bin} bin/vendors update"
     end
   end
 
   namespace :cache do
     desc "Clears project cache."
-    task :clear do
+    task :clear, :roles  => [:app] do
       run "cd #{latest_release} && #{php_bin} #{symfony_console} cache:clear --env=#{symfony_env_prod}"
       run "chmod -R g+w #{latest_release}/#{cache_path}"
     end
 
     desc "Warms up an empty cache."
-    task :warmup do
+    task :warmup, :roles  => [:app] do
       run "cd #{latest_release} && #{php_bin} #{symfony_console} cache:warmup --env=#{symfony_env_prod}"
       run "chmod -R g+w #{latest_release}/#{cache_path}"
     end
@@ -176,65 +176,65 @@ namespace :symfony do
   namespace :doctrine do
     namespace :cache do
       desc "Clear all metadata cache for a entity manager."
-      task :clear_metadata do
+      task :clear_metadata, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-metadata --env=#{symfony_env_prod}"
       end
 
       desc "Clear all query cache for a entity manager."
-      task :clear_query do
+      task :clear_query, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-query --env=#{symfony_env_prod}"
       end
 
       desc "Clear result cache for a entity manager."
-      task :clear_result do
+      task :clear_result, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-result --env=#{symfony_env_prod}"
       end
     end
 
     namespace :database do
       desc "Create the configured databases."
-      task :create do
+      task :create, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:create --env=#{symfony_env_prod}"
       end
 
       desc "Drop the configured databases."
-      task :drop do
+      task :drop, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:drop --env=#{symfony_env_prod}"
       end
     end
 
     namespace :generate do
       desc "Generates proxy classes for entity classes."
-      task :hydrators do
+      task :hydrators, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:generate:proxies --env=#{symfony_env_prod}"
       end
 
       desc "Generate repository classes from your mapping information."
-      task :hydrators do
+      task :hydrators, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:generate:repositories --env=#{symfony_env_prod}"
       end
     end
 
     namespace :schema do
       desc "Processes the schema and either create it directly on EntityManager Storage Connection or generate the SQL output."
-      task :create do
+      task :create, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:create --env=#{symfony_env_prod}"
       end
 
       desc "Drop the complete database schema of EntityManager Storage Connection or generate the corresponding SQL output."
-      task :drop do
+      task :drop, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:drop --env=#{symfony_env_prod}"
       end
     end
 
     namespace :migrations do
       desc "Execute a migration to a specified version or the latest available version."
-      task :migrate do
+      task :migrate, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate --env=#{symfony_env_prod}"
       end
 
       desc "View the status of a set of migrations."
-      task :status do
+      task :status, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:status --env=#{symfony_env_prod}"
       end
     end
@@ -242,29 +242,29 @@ namespace :symfony do
     namespace :mongodb do
       namespace :generate do
         desc "Generates hydrator classes for document classes."
-        task :hydrators do
+        task :hydrators, :roles  => [:app] do
           run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:generate:hydrators --env=#{symfony_env_prod}"
         end
 
         desc "Generates proxy classes for document classes."
-        task :hydrators do
+        task :hydrators, :roles  => [:app] do
           run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:generate:proxies --env=#{symfony_env_prod}"
         end
 
         desc "Generates repository classes for document classes."
-        task :hydrators do
+        task :hydrators, :roles  => [:app] do
           run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:generate:repositories --env=#{symfony_env_prod}"
         end
       end
 
       namespace :schema do
         desc "Allows you to create databases, collections and indexes for your documents."
-        task :create do
+        task :create, :roles  => [:app] do
           run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:schema:create --env=#{symfony_env_prod}"
         end
 
         desc "Allows you to drop databases, collections and indexes for your documents."
-        task :drop do
+        task :drop, :roles  => [:app] do
           run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:schema:drop --env=#{symfony_env_prod}"
         end
       end
@@ -274,29 +274,29 @@ namespace :symfony do
   namespace :propel do
     namespace :database do
       desc "Create the configured databases."
-      task :create do
+      task :create, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:database:create --env=#{symfony_env_prod}"
       end
 
       desc "Drop the configured databases."
-      task :drop do
+      task :drop, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:database:drop --env=#{symfony_env_prod}"
       end
     end
 
     namespace :build do
       desc "Build the Model classes."
-      task :model do
+      task :model, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:build-model --env=#{symfony_env_prod}"
       end
 
       desc "Build SQL statements."
-      task :sql do
+      task :sql, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:build-sql --env=#{symfony_env_prod}"
       end
 
       desc "Build the Model classes, SQL statements and insert SQL."
-      task :all_and_load do
+      task :all_and_load, :roles  => [:app] do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:build --insert-sql --env=#{symfony_env_prod}"
       end
     end

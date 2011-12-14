@@ -22,13 +22,13 @@ set :dump_assetic_assets, false
 set :update_vendors, false
 
 # run bin/vendors script in mode (upgrade, install (faster if shared /vendor folder) or reinstall)
-set :vendors_mode, reinstall
+set :vendors_mode, "reinstall"
 
-# Whether to run cache warmup 
-set :cache_warmup, true 
+# Whether to run cache warmup
+set :cache_warmup, true
 
 # Assets install
-set :assets_install, true 
+set :assets_install, true
 
 # Dirs that need to remain the same between deploys (shared dirs)
 set :shared_children,     [log_path, web_path + "/uploads"]
@@ -310,15 +310,15 @@ after "deploy:finalize_update" do
     deploy.share_childs
     if vendors_mode == "upgrade"
         symfony.vendors.upgrade           # 1. Upgrade vendors (upgrade to latest)
-    elseif vendors_mode == "install"
+    elsif vendors_mode == "install"
         symfony.vendors.install           # 1. Install vendors (fast when shared vendors)
-    elseif vendors_mode == "reinstall"
+    elsif vendors_mode == "reinstall"
         symfony.vendors.reinstall         # 1. Reinstall vendors (slow)
     else
         symfony.vendors.reinstall         # 1. Reinstall vendors (slow)
     end
   end
-  
+
   if assets_install
     symfony.assets.install  # 2. Publish bundle assets
   end

@@ -1,7 +1,7 @@
 Gem::Specification.new do |spec|
 
   spec.name = 'capifony'
-  spec.version = '2.1.3'
+  spec.version = '2.1.4'
   spec.platform = Gem::Platform::RUBY
   spec.description = <<-DESC
     Capistrano is an open source tool for running scripts on multiple servers. It’s primary use is for easily deploying applications. While it was built specifically for deploying Rails apps, it’s pretty simple to customize it to deploy other types of applications. This package is a deployment “recipe” to work with symfony (both 1 and 2) applications.

@@ -21,6 +21,9 @@ set :dump_assetic_assets, false
 # Whether to run the bin/vendors script to update vendors
 set :update_vendors, false
 
+# Whether to use composer to install vendors. This needs :update_vendors to false
+set :use_composer, false
+
 # run bin/vendors script in mode (upgrade, install (faster if shared /vendor folder) or reinstall)
 set :vendors_mode, "reinstall"
 
@@ -156,6 +159,13 @@ namespace :symfony do
     desc "Runs the bin/vendors script to upgrade the vendors"
     task :upgrade do
       run "cd #{latest_release} && #{php_bin} bin/vendors update"
+    end
+  end
+
+  namespace :composer do
+    desc "Runs composer install to install vendors from composer.lock file"
+    task :install do
+      run "cd #{latest_release} && #{php_bin} composer.phar install"
     end
   end
 
@@ -314,8 +324,10 @@ after "deploy:finalize_update" do
      when "install" then symfony.vendors.install
      when "reinstall" then symfony.vendors.reinstall
     end
+  elsif use_composer
+    symfony.composer.install
   end
-  
+
   if assets_install
     symfony.assets.install  # 2. Publish bundle assets
   end

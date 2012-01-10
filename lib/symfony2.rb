@@ -281,6 +281,14 @@ namespace :symfony do
     end
   end
 
+  namespace :init do
+    desc "Mounts ACL tables in the database"
+    task :acl do
+      run "cd #{latest_release} && #{php_bin} #{symfony_console} init:acl --env=#{symfony_env_prod}"
+    end
+  end
+
+    
   namespace :propel do
     namespace :database do
       desc "Create the configured databases."

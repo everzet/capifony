@@ -240,7 +240,9 @@ namespace :symfony do
     namespace :migrations do
       desc "Execute a migration to a specified version or the latest available version."
       task :migrate do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate --env=#{symfony_env_prod}"
+        if Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database? (y/N)")
+          run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate --env=#{symfony_env_prod} --no-interaction"
+        end
       end
 
       desc "View the status of a set of migrations."

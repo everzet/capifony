@@ -98,7 +98,7 @@ namespace :deploy do
   task :migrate do
     currentVersion = nil
     run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:status --env=#{symfony_env_prod}" do |ch, stream, out|
-      if stream == :out and out =~ /Current Version:[^$]+\(([0-9]+)\)/
+      if stream == :out and out =~ /Current Version:[^$]+\(([\w]+)\)/
         currentVersion = Regexp.last_match(1)
       end
       if stream == :out and out =~ /Current Version:\s*0\s*$/

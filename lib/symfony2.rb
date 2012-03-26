@@ -9,6 +9,9 @@ set :web_path,            "web"
 # Symfony console bin
 set :symfony_console,     app_path + "/console"
 
+# Symfony bin vendors
+set :symfony_vendors,     "bin/vendors"
+
 # Symfony log path
 set :log_path,            app_path + "/logs"
 
@@ -148,17 +151,17 @@ namespace :symfony do
   namespace :vendors do
     desc "Runs the bin/vendors script to install the vendors (fast if already installed)"
     task :install do
-      run "cd #{latest_release} && #{php_bin} bin/vendors install"
+      run "cd #{latest_release} && #{php_bin} #{symfony_vendors} install"
     end
 
     desc "Runs the bin/vendors script to reinstall the vendors"
     task :reinstall do
-      run "cd #{latest_release} && #{php_bin} bin/vendors install --reinstall"
+      run "cd #{latest_release} && #{php_bin} #{symfony_vendors} install --reinstall"
     end
 
     desc "Runs the bin/vendors script to upgrade the vendors"
     task :upgrade do
-      run "cd #{latest_release} && #{php_bin} bin/vendors update"
+      run "cd #{latest_release} && #{php_bin} #{symfony_vendors} update"
     end
   end
 

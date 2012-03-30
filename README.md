@@ -1,7 +1,7 @@
 Deploying symfony Applications with Capistrano
 ==============================================
 
-Capistrano is an open source tool for running scripts on multiple servers. It’s primary use is for easily deploying applications. While it was built specifically for deploying Rails apps, it’s pretty simple to customize it to deploy other types of applications. We’ve been working on creating a deployment “recipe” to work with symfony applications to make our job a lot easier.
+Capistrano is an open source tool for running scripts on multiple servers. Its primary use is for easily deploying applications. While it was built specifically for deploying Rails apps, it’s pretty simple to customize it to deploy other types of applications. We’ve been working on creating a deployment “recipe” to work with symfony applications to make our job a lot easier.
 
 ## Prerequisites ##
 

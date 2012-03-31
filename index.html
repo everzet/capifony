@@ -226,12 +226,15 @@ set :deploy_via, :rsync_with_remote_cache</pre>
     <div class="step">
         <h2>4. Setup server</h2>
         <p>
-            Now, you can start the deployment process! To get your server setup with the file structure that Capistrano expects, you must run the following command just one time:
+            Now, you can start the deployment process! To get your server setup with the directory structure that Capistrano expects, CD to your local project directory and run:
         </p>
         <pre>
 <span class="prompt">$&gt;</span> cap deploy:setup</pre>
         <p>
-            This command will create the following folder, approximate structure on your server. The exact structure will depend on if you're deploying a symfony1 or Symfony2 application:
+            (You'll only have to run this once!)
+        </p>
+        <p>
+            This command will create the following approximate directory structure on your server. The exact structure will depend on if you're deploying a symfony1 or Symfony2 application:
         </p>
         <pre>
 `-- /var/www/my-app.com

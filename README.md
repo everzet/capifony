@@ -7,7 +7,7 @@ Capistrano is an open source tool for running scripts on multiple servers. It’
 
 - Symfony 1.4+ OR Symfony2
 - Must have SSH access to the server you are deploying to.
-- Must have Ruby and RubyGems installed on your machine (not required for deployment server)’
+- Must have Ruby and RubyGems installed on your machine (not required for deployment server)
 
 ## Installing Capifony ##
 
@@ -28,18 +28,18 @@ CD to your project directory & run:
 
 	capifony .
 
-This will create `Capfile` in your project root & `deploy.rb` config file in `config` (for symfony)
-and `app/config` (for Symfony2) directory
+This will create a `Capfile` in your project root & a `deploy.rb` config file in your `config` (for symfony)
+or `app/config` (for Symfony2) directory.
 
-Fill up your `config/deploy.rb` with your server connection data
+Fill up your `config/deploy.rb` with your server connection data.
 
 ## Server Setup ##
 
-Now, you can start the deployment process! To get your server setup with the file structure that Capistrano expects, you can run:
+Now, you can start the deployment process! To get your server setup with the directory structure that Capistrano expects, CD to your local project directory and run:
 
 	cap deploy:setup
 
-This command will create the following folder structure on your server:
+Running this command locally will create the following directory structure on your server:
 
 	`-- /var/www/demo.everzet.com
 	  |-- current → /var/www/demo.everzet.com/releases/20100512131539
@@ -56,11 +56,11 @@ This command will create the following folder structure on your server:
 
 The folders in the releases directory will be the actual deployed code, timestamped. Capistrano symlinks your log & web/uploads directories from your app to the directories in the shared folder so that it doesn’t get erased when you deploy a new version of your code.
 
+## Deployment ##
+
 To deploy your application, simply run:
 
 	cap deploy
-
-## Deployment ##
 
 To specify the username/password to use over SSH, add the following configuration to your `config/deploy.rb` file:
 

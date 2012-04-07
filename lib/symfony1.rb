@@ -510,7 +510,7 @@ namespace :database do
 
       database.dump.remote
 
-      require "FileUtils"
+      require "fileutils"
       f = File.new("backups/#{sqlfile}", "a+")
       require "zlib"
       gz = Zlib::GzipReader.new(File.open("backups/#{filename}", "r"))

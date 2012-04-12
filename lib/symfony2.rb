@@ -74,7 +74,7 @@ namespace :database do
           puts data
         end
       when 'pdo_pgsql'
-        run "pg_dump -U #{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} | gzip -c > #{file}" do |ch, stream, data|
+        run "pg_dump -U #{config['database_user']} #{config['database_name']} | gzip -c > #{file}" do |ch, stream, data|
           puts data
         end
       end
@@ -104,7 +104,7 @@ namespace :database do
       when 'pdo_mysql'
         `mysqldump -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} > #{tmpfile}`
       when 'pdo_pgsql'
-        `pg_dump -U #{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} > #{tmpfile}`
+        `pg_dump -U #{config['database_user']} #{config['database_name']} > #{tmpfile}`
       end
       File.open(tmpfile, "r+") do |f|
         gz = Zlib::GzipWriter.open(file)

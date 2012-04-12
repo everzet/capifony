@@ -456,7 +456,7 @@ namespace :database do
         end
       end
 
-      require "FileUtils"
+      require "fileutils"
       FileUtils.mkdir_p("backups")
       get file, "backups/#{filename}"
       begin
@@ -475,7 +475,7 @@ namespace :database do
       config    = load_database_config IO.read('config/databases.yml'), symfony_env_local
       sqlfile   = "#{application}_dump.sql"
 
-      require "FileUtils"
+      require "fileutils"
       FileUtils::mkdir_p("backups")
       case config['type']
       when 'mysql'
@@ -510,7 +510,7 @@ namespace :database do
 
       database.dump.remote
 
-      require "FileUtils"
+      require "fileutils"
       f = File.new("backups/#{sqlfile}", "a+")
       require "zlib"
       gz = Zlib::GzipReader.new(File.open("backups/#{filename}", "r"))

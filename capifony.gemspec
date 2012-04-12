@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 
   spec.author = "Konstantin Kudryashov"
   spec.email = "ever.zet@gmail.com"
-  spec.homepage = "http://capifony.info"
+  spec.homepage = "http://capifony.org"
   spec.rubyforge_project = "capifony"
 
 end

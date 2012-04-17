@@ -144,7 +144,7 @@ namespace :database do
       when 'pdo_mysql'
         `mysql -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} < backups/#{sqlfile}`
       when 'pdo_pgsql'
-        `psql -U #{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} < backups/#{sqlfile}`
+        `psql -U #{config['database_user']} #{config['database_name']} < backups/#{sqlfile}`
       end
       FileUtils.rm("backups/#{sqlfile}")
     end
@@ -161,7 +161,7 @@ namespace :database do
       upload(file, "/tmp/#{filename}", :via => :scp)
       run "gunzip -c /tmp/#{filename} > /tmp/#{sqlfile}"
 
-      run "cat #{shared_path}/config/databases.yml" do |ch, st, data|
+      run "cat #{current_path}/app/config/parameters.yml" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
       end
 
@@ -171,7 +171,7 @@ namespace :database do
           puts data
         end
       when 'pdo_pgsql'
-        run "psql -U #{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} < /tmp/#{sqlfile}" do |ch, stream, data|
+        run "psql -U #{config['database_user']} #{config['database_name']} < /tmp/#{sqlfile}" do |ch, stream, data|
           puts data
         end
       end

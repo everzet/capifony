@@ -298,13 +298,6 @@ namespace :symfony do
       run "cd #{latest_release} && #{php_bin} #{symfony_vendors} update"
     end
   end
-    
-  namespace :bootstrap do
-    desc "Runs the bin/build_bootstrap whithout upgrade the vendors"
-    task :build do
-      run "cd #{latest_release} && #{php_bin} bin/build_bootstrap"
-    end
-  end
 
   namespace :composer do
     desc "Runs composer install to install vendors from composer.lock file"
@@ -480,11 +473,6 @@ after "deploy:finalize_update" do
     end
   elsif use_composer
     symfony.composer.install
-  else
-    # share the children first (to get the vendor symlink)
-    deploy.share_childs
-    vendors_mode.chomp # To remove trailing whiteline
-    symfony.bootstrap.build
   end
 
   if assets_install

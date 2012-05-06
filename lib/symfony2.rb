@@ -302,7 +302,7 @@ namespace :symfony do
   namespace :bootstrap do
     desc "Runs the bin/build_bootstrap whithout upgrade the vendors"
     task :build do
-      run "cd #{latest_release} && #{php_bin} bin/build_bootstrap"
+      run "cd #{latest_release} && test -f bin/build_bootstrap && #{php_bin} bin/build_bootstrap"
     end
   end
 

@@ -58,13 +58,16 @@ end
 namespace :database do
   namespace :dump do
     desc "Dump remote database"
-    task :remote do
-      filename  = "#{application}.remote_dump.#{Time.now.to_i}.sql.gz"
-      file      = "/tmp/#{filename}"
-      sqlfile   = "#{application}_dump.sql"
-      config    = ""
+    task :remote, :roles => :db, :only => { :primary => true } do
+      output_dir = ENV.has_key?('output_dir') ? ENV['output_dir'] : "/tmp/"
+      format     = stage || application
+      format     = "#{format}.remote_dump"
+      extension  = "sql.gz"
+      filename   = "#{format}.#{Time.now.to_i}.#{extension}"
+      file       = "#{output_dir}#{filename}"
 
-      run "cat #{current_path}/app/config/parameters.yml" do |ch, st, data|
+      config = ""
+      run "cat #{current_path}/#{app_path}/config/parameters.yml" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
       end
 
@@ -77,48 +80,71 @@ namespace :database do
         run "pg_dump -U #{config['database_user']} #{config['database_name']} | gzip -c > #{file}" do |ch, stream, data|
           puts data
         end
+      when 'mongodb'
+        extension = "tar.gz"
+        filename  = "#{format}.#{Time.now.to_i}.#{extension}"
+        file      = "#{output_dir}#{filename}"
+        run "mongodump -d #{config['database_name']} -o /tmp/#{format}"
+        run "cd #{output_dir} && tar -zcf #{filename} /tmp/#{format}"
+        run "rm -rf /tmp/#{format}"
       end
 
-      require "fileutils"
-      FileUtils.mkdir_p("backups")
-      get file, "backups/#{filename}"
-      begin
-        FileUtils.ln_sf(filename, "backups/#{application}.remote_dump.latest.sql.gz")
-      rescue NotImplementedError # hack for windows which doesnt support symlinks
-        FileUtils.cp_r("backups/#{filename}", "backups/#{application}.remote_dump.latest.sql.gz")
+      if config.has_key?('database_driver')
+        require "fileutils"
+        FileUtils.mkdir_p("#{shared_path}/backups")
+        get file, "#{shared_path}/backups/#{filename}"
+        begin
+          FileUtils.ln_sf(filename, "#{shared_path}/backups/#{format}.latest.#{extension}")
+        rescue NotImplementedError # hack for windows which doesnt support symlinks
+          FileUtils.cp_r("#{shared_path}/backups/#{filename}", "#{shared_path}/backups/#{format}.latest.#{extension}")
+        end
+        run "rm #{file}"
+      else
+        logger.info "WARNING: Could not find database_driver in parameters.yml"
       end
-      run "rm #{file}"
     end
 
     desc "Dump local database"
     task :local do
-      filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.gz"
-      tmpfile   = "backups/#{application}_dump_tmp.sql"
+      format    = "#{application}.local_dump.#{Time.now.to_i}"
+      extension = ".sql.gz"
+      filename  = "#{format}#{extension}"
       file      = "backups/#{filename}"
       config    = load_database_config IO.read('app/config/parameters.yml'), symfony_env_local
-      sqlfile   = "#{application}_dump.sql"
-
+      tmpfile   = false
+      
       require "fileutils"
       FileUtils::mkdir_p("backups")
       case config['database_driver']
       when 'pdo_mysql'
+        tmpfile = "backups/#{application}_dump_tmp.sql"
         `mysqldump -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} > #{tmpfile}`
       when 'pdo_pgsql'
+        tmpfile = "backups/#{application}_dump_tmp.sql"
         `pg_dump -U #{config['database_user']} #{config['database_name']} > #{tmpfile}`
+      when 'mongodb'
+        extension = ".tar.gz"
+        filename  = "#{format}#{extension}"
+        `mongodump -d #{config['database_name']} -o backups/#{format}`
+        `cd backups && tar -zcf #{filename} backups/#{format}`
+        `rm -rf backups/#{format}`
       end
-      File.open(tmpfile, "r+") do |f|
-        gz = Zlib::GzipWriter.open(file)
-        while (line = f.gets)
-          gz << line
+
+      if tmpfile
+        File.open(tmpfile, "r+") do |f|
+          gz = Zlib::GzipWriter.open(file)
+          while (line = f.gets)
+            gz << line
+          end
+          gz.flush
+          gz.close
         end
-        gz.flush
-        gz.close
       end
 
       begin
-        FileUtils.ln_sf(filename, "backups/#{application}.local_dump.latest.sql.gz")
+        FileUtils.ln_sf(filename, "backups/#{application}.local_dump.latest.#{extension}")
       rescue NotImplementedError # hack for windows which doesnt support symlinks
-        FileUtils.cp_r("backups/#{filename}", "backups/#{application}.local_dump.latest.sql.gz")
+        FileUtils.cp_r("backups/#{filename}", "backups/#{application}.local_dump.latest.#{extension}")
       end
       FileUtils.rm(tmpfile)
     end

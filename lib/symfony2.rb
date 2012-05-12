@@ -451,12 +451,12 @@ namespace :symfony do
     namespace :build do
       desc "Build the Model classes."
       task :model do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:build-model --env=#{symfony_env_prod}"
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:model:build --env=#{symfony_env_prod}"
       end
 
       desc "Build SQL statements."
       task :sql do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:build-sql --env=#{symfony_env_prod}"
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:sql:build --env=#{symfony_env_prod}"
       end
 
       desc "Build the Model classes, SQL statements and insert SQL."

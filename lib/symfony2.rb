@@ -461,7 +461,7 @@ namespace :symfony do
 
       desc "Build the Model classes, SQL statements and insert SQL."
       task :all_and_load do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:sql:insert --env=#{symfony_env_prod}"
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:build --insert-sql --env=#{symfony_env_prod}"
       end
     end
   end

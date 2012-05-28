@@ -27,14 +27,17 @@ set :update_vendors, false
 # Whether to use composer to install vendors. This needs :update_vendors to false
 set :use_composer, false
 
+# Which composer.phar-bin to use. Defaults to "composer.phar" in $PATH
+set :composer_bin, "composer.phar"
+
 # run bin/vendors script in mode (upgrade, install (faster if shared /vendor folder) or reinstall)
 set :vendors_mode, "reinstall"
 
-# Whether to run cache warmup 
-set :cache_warmup, true 
+# Whether to run cache warmup
+set :cache_warmup, true
 
 # Assets install
-set :assets_install, true 
+set :assets_install, true
 
 # Dirs that need to remain the same between deploys (shared dirs)
 set :shared_children,     [log_path, web_path + "/uploads"]
@@ -298,7 +301,7 @@ namespace :symfony do
       run "cd #{latest_release} && #{php_bin} #{symfony_vendors} update"
     end
   end
-    
+
   namespace :bootstrap do
     desc "Runs the bin/build_bootstrap whithout upgrade the vendors"
     task :build do
@@ -309,7 +312,7 @@ namespace :symfony do
   namespace :composer do
     desc "Runs composer install to install vendors from composer.lock file"
     task :install do
-      run "cd #{latest_release} && #{php_bin} composer.phar install"
+      run "cd #{latest_release} && #{composer_bin} install"
     end
   end
 
@@ -434,7 +437,7 @@ namespace :symfony do
     end
   end
 
-    
+
   namespace :propel do
     namespace :database do
       desc "Create the configured databases."

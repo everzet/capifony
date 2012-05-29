@@ -487,6 +487,10 @@ after "deploy:finalize_update" do
     symfony.bootstrap.build
   end
 
+  if model_manager == "propel"
+    symfony.propel.build.model
+  end
+
   if assets_install
     symfony.assets.install  # 2. Publish bundle assets
   end
@@ -497,9 +501,5 @@ after "deploy:finalize_update" do
 
   if dump_assetic_assets
     symfony.assetic.dump    # 4. Dump assetic assets
-  end
-
-  if model_manager == "propel"
-    symfony.propel.build.model
   end
 end

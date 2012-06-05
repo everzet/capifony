@@ -307,8 +307,17 @@ namespace :symfony do
   end
 
   namespace :composer do
+    desc "Get composer and install it"
+    task :get do
+        run "cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}"
+    end
+
     desc "Runs composer install to install vendors from composer.lock file"
     task :install do
+      if !File.exist?("#{latest_release}/composer.phar")
+        symfony.composer.get
+      end
+
       run "cd #{latest_release} && #{php_bin} composer.phar install"
     end
   end

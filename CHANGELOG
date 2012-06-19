@@ -1,5 +1,7 @@
 == 2.1.7 / ???
 
+* fixed propel regression.
+* added new `symfony_version` variable automatically guessed.
 * the `build_bootstrap` script to use is now configurable thanks to the
   `:build_bootstrap` variable.
 * composer can be used with the `update_vendors` parameter, so that you can

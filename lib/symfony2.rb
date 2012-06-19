@@ -3,6 +3,12 @@ load Gem.find_files('capifony.rb').last.to_s
 # Symfony application path
 set :app_path,            "app"
 
+# Symfony config file path
+set :app_config_path,     app_path + "/config"
+
+# Symfony config file (parameters.(ini|yml|etc...)
+set :app_config_file,     "parameters.yml"
+
 # Symfony web path
 set :web_path,            "web"
 
@@ -22,19 +28,19 @@ set :cache_path,          app_path + "/cache"
 set :dump_assetic_assets, false
 
 # Whether to run the bin/vendors script to update vendors
-set :update_vendors, false
+set :update_vendors,      false
 
 # Whether to use composer to install vendors. This needs :update_vendors to false
-set :use_composer, false
+set :use_composer,        false
 
 # run bin/vendors script in mode (upgrade, install (faster if shared /vendor folder) or reinstall)
-set :vendors_mode, "reinstall"
+set :vendors_mode,        "reinstall"
 
-# Whether to run cache warmup 
-set :cache_warmup, true 
+# Whether to run cache warmup
+set :cache_warmup,        true
 
 # Assets install
-set :assets_install, true 
+set :assets_install,      true
 
 # Dirs that need to remain the same between deploys (shared dirs)
 set :shared_children,     [log_path, web_path + "/uploads"]
@@ -45,13 +51,11 @@ set :shared_files,        false
 # Asset folders (that need to be timestamped)
 set :asset_children,      [web_path + "/css", web_path + "/images", web_path + "/js"]
 
-set :model_manager, "doctrine"
-# Or: `propel`
-
+# Model manager (doctrine|propel)
+set :model_manager,       "doctrine"
 
 def load_database_config(data, env)
   parameters = YAML::load(data)
-
   parameters['parameters']
 end
 
@@ -64,7 +68,7 @@ namespace :database do
       sqlfile   = "#{application}_dump.sql"
       config    = ""
 
-      run "cat #{current_path}/app/config/parameters.yml" do |ch, st, data|
+      run "cat #{current_path}/#{app_config_path}/#{app_config_file}" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
       end
 
@@ -95,7 +99,7 @@ namespace :database do
       filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.gz"
       tmpfile   = "backups/#{application}_dump_tmp.sql"
       file      = "backups/#{filename}"
-      config    = load_database_config IO.read('app/config/parameters.yml'), symfony_env_local
+      config    = load_database_config IO.read("#{app_config_path}/#{app_config_file}"), symfony_env_local
       sqlfile   = "#{application}_dump.sql"
 
       require "fileutils"
@@ -128,7 +132,7 @@ namespace :database do
     desc "Dump remote database, download it to local & populate here"
     task :to_local do
       filename  = "#{application}.remote_dump.latest.sql.gz"
-      config    = load_database_config IO.read('app/config/parameters.yml'), symfony_env_local
+      config    = load_database_config IO.read("#{app_config_path}/#{app_config_file}"), symfony_env_local
       sqlfile   = "#{application}_dump.sql"
 
       database.dump.remote
@@ -183,6 +187,15 @@ namespace :database do
 end
 
 namespace :deploy do
+  namespace :parameters do
+    desc "Symlinks parameters.yml.{stage} to parameters.yml"
+    task :symlink_stage, :roles => :web do
+      run "mkdir -p #{app_config_path}"
+      run "touch #{release_path}/#{app_config_path}/#{app_config_file}"
+      run "ln -nfs #{release_path}/#{app_config_path}/#{app_config_file}.#{stage} #{release_path}/#{app_config_path}/#{app_config_file}"
+    end
+  end
+  
   desc "Symlink static directories and static files that need to remain between deployments."
   task :share_childs do
     if shared_children
@@ -298,7 +311,7 @@ namespace :symfony do
       run "cd #{latest_release} && #{php_bin} #{symfony_vendors} update"
     end
   end
-    
+
   namespace :bootstrap do
     desc "Runs the bin/build_bootstrap whithout upgrade the vendors"
     task :build do
@@ -443,7 +456,6 @@ namespace :symfony do
     end
   end
 
-    
   namespace :propel do
     namespace :database do
       desc "Create the configured databases."

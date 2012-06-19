@@ -185,6 +185,16 @@ namespace :database do
 end
 
 namespace :deploy do
+  desc "Sets folder permissions/ACL (see: http://goo.gl/L916e)"
+  task :permissions, :roles => :app do
+    if shared_children
+      shared_children << app_path + "/cache"
+      run "cd #{latest_release} && sudo chmod -R g+w #{shared_children.join(' ')}"
+      run "cd #{latest_release} && sudo setfacl -R -m u:www-data:rwx -m u:`whoami`:rwx #{shared_children.join(' ')}"
+      run "cd #{latest_release} && sudo setfacl -dR -m u:www-data:rwx -m u:`whoami`:rwx #{shared_children.join(' ')}"
+    end
+  end
+
   desc "Symlink static directories and static files that need to remain between deployments."
   task :share_childs do
     if shared_children

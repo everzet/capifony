@@ -148,7 +148,7 @@ namespace :database do
       case config['database_driver']
       when "pdo_mysql", "mysql"
         `mysql -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} < backups/#{sqlfile}`
-      when "pdo_mysql", "mysql"
+      when "pdo_pgsql", "pgsql"
         `psql -U #{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} < backups/#{sqlfile}`
       end
       FileUtils.rm("backups/#{sqlfile}")
@@ -175,7 +175,7 @@ namespace :database do
         run "mysql -u#{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} < /tmp/#{sqlfile}" do |ch, stream, data|
           puts data
         end
-      when "pdo_mysql", "mysql"
+      when "pdo_pgsql", "pgsql"
         run "psql -U #{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} < /tmp/#{sqlfile}" do |ch, stream, data|
           puts data
         end

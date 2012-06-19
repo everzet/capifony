@@ -21,10 +21,10 @@ set :cache_path,          app_path + "/cache"
 # Use AsseticBundle
 set :dump_assetic_assets, false
 
-# Whether to run the bin/vendors script to update vendors
+# Whether to run the bin/vendors or composer script to update vendors
 set :update_vendors, false
 
-# Whether to use composer to install vendors. This needs :update_vendors to false
+# Whether to use composer to install vendors. This needs :update_vendors to true
 set :use_composer, false
 
 # run bin/vendors script in mode (upgrade, install (faster if shared /vendor folder) or reinstall)
@@ -320,6 +320,10 @@ namespace :symfony do
 
       run "cd #{latest_release} && #{php_bin} composer.phar install"
     end
+	desc "Runs composer update to install vendors and update composer.lock file"
+    task :update do
+      run "cd #{latest_release} && #{php_bin} composer.phar update"
+    end
   end
 
   namespace :cache do
@@ -489,16 +493,21 @@ end
 # After finalizing update:
 after "deploy:finalize_update" do
   if update_vendors
-    # share the children first (to get the vendor symlink)
-    deploy.share_childs
-    vendors_mode.chomp # To remove trailing whiteline
-    case vendors_mode
-     when "upgrade" then symfony.vendors.upgrade
-     when "install" then symfony.vendors.install
-     when "reinstall" then symfony.vendors.reinstall
-    end
-  elsif use_composer
-    symfony.composer.install
+	if use_composer
+		case vendors_mode
+			when "upgrade" then symfony.composer.update
+			when "install" then symfony.composer.install
+		end
+	else
+		# share the children first (to get the vendor symlink)
+		deploy.share_childs
+		vendors_mode.chomp # To remove trailing whiteline
+		case vendors_mode
+			when "upgrade" then symfony.vendors.upgrade
+			when "install" then symfony.vendors.install
+			when "reinstall" then symfony.vendors.reinstall
+		end
+	end
   else
     # share the children first (to get the vendor symlink)
     deploy.share_childs

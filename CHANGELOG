@@ -1,3 +1,11 @@
+== 2.1.7 / ???
+
+* composer can be used with the `update_vendors` parameter, so that you can
+  update composer dependencies.
+* composer support updated, it downloads the `phar` if not available in the
+  working directory.
+* bugfixes
+
 == 2.1.6 / April 12, 2012
 
 * bugfixes

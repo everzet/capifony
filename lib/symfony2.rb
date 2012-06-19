@@ -1,52 +1,52 @@
 load Gem.find_files('capifony.rb').last.to_s
 
 # Symfony application path
-set :app_path,            "app"
+set :app_path,              "app"
 
 # Symfony web path
-set :web_path,            "web"
+set :web_path,              "web"
 
 # Symfony console bin
-set :symfony_console,     app_path + "/console"
+set :symfony_console,       app_path + "/console"
 
 # Symfony bin vendors
-set :symfony_vendors,     "bin/vendors"
+set :symfony_vendors,       "bin/vendors"
 
 # Symfony log path
-set :log_path,            app_path + "/logs"
+set :log_path,              app_path + "/logs"
 
 # Symfony cache path
-set :cache_path,          app_path + "/cache"
+set :cache_path,            app_path + "/cache"
 
 # Use AsseticBundle
-set :dump_assetic_assets, false
+set :dump_assetic_assets,   false
 
 # Whether to run the bin/vendors script to update vendors
-set :update_vendors, false
+set :update_vendors,        false
 
 # Whether to use composer to install vendors. This needs :update_vendors to false
-set :use_composer, false
+set :use_composer,          false
 
 # run bin/vendors script in mode (upgrade, install (faster if shared /vendor folder) or reinstall)
-set :vendors_mode, "reinstall"
+set :vendors_mode,          "reinstall"
 
-# Whether to run cache warmup 
-set :cache_warmup, true 
+# Whether to run cache warmup
+set :cache_warmup,          true
 
 # Assets install
-set :assets_install, true 
+set :assets_install,        true
 
 # Dirs that need to remain the same between deploys (shared dirs)
-set :shared_children,     [log_path, web_path + "/uploads"]
+set :shared_children,       [log_path, web_path + "/uploads"]
 
 # Files that need to remain the same between deploys
-set :shared_files,        false
+set :shared_files,          false
 
 # Asset folders (that need to be timestamped)
-set :asset_children,      [web_path + "/css", web_path + "/images", web_path + "/js"]
+set :asset_children,        [web_path + "/css", web_path + "/images", web_path + "/js"]
 
-set :model_manager, "doctrine"
-# Or: `propel`
+# Model manager: (doctrine, propel)
+set :model_manager,         "doctrine"
 
 
 def load_database_config(data, env)
@@ -69,11 +69,11 @@ namespace :database do
       end
 
       case config['database_driver']
-      when 'pdo_mysql'
+      when "pdo_mysql", "mysql"
         run "mysqldump -u#{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} | gzip -c > #{file}" do |ch, stream, data|
           puts data
         end
-      when 'pdo_pgsql'
+      when "pdo_pgsql", "pgsql"
         run "pg_dump -U #{config['database_user']} #{config['database_name']} | gzip -c > #{file}" do |ch, stream, data|
           puts data
         end
@@ -101,11 +101,12 @@ namespace :database do
       require "fileutils"
       FileUtils::mkdir_p("backups")
       case config['database_driver']
-      when 'pdo_mysql'
+      when "pdo_mysql", "mysql"
         `mysqldump -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} > #{tmpfile}`
-      when 'pdo_pgsql'
+      when "pdo_pgsql", "pgsql"
         `pg_dump -U #{config['database_user']} #{config['database_name']} > #{tmpfile}`
       end
+
       File.open(tmpfile, "r+") do |f|
         gz = Zlib::GzipWriter.open(file)
         while (line = f.gets)
@@ -141,9 +142,9 @@ namespace :database do
       f.close
 
       case config['database_driver']
-      when 'pdo_mysql'
+      when "pdo_mysql", "mysql"
         `mysql -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} < backups/#{sqlfile}`
-      when 'pdo_pgsql'
+      when "pdo_mysql", "mysql"
         `psql -U #{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} < backups/#{sqlfile}`
       end
       FileUtils.rm("backups/#{sqlfile}")
@@ -166,11 +167,11 @@ namespace :database do
       end
 
       case config['database_driver']
-      when 'pdo_mysql'
+      when "pdo_mysql", "mysql"
         run "mysql -u#{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} < /tmp/#{sqlfile}" do |ch, stream, data|
           puts data
         end
-      when 'pdo_pgsql'
+      when "pdo_mysql", "mysql"
         run "psql -U #{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} < /tmp/#{sqlfile}" do |ch, stream, data|
           puts data
         end
@@ -298,7 +299,7 @@ namespace :symfony do
       run "cd #{latest_release} && #{php_bin} #{symfony_vendors} update"
     end
   end
-    
+
   namespace :bootstrap do
     desc "Runs the bin/build_bootstrap whithout upgrade the vendors"
     task :build do
@@ -443,7 +444,6 @@ namespace :symfony do
     end
   end
 
-    
   namespace :propel do
     namespace :database do
       desc "Create the configured databases."

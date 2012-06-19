@@ -114,7 +114,7 @@ If you need to upload some shared folders to remote server, run:
 If you are not allowed sudo ability on your host you can add the following configuration to your `config/deploy.rb` file:
 
     set :use_sudo, false
-    
+
 If your host complains about the entire project being group-writable you can add the following configuration to your `config/deploy.rb` file:
 
     set :group_writable, false

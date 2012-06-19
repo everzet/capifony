@@ -21,7 +21,7 @@ set(:symfony_lib)     { guess_symfony_lib }
 
 # Shared symfony lib
 set :use_shared_symfony, false
-set :symfony_version, "1.4.11"
+set :symfony_version, "1.4.18"
 
 def guess_symfony_orm
   databases = YAML::load(IO.read('config/databases.yml'))
@@ -137,7 +137,7 @@ namespace :symfony do
   end
 
   desc "Creates symbolic link to symfony lib in shared"
-  task :create_lib_symlink do 
+  task :create_lib_symlink do
     prompt_with_default(:version, symfony_version)
     symlink_path = "#{latest_release}/lib/vendor/symfony"
 
@@ -156,7 +156,7 @@ namespace :symfony do
       current_logger_level = self.logger.level
       if current_logger_level >= Capistrano::Logger::DEBUG
         logger.debug %(executing "cd #{latest_release} && #{php_bin} ./symfony configure:database '#{dsn}' '#{db_username}' ***")
-        self.logger.level = Capistrano::Logger::INFO 
+        self.logger.level = Capistrano::Logger::INFO
       end
 
       stream "cd #{latest_release} && #{php_bin} ./symfony configure:database '#{dsn}' '#{db_username}' '#{db_password}'"
@@ -201,7 +201,7 @@ namespace :symfony do
 
       stream "cd #{latest_release} && #{php_bin} ./symfony project:send-emails --message-limit=#{message_limit} --time-limit=#{time_limit} --env=#{symfony_env_prod}"
     end
-    
+
     desc 'Task to set all front controllers to a specific environment'
     task :set_environment do
       if (env = fetch(:symfony_env_prod, nil)) && env != 'prod'
@@ -212,12 +212,12 @@ namespace :symfony do
         if app = apps.shift
           cmd << "cp #{release_path}/web/#{app}_#{env}.php #{release_path}/web/index.php"
         end
-        
+
         # All other apps are copied to their default controllers
         for app in apps
           cmd << "cp #{release_path}/web/#{app}_#{env}.php #{release_path}/web/#{app}.php"
         end
-    
+
         run cmd.join(';') if cmd.join(';')
       end
     end
@@ -268,7 +268,7 @@ namespace :symfony do
     task :setup do
       find_and_execute_task("symfony:#{symfony_orm}:setup")
     end
-  
+
     desc "Migrates database to current version"
     task :migrate do
       find_and_execute_task("symfony:#{symfony_orm}:migrate")
@@ -307,7 +307,7 @@ namespace :symfony do
     end
 
     desc "Ensure Doctrine is correctly configured"
-    task :setup do 
+    task :setup do
       conf_files_exists = capture("if test -s #{shared_path}/config/databases.yml ; then echo 'exists' ; fi").strip
       if (!conf_files_exists.eql?("exists"))
         symfony.configure.database
@@ -516,7 +516,7 @@ namespace :database do
       gz = Zlib::GzipReader.new(File.open("backups/#{filename}", "r"))
       f << gz.read
       f.close
-      
+
       case config['type']
       when 'mysql'
         `mysql -u#{config['user']} --password=\"#{config['pass']}\" #{config['db']} < backups/#{sqlfile}`
@@ -598,9 +598,9 @@ namespace :shared do
 
   namespace :symfony do
     desc "Downloads symfony framework to shared directory"
-    task :download do 
+    task :download do
       prompt_with_default(:version, symfony_version)
-  
+
       run <<-CMD
         if [ ! -d #{shared_path}/symfony-#{version} ]; then
           wget -q http://www.symfony-project.org/get/symfony-#{version}.tgz -O- | tar -zxf - -C #{shared_path};

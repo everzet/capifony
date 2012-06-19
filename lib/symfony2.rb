@@ -21,11 +21,12 @@ set :cache_path,            app_path + "/cache"
 # Use AsseticBundle
 set :dump_assetic_assets,   false
 
-# Whether to run the bin/vendors or composer script to update vendors
-set :update_vendors,        false
-
-# Whether to use composer to install vendors. This needs :update_vendors to true
+# Whether to use composer to install vendors.
+# If set to false, it will use the bin/vendors script
 set :use_composer,          false
+
+# Whether to update vendors using the configured dependency manager (composer or bin/vendors)
+set :update_vendors,        false
 
 # run bin/vendors script in mode (upgrade, install (faster if shared /vendor folder) or reinstall)
 set :vendors_mode,          "reinstall"
@@ -321,8 +322,13 @@ namespace :symfony do
 
       run "cd #{latest_release} && #{php_bin} composer.phar install"
     end
-	desc "Runs composer update to install vendors and update composer.lock file"
+
+    desc "Runs composer update to install vendors and update composer.lock file"
     task :update do
+      if !File.exist?("#{latest_release}/composer.phar")
+        symfony.composer.get
+      end
+
       run "cd #{latest_release} && #{php_bin} composer.phar update"
     end
   end
@@ -492,27 +498,28 @@ end
 
 # After finalizing update:
 after "deploy:finalize_update" do
-  if update_vendors
-	if use_composer
-		case vendors_mode
-			when "upgrade" then symfony.composer.update
-			when "install" then symfony.composer.install
-		end
-	else
-		# share the children first (to get the vendor symlink)
-		deploy.share_childs
-		vendors_mode.chomp # To remove trailing whiteline
-		case vendors_mode
-			when "upgrade" then symfony.vendors.upgrade
-			when "install" then symfony.vendors.install
-			when "reinstall" then symfony.vendors.reinstall
-		end
-	end
+  if use_composer
+    if update_vendors
+      symfony.composer.update
+    else
+      symfony.composer.install
+    end
   else
-    # share the children first (to get the vendor symlink)
-    deploy.share_childs
-    vendors_mode.chomp # To remove trailing whiteline
-    symfony.bootstrap.build
+    if update_vendors
+      # share the children first (to get the vendor symlink)
+      deploy.share_childs
+      vendors_mode.chomp # To remove trailing whiteline
+      case vendors_mode
+        when "upgrade" then symfony.vendors.upgrade
+        when "install" then symfony.vendors.install
+        when "reinstall" then symfony.vendors.reinstall
+      end
+    else
+      # share the children first (to get the vendor symlink)
+      deploy.share_childs
+      vendors_mode.chomp # To remove trailing whiteline
+      symfony.bootstrap.build
+    end
   end
 
   if model_manager == "propel"

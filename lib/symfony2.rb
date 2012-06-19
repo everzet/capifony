@@ -216,7 +216,12 @@ namespace :deploy do
     if fetch(:normalize_asset_timestamps, true)
       stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
       asset_paths = asset_children.map { |p| "#{latest_release}/#{p}" }.join(" ")
-      run "find #{asset_paths} -exec touch -t #{stamp} {} ';'; true", :env => { "TZ" => "UTC" }
+
+      if asset_paths.chomp.empty?
+        puts "No asset paths found, skipped"
+      else
+        run "find #{asset_paths} -exec touch -t #{stamp} {} ';'; true", :env => { "TZ" => "UTC" }
+      end
     end
   end
 

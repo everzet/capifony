@@ -1,10 +1,12 @@
 == 2.1.7 / ???
 
+* the `build_bootstrap` script to use is now configurable thanks to the
+  `:build_bootstrap` variable.
 * composer can be used with the `update_vendors` parameter, so that you can
   update composer dependencies.
 * composer support updated, it downloads the `phar` if not available in the
   working directory.
-* bugfixes
+* bugfixes.
 
 == 2.1.6 / April 12, 2012
 

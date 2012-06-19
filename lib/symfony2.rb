@@ -9,17 +9,17 @@ set :web_path,              "web"
 # Symfony console bin
 set :symfony_console,       app_path + "/console"
 
-# Symfony bin vendors
-set :symfony_vendors,       "bin/vendors"
-
 # Symfony log path
 set :log_path,              app_path + "/logs"
 
 # Symfony cache path
 set :cache_path,            app_path + "/cache"
 
-# Use AsseticBundle
-set :dump_assetic_assets,   false
+# Symfony bin vendors
+set :symfony_vendors,       "bin/vendors"
+
+# Symfony build_bootstrap script
+set :build_bootstrap,       "bin/build_bootstrap"
 
 # Whether to use composer to install vendors.
 # If set to false, it will use the bin/vendors script
@@ -34,14 +34,17 @@ set :vendors_mode,          "reinstall"
 # Whether to run cache warmup
 set :cache_warmup,          true
 
+# Use AsseticBundle
+set :dump_assetic_assets,   false
+
 # Assets install
 set :assets_install,        true
 
-# Dirs that need to remain the same between deploys (shared dirs)
-set :shared_children,       [log_path, web_path + "/uploads"]
-
 # Files that need to remain the same between deploys
 set :shared_files,          false
+
+# Dirs that need to remain the same between deploys (shared dirs)
+set :shared_children,       [log_path, web_path + "/uploads"]
 
 # Asset folders (that need to be timestamped)
 set :asset_children,        [web_path + "/css", web_path + "/images", web_path + "/js"]
@@ -307,9 +310,9 @@ namespace :symfony do
   end
 
   namespace :bootstrap do
-    desc "Runs the bin/build_bootstrap whithout upgrade the vendors"
+    desc "Runs the bin/build_bootstrap script"
     task :build do
-      run "cd #{latest_release} && test -f bin/build_bootstrap && #{php_bin} bin/build_bootstrap"
+      run "cd #{latest_release} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap}"
     end
   end
 
@@ -319,7 +322,7 @@ namespace :symfony do
         run "cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}"
     end
 
-    desc "Runs composer install to install vendors from composer.lock file"
+    desc "Runs composer to install vendors from composer.lock file"
     task :install do
       if !File.exist?("#{latest_release}/composer.phar")
         symfony.composer.get
@@ -328,7 +331,7 @@ namespace :symfony do
       run "cd #{latest_release} && #{php_bin} composer.phar install"
     end
 
-    desc "Runs composer update to install vendors and update composer.lock file"
+    desc "Runs composer to update vendors, and composer.lock file"
     task :update do
       if !File.exist?("#{latest_release}/composer.phar")
         symfony.composer.get

@@ -52,11 +52,17 @@ set :asset_children,        [web_path + "/css", web_path + "/images", web_path +
 # Model manager: (doctrine, propel)
 set :model_manager,         "doctrine"
 
+# Symfony2 version
+set(:symfony_version)       { guess_symfony_version }
 
 def load_database_config(data, env)
   parameters = YAML::load(data)
 
   parameters['parameters']
+end
+
+def guess_symfony_version
+  capture("cd #{latest_release} && #{php_bin} #{symfony_console} --version |cut -d \" \" -f 3")
 end
 
 namespace :database do
@@ -478,12 +484,22 @@ namespace :symfony do
     namespace :build do
       desc "Builds the Model classes"
       task :model do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:model:build --env=#{symfony_env_prod}"
+        command = "propel:model:build"
+        if /2\.0\.[0-9]+.*/ =~ symfony_version
+          command = "propel:build-model"
+        end
+
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --env=#{symfony_env_prod}"
       end
 
       desc "Builds SQL statements"
       task :sql do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:sql:build --env=#{symfony_env_prod}"
+        command = "propel:sql:build"
+        if /2\.0\.[0-9]+.*/ =~ symfony_version
+          command = "propel:build-sql"
+        end
+
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --env=#{symfony_env_prod}"
       end
 
       desc "Builds the Model classes, SQL statements and insert SQL"

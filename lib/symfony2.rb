@@ -12,6 +12,12 @@ set :symfony_console,     app_path + "/console"
 # Symfony bin vendors
 set :symfony_vendors,     "bin/vendors"
 
+# Symfony version
+set :symfony_version_2_0, "2.0.*"
+set :symfony_version_2_1, "2.1.*"
+
+set :symfony_version, symfony_version_2_0
+
 # Symfony log path
 set :log_path,            app_path + "/logs"
 
@@ -460,12 +466,20 @@ namespace :symfony do
     namespace :build do
       desc "Build the Model classes."
       task :model do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:model:build --env=#{symfony_env_prod}"
+        if symfony_version == symfony_version_2_0
+            run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:build-model --env=#{symfony_env_prod}"
+        else
+            run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:model:build --env=#{symfony_env_prod}"
+        end
       end
 
       desc "Build SQL statements."
       task :sql do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:sql:build --env=#{symfony_env_prod}"
+        if symfony_version == symfony_version_2_0
+            run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:build-sql --env=#{symfony_env_prod}"
+        else
+            run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:sql:build --env=#{symfony_env_prod}"
+        end
       end
 
       desc "Build the Model classes, SQL statements and insert SQL."

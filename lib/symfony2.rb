@@ -463,6 +463,16 @@ namespace :symfony do
       task :all_and_load do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:build --insert-sql --env=#{symfony_env_prod}"
       end
+
+      desc "Generate ACLs models"
+      task :acl do
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:acl:init --env=#{symfony_env_prod}"
+      end
+
+      desc "Insert propel ACL tables"
+      task :acl_load do
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:acl:init --env=#{symfony_env_prod} --force"
+      end
     end
   end
 end

@@ -1,13 +1,21 @@
 Deploying symfony Applications with Capistrano
 ==============================================
 
-Capistrano is an open source tool for running scripts on multiple servers. Its primary use is for easily deploying applications. While it was built specifically for deploying Rails apps, it’s pretty simple to customize it to deploy other types of applications. We’ve been working on creating a deployment “recipe” to work with symfony applications to make our job a lot easier.
+Capistrano is an open source tool for running scripts on multiple servers.
+Its primary use is for easily deploying applications. While it was built
+specifically for deploying Rails apps, it’s pretty simple to customize it
+to deploy other types of applications. We’ve been working on creating a
+deployment “recipe” to work with symfony applications to make our job a
+lot easier.
+
 
 ## Prerequisites ##
 
 - Symfony 1.4+ OR Symfony2
 - Must have SSH access to the server you are deploying to.
-- Must have Ruby and RubyGems installed on your machine (not required for deployment server)
+- Must have Ruby and RubyGems installed on your machine (not required
+  for deployment server)
+
 
 ## Installing Capifony ##
 
@@ -22,135 +30,23 @@ Capistrano is an open source tool for running scripts on multiple servers. Its p
 	gem build capifony.gemspec
 	sudo gem install capifony-{version}.gem
 
-## Setup your project to use Capifony ##
 
-CD to your project directory & run:
+## What's next? ##
 
-	capifony .
+Read the [capifony documentation](http://everzet.github.com/capifony/)
 
-This will create a `Capfile` in your project root & a `deploy.rb` config file in your `config` (for symfony)
-or `app/config` (for Symfony2) directory.
-
-Fill up your `config/deploy.rb` with your server connection data.
-
-## Server Setup ##
-
-Now, you can start the deployment process! To get your server setup with the directory structure that Capistrano expects, CD to your local project directory and run:
-
-	cap deploy:setup
-
-Running this command locally will create the following directory structure on your server:
-
-	`-- /var/www/demo.everzet.com
-	  |-- current → /var/www/demo.everzet.com/releases/20100512131539
-	  |-- releases
-	    |-- 20100512131539
-	    |-- 20100509150741
-	    `-- 20100509145325
-	  `-- shared
-	    |-- log
-	    |-- config
-	      `-- databases.yml
-	    `-- web
-	      `-- uploads
-
-The folders in the releases directory will be the actual deployed code, timestamped. Capistrano symlinks your log & web/uploads directories from your app to the directories in the shared folder so that it doesn’t get erased when you deploy a new version of your code.
-
-## Deployment ##
-
-To deploy your application, simply run:
-
-	cap deploy
-
-To specify the username/password to use over SSH, add the following configuration to your `config/deploy.rb` file:
-
-    set :user, 'username'
-    set :password, 'password'
-
-To configure database on production environment, run:
-
-	cap symfony:configure:database
-
-To deploy your application for the first time, you can run:
-
-	cap deploy:cold
-
-This will deploy your application, configures databases.yml (will ask you about DSN, user, pass), create the db, models, forms, filters, and run all of your migrations.
-
-Now, whenever you need to deploy a new version of your code, just run:
-
-	cap deploy
-
-## Databases ##
-
-If you need to dump remote database & download this dump to local `backups/` folder, run:
-
-	cap database:dump:remote
-
-If you need to dump local database & put this dump to local `backups/` folder, run:
-
-	cap database:dump:local
-
-If you need to dump remote database & populate this dump on local machine, run:
-
-	cap database:move:to_local
-
-If you need to dump local database & populate this dump on remote server, run:
-
-	cap database:move:to_remote
-
-## Shared folders ##
-
-If you need to download some shared folders from remote server, run:
-
-	cap shared:{databases OR log OR uploads]:to_local
-
-If you need to upload some shared folders to remote server, run:
-
-	cap shared:{databases OR log OR uploads]:to_remote
-
-## Host Permissions ##
-
-If you are not allowed sudo ability on your host you can add the following configuration to your `config/deploy.rb` file:
-
-    set :use_sudo, false
-
-If your host complains about the entire project being group-writable you can add the following configuration to your `config/deploy.rb` file:
-
-    set :group_writable, false
-
-## Git Specific Options ##
-
-If you are using Git submoduleis you'll want to add the following to your `config/deploy.rb` file or the submodule files won't be brought down with your project:
-
-    set :git_enable_submodules, 1
-
-## Other tasks ##
-
-If you need to deploy and run your migrations you can call:
-
-	cap deploy:migrations
-
-We’ve also added a custom task to run your test suite on the production server. You can invoke this by calling:
-
-	cap deploy:tests:all
-
-This will deploy the application, rebuild the test database, then run all of the tests.
-
-Also, you have command to run your custom symfony tasks:
-
-	cap symfony
-
-If you want to see all of the Capistrano tasks available, you can run:
-
-	cap -T
-
-We’ve been using this setup for a little while now, and it’s saved us a ton of time when we need to push changes for a site to the production server.
 
 ## Contributors ##
 
 * everzet (owner): [http://github.com/everzet](http://github.com/everzet)
-* Arlo (contributor): [http://github.com/arlo](http://github.com/arlo)
+* Arlo Borras (contributor): [http://github.com/arlo](http://github.com/arlo)
 * Xavier Gorse (contributor): [http://github.com/xgorse](http://github.com/xgorse)
 * Travis Roberts (creator of improved version): [http://blog.centresource.com/author/troberts/](http://blog.centresource.com/author/troberts/)
 * Brent Shaffer (contributor): [http://github.com/bshaffer](http://github.com/bshaffer)
+* William Durand (maintainer): [http://github.com/willdurand](http://github.com/willdurand)
+* And, [All contributors](https://github.com/everzet/capifony/contributors)
+
+
+## License ##
+
+Capifony is released under the MIT License. See the bundled LICENSE file for details.

@@ -270,14 +270,14 @@ namespace :symfony do
   namespace :assets do
     desc "Installs bundle's assets"
     task :install do
-      run "cd #{latest_release} && #{php_bin} #{symfony_console} assets:install --env=#{symfony_env_prod}"
+      run "cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{web_path} --env=#{symfony_env_prod}"
     end
   end
 
   namespace :assetic do
     desc "Dumps all assets to the filesystem"
     task :dump do
-      run "cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump #{web_path} --env=#{symfony_env_prod} --no-debug"
+      run "cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump --env=#{symfony_env_prod} --no-debug"
     end
   end
 

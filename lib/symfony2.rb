@@ -266,7 +266,7 @@ namespace :symfony do
   namespace :assets do
     desc "Installs bundle's assets"
     task :install do
-      run "cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{web_path} --env=#{symfony_env_prod}"
+      run "cd #{latest_release} && #{php_bin} #{symfony_console} assets:install --env=#{symfony_env_prod}"
     end
   end
 

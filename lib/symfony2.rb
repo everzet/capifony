@@ -231,7 +231,7 @@ namespace :deploy do
       asset_paths = asset_children.map { |p| "#{latest_release}/#{p}" }.join(" ")
 
       if asset_paths.chomp.empty?
-        puts "No asset paths found, skipped"
+        puts "    No asset paths found, skipped"
       else
         run "find #{asset_paths} -exec touch -t #{stamp} {} ';'; true", :env => { "TZ" => "UTC" }
       end
@@ -255,6 +255,10 @@ namespace :deploy do
   task :migrate do
     if model_manager == "doctrine"
       symfony.doctrine.migrations.migrate
+    else
+      if model_manager == "propel"
+        puts "    Propel doesn't have built-in migration for now"
+      end
     end
   end
 end
@@ -414,7 +418,7 @@ namespace :symfony do
         if currentVersion == nil
           raise "Could not find current database migration version"
         end
-        puts "Current database version: #{currentVersion}"
+        puts "    Current database version: #{currentVersion}"
 
         on_rollback {
           if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database back to version #{currentVersion}? (y/N)")

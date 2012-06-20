@@ -268,39 +268,39 @@ set :deploy_via, :rsync_with_remote_cache</pre>
 
     <div class="step">
         <h2>Symfony2 Deployment</h2>
-        
+
         <p>If you're deploying a Symfony2 application, then this section is probably for you. This section explains how to configure capifony to deploy an application that uses the <code>bin/vendors</code> file to manage vendor libraries and the <code>app/config/parameters.ini</code> file for server-specific configuration (like database connection information).</p>
-        
+
         <p>First, add the following to your <code>app/config/deploy.rb</code> file so that the <code>parameters.ini</code> file is shared between all deployments:</p>
-        
+
         <pre>
 set :shared_files,      ["app/config/parameters.ini"]</pre>
-        
+
         <p>Next, share the <code>vendor</code> directory between all deployments to make deploying faster:</p>
-        
+
         <pre>
 set :shared_children,     [app_path + "/logs", web_path + "/uploads", "vendor"]</pre>
-        
+
         <p>Finally, each time you deploy, capistrano must run <code>./bin/vendors</code> so that all of the vendor libraries are updated. Add the following code to <code>deploy.rb</code> to make this happen:</p>
-        
+
         <pre>
 set :update_vendors, true</pre>
-        
+
         <p>Now, each time you deploy, the vendors will be fully updated. This functionality is new in capifony 2.0.8</p>
-        
+
         <p>The final step is to configure your <code>app/config/parameters.ini</code> file. The best way to do this is to create this file in shared folder on server manually:</p>
-        
+
         <pre>
 <span class="prompt">$&gt;</span> ssh your_deploy_server
 <span class="prompt">$&gt;</span> mkdir -p /var/www/my-app.com/shared/app/config
 <span class="prompt">$&gt;</span> vim /var/www/my-app.com/shared/app/config/parameters.ini</pre>
-        
+
         <p>Once your <code>parameters.ini</code> file is correctly configured, you should be able to test your deployed application. On every subsequent deploy, that same <code>app/config/parameters.ini</code> file will by symlinked into your application, meaning you only need to configure after the initial deploy.
     </div>
-    
+
     <div class="step">
         <h2>Configuration Reference</h2>
-        
+
             <p>Capifony is highly configurable, and any option that exists for capistrano also exists for capifony</p>
 
             <p>
@@ -328,8 +328,13 @@ set :git_enable_submodules, 1</pre>
             </p>
             <pre>
 ssh_options[:port] = "22123"</pre>
+            <p>If you are not allowed sudo ability on your host you can use the following configuration:</p>
+            <pre>
+set :use_sudo, false</pre>
+            <p>If your host complains about the entire project being group-writable, add the following configuration:</p>
+            <pre>
+set :group_writable, false</pre>
             <p></p>
-
 
             <h3>symfony configuration parameters</h3>
             <p>
@@ -363,11 +368,49 @@ set :web_path, "my_web"</pre>
             </p>
             <pre>
 set :dump_assetic_assets, true</pre>
-
     </div>
 
+    <div class="step">
+        <h2>Other Features</h2>
 
+        <h3>Databases</h3>
+        <p>If you need to dump remote database, and download this dump to local <code>backups/</code> folder, run:</p>
+        <pre>
+cap database:dump:remote</pre>
+        <p>If you need to dump local database, and put this dump to local <code>backups/</code> folder, run:</p>
+        <pre>
+cap database:dump:local</pre>
+        <p>If you need to dump remote database, and populate this dump on local machine, run:</p>
+        <pre>
+cap database:move:to_local</pre>
+        <p>If you need to dump local database, and populate this dump on remote server, run:</p>
+        <pre>
+cap database:move:to_remove</pre>
+        <p></p>
 
+        <h3>Shared folders</h3>
+        <p>If you need to download some shared folders from remote server, run:</p>
+        <pre>
+cap shared:{databases OR log OR uploads]:to_local</pre>
+        <p>If you need to upload some shared folders to remote server, run:</p>
+        <pre>
+cap shared:{databases OR log OR uploads]:to_remote</pre>
+        <p></p>
+
+        <h3>Other tasks</h3>
+        <p>If you need to deploy and run your migrations you can call:</p>
+        <pre>
+cap deploy:migrations</pre>
+        <p>To run your test suite on the production server, just invoke:</p>
+        <pre>
+cap deploy:tests:all</pre>
+        <p>You can invoke tasks/commands by calling:</p>
+        <pre>
+cap symfony</pre>
+        <p>If you want to see all available tasks, you can run:</p>
+        <pre>
+cap -T</pre>
+    </div>
 
     <a id="developedby" href="http://www.knplabs.com/en">
         <img src="images/developedby.png" alt="knpLabs product"/>

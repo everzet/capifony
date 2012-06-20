@@ -1,5 +1,7 @@
 == 2.1.7 / ???
 
+* added `interactive_mode` variable. Allows to avoid the need to confirm
+  task executions, useful for fully automated deployments.
 * fixed propel regression.
 * added new `symfony_version` variable automatically guessed.
 * the `build_bootstrap` script to use is now configurable thanks to the

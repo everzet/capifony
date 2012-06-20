@@ -55,6 +55,10 @@ set :model_manager,         "doctrine"
 # Symfony2 version
 set(:symfony_version)       { guess_symfony_version }
 
+# If set to false, it will never ask for confirmations (migrations task for instance)
+# Use it carefully, really!
+set :interactive_mode,      true
+
 def load_database_config(data, env)
   parameters = YAML::load(data)
 
@@ -413,12 +417,12 @@ namespace :symfony do
         puts "Current database version: #{currentVersion}"
 
         on_rollback {
-          if Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database back to version #{currentVersion}? (y/N)")
+          if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database back to version #{currentVersion}? (y/N)")
             run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate #{currentVersion} --env=#{symfony_env_prod} --no-interaction"
           end
         }
 
-        if Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database? (y/N)")
+        if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database? (y/N)")
           run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate --env=#{symfony_env_prod} --no-interaction"
         end
       end

@@ -270,14 +270,14 @@ namespace :symfony do
   namespace :assets do
     desc "Installs bundle's assets"
     task :install do
-      run "cd #{latest_release} && #{php_bin} #{symfony_console} assets:install --env=#{symfony_env_prod}"
+      run "cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{web_path} --env=#{symfony_env_prod}"
     end
   end
 
   namespace :assetic do
     desc "Dumps all assets to the filesystem"
     task :dump do
-      run "cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump #{web_path} --env=#{symfony_env_prod} --no-debug"
+      run "cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump --env=#{symfony_env_prod} --no-debug"
     end
   end
 
@@ -301,7 +301,7 @@ namespace :symfony do
   namespace :bootstrap do
     desc "Runs the bin/build_bootstrap script"
     task :build do
-      run "cd #{latest_release} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap}"
+      run "cd #{latest_release} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} || echo '#{build_bootstrap} not found, skipped'"
     end
   end
 
@@ -534,8 +534,6 @@ after "deploy:finalize_update" do
     end
   else
     if update_vendors
-      # share the children first (to get the vendor symlink)
-      deploy.share_childs
       vendors_mode.chomp # To remove trailing whiteline
       case vendors_mode
         when "upgrade" then symfony.vendors.upgrade
@@ -543,9 +541,6 @@ after "deploy:finalize_update" do
         when "reinstall" then symfony.vendors.reinstall
       end
     else
-      # share the children first (to get the vendor symlink)
-      deploy.share_childs
-      vendors_mode.chomp # To remove trailing whiteline
       symfony.bootstrap.build
     end
   end

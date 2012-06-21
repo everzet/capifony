@@ -42,14 +42,21 @@ def guess_symfony_lib
   /\((.*)\)/.match(symfony_version)[1]
 end
 
-def load_database_config(data, env)
-  databases = YAML::load(data)
+def deep_merge(hash1, hash2)
+    hash1.merge(hash2){|key, subhash1, subhash2|
+        if (subhash1.is_a?(Hash) && subhash2.is_a?(Hash))
+            next deep_merge(subhash1, subhash2)
+        end
+        subhash2
+    }
+end
 
-  if databases[env]
-    db_param = databases[env][connection]['param']
-  else
-    db_param = databases['all'][connection]['param']
-  end
+def load_database_config(data, env)
+  db_config = YAML::load(data)
+
+  connections = deep_merge(db_config['all'], db_config[env.to_s])
+
+  db_param = connections[connection]['param']
 
   {
     'type'  => /(\w+)\:/.match(db_param['dsn'])[1],

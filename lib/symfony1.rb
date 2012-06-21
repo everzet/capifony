@@ -16,6 +16,9 @@ set :use_orm,           true
 # Symfony default ORM
 set(:symfony_orm)     { guess_symfony_orm }
 
+# Default database connection name
+set(:connection)     { symfony_orm }
+
 # Symfony lib path
 set(:symfony_lib)     { guess_symfony_lib }
 
@@ -43,9 +46,9 @@ def load_database_config(data, env)
   databases = YAML::load(data)
 
   if databases[env]
-    db_param = databases[env][symfony_orm]['param']
+    db_param = databases[env][connection]['param']
   else
-    db_param = databases['all'][symfony_orm]['param']
+    db_param = databases['all'][connection]['param']
   end
 
   {

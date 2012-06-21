@@ -58,12 +58,33 @@ def load_database_config(data, env)
 
   db_param = connections[connection]['param']
 
+  dsn = db_param['dsn']
+  host = dsn.match(/host=([^;$]+)/)[1] if dsn.match("host")
+  port = dsn.match(/port=([0-9]+)/)[1] if dsn.match("port")
+
   {
     'type'  => /(\w+)\:/.match(db_param['dsn'])[1],
     'user'  => db_param['username'],
     'pass'  => db_param['password'],
-    'db'    => /dbname=([^;$]+)/.match(db_param['dsn'])[1]
+    'db'    => dsn.match(/dbname=([^;$]+)/)[1],
+    'host'  => host,
+    'port'  => port
   }
+end
+
+def get_sql_dump_cmd(config)
+    case config['type']
+      when 'mysql'
+        cmd = "mysqldump -u#{config['user']} --password='#{config['pass']}'"
+      when 'pgsql'
+        cmd = "pg_dump -U #{config['user']}"
+    end
+
+    cmd+= " -h#{config['host']}" if config['host']
+    cmd+= " --port=#{config['port']}" if  config['port']
+    cmd+= " #{config['db']}"
+
+    cmd
 end
 
 namespace :deploy do
@@ -467,15 +488,9 @@ namespace :database do
         config = load_database_config data, symfony_env_prod
       end
 
-      case config['type']
-      when 'mysql'
-        run "mysqldump -u#{config['user']} --password='#{config['pass']}' #{config['db']} | gzip -c > #{file}" do |ch, stream, data|
-          puts data
-        end
-      when 'pgsql'
-        run "pg_dump -U #{config['user']} #{config['db']} | gzip -c > #{file}" do |ch, stream, data|
-          puts data
-        end
+      sql_dump_cmd = get_sql_dump_cmd(config)
+      run "#{sql_dump_cmd} | gzip -c > #{file}" do |ch, stream, data|
+        puts data
       end
 
       require "fileutils"
@@ -499,12 +514,10 @@ namespace :database do
 
       require "fileutils"
       FileUtils::mkdir_p("backups")
-      case config['type']
-      when 'mysql'
-        `mysqldump -u#{config['user']} --password=\"#{config['pass']}\" #{config['db']} > #{tmpfile}`
-      when 'pgsql'
-        `pg_dump -U #{config['user']} #{config['db']} > #{tmpfile}`
-      end
+
+      sql_dump_cmd = get_sql_dump_cmd(config)
+      `#{sql_dump_cmd} > #{tmpfile}`
+
       File.open(tmpfile, "r+") do |f|
         gz = Zlib::GzipWriter.open(file)
         while (line = f.gets)

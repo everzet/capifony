@@ -2,119 +2,24 @@
 <html>
 <head>
     <meta charset='utf-8'>
-
     <title>capifony &mdash; symfony and Symfony2 deployment</title>
-
-    <style type="text/css">
-        body {
-            margin-top: 1.0em;
-            margin:30px 40px;
-            margin-left:100px;
-            margin-top:70px;
-            margin-bottom:10px;
-            background-color: #fff;
-            font-family: Helvetica, Arial, FreeSans, san-serif;
-            color: #7a7a7a;
-        }
-        #logo {
-            float:left;
-            width:220px;
-            border:0px none;
-        }
-        #developedby {
-            border:0px none;
-            float:left;
-            margin-left:610px;
-            margin-bottom:0px;
-        }
-        #logo img, #developedby img {
-            border:0px none;
-        }
-        pre {
-            overflow-y:hidden;
-            overflow-x:auto;
-        }
-        p, pre, h3, h4, ol, ul {
-            width:500px;
-            margin-left:220px;
-            padding:10px 20px;
-            border-left:1px dashed #ccc;
-            margin-top:0px;
-            margin-bottom:0px;
-            line-height:22px;
-            font-size:16px;
-        }
-        ol, ul {
-            padding:0px;
-            padding-bottom:10px;
-            padding-left:40px;
-        }
-        p img {
-            display:block;
-            margin-bottom:10px;
-            margin-top:10px;
-        }
-        pre {
-            color:#000;
-            font-family:Courier;
-            line-height:20px;
-            font-size:12px;
-        }
-        pre, code {
-            background:#f2f2f2;
-        }
-        code {
-            font-size:13px;
-            padding:2px 3px;
-            color:#000;
-        }
-        pre .prompt {
-            color:#7a7a7a;
-        }
-        p.intro {
-            font-style:italic;
-        }
-        a {
-            color:#000;
-            text-decoration:underline;
-        }
-        a:hover {
-            text-decoration:none;
-        }
-        h2 {
-            float:left;
-            text-align:right;
-            padding-right:20px;
-            width:200px;
-            font-family:georgia;
-            font-size:28px;
-            font-weight:normal;
-            color:#000;
-            margin:5px 0px;
-        }
-        h3 {
-            font-size:22px;
-            color:#000;
-            padding-top:15px;
-            padding-bottom:15px;
-            font-weight:normal;
-        }
-        .step {
-            margin-bottom:50px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css" type="text/css">
 </head>
 
 <body>
-    <a href="http://github.com/everzet/capifony"><img style="position: absolute; top: 0; left: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+    <a href="http://github.com/everzet/capifony">
+        <img style="position: absolute; top: 0; left: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Fork me on GitHub" />
+    </a>
 
     <div class="step">
         <a id="logo" href="/">
             <img src="images/logo.png" alt="capifony"/>
         </a>
-
         <p class="intro">
-            <a href="https://github.com/capistrano/capistrano">Capistrano</a> is an open source tool for running scripts on multiple servers. It’s primary use is for easily deploying applications. While it was built specifically for deploying <a href="http://rubyonrails.org/">Rails</a> apps, it’s pretty simple to customize it to deploy other types of applications. This project is a deployment recipes collection that works with both <a href="http://www.symfony-project.org/">symfony</a> and <a href="http://symfony.com/">Symfony2</a> applications.
+            <a href="https://github.com/capistrano/capistrano">Capistrano</a> is an open source tool for running scripts on multiple servers.
+            It’s primary use is for easily deploying applications. While it was built specifically for deploying <a href="http://rubyonrails.org/">Rails</a> apps,
+            it’s pretty simple to customize it to deploy other types of applications. This project is a deployment recipes collection that works with both
+            <a href="http://www.symfony-project.org/">symfony</a> and <a href="http://symfony.com/">Symfony2</a> applications.
         </p>
     </div>
 
@@ -131,21 +36,25 @@
         <h2>2. Setup project</h2>
         <p>Setup initial deployment configuration for your project:</p>
         <pre>
-<span class="prompt">$&gt;</span> cd to/symfony1/or/Symfony2/project/path
+<span class="prompt">$&gt;</span> cd path/to/your/project
 <span class="prompt">$&gt;</span> capifony .</pre>
         <p>
-            This will create a <code>Capfile</code> in your project root &amp; a <code>deploy.rb</code> config file in <code>config/</code> (for symfony1 projects) or <code>app/config/</code> (for Symfony2 projects).
+            This will create a <code>Capfile</code> in your project root &amp; a <code>deploy.rb</code> config file in <code>config/</code> (for symfony 1.x projects)
+            or in <code>app/config/</code> (for Symfony2 projects).
         </p>
     </div>
 
     <div class="step">
         <h2>3. Configure</h2>
         <p>
-            Fill up your <code>config/deploy.rb</code> (or <code>app/config/deploy.rb</code>) with your server connection data. But first, you must choose your deployment strategy.
+            Fill up your <code>config/deploy.rb</code> (or <code>app/config/deploy.rb</code>) with your server connection data.
+            But first, you must choose your deployment strategy.
         </p>
         <h3>a) deployment &rarr; scm &rarr; production</h3>
         <p>
-            The first strategy involves deployment to a production server via an intermediate git repository server. In this case, the production server <strong>must</strong> have access to your git repository (remote or not) and be able to issue a "pull" from it. You <strong>must</strong> have ssh access to the production server from wherever you're deploying from:
+            The first strategy involves deployment to a production server via an intermediate git repository server.
+            In this case, the production server <strong>must</strong> have access to your git repository (remote or not) and be able to issue a "pull" from it.
+            You <strong>must</strong> have ssh access to the production server from wherever you're deploying from:
             <img src="images/strategy_a.png" alt="deployment strategy a">
         </p>
         <pre>
@@ -178,7 +87,9 @@ set   :keep_releases, 3</pre>
 
         <h3>b) deployment &rarr; production (via copy)</h3>
         <p>
-            The second strategy involves deployment to a production server right from your deployment machine via a copy. In this case, the deployment server (which may just be your local computer) <strong>must</strong> have access to the git repository (remote or not) and be able to pull from it. The deployment server <strong>must</strong> also have ssh access to the production server:
+            The second strategy involves deployment to a production server right from your deployment machine via a copy.
+            In this case, the deployment server (which may just be your local computer) <strong>must</strong> have access to the git repository (remote or not)
+            and be able to pull from it. The deployment server <strong>must</strong> also have ssh access to the production server:
             <img src="images/strategy_b.png" alt="deployment strategy a">
         </p>
         <pre>
@@ -209,7 +120,8 @@ set   :keep_releases, 3</pre>
             <li>run deployment hooks (<code>cache:warmup</code>, <code>cc</code>, etc.)</li>
         </ol>
         <p>
-            Of course, copying the whole project on every deploy is very expensive and slow. Fortunately, you can optimize things with the <code>capistrano_rsync_with_remote_cache</code> gem:
+            Of course, copying the whole project on every deploy is very expensive and slow.
+            Fortunately, you can optimize things with the <code>capistrano_rsync_with_remote_cache</code> gem:
         </p>
         <pre>
 <span class="prompt">$&gt;</span> gem install capistrano_rsync_with_remote_cache</pre>
@@ -226,7 +138,8 @@ set :deploy_via, :rsync_with_remote_cache</pre>
     <div class="step">
         <h2>4. Setup server</h2>
         <p>
-            Now, you can start the deployment process! To get your server setup with the directory structure that Capistrano expects, CD to your local project directory and run:
+            Now, you can start the deployment process! To get your server setup with the directory structure that Capistrano expects,
+            <code>cd</code> to your local project directory and run:
         </p>
         <pre>
 <span class="prompt">$&gt;</span> cap deploy:setup</pre>
@@ -234,7 +147,8 @@ set :deploy_via, :rsync_with_remote_cache</pre>
             (You'll only have to run this once!)
         </p>
         <p>
-            This command will create the following approximate directory structure on your server. The exact structure will depend on if you're deploying a symfony1 or Symfony2 application:
+            This command will create the following approximate directory structure on your server.
+            The exact structure will depend on if you're deploying a symfony 1.x or Symfony2 application:
         </p>
         <pre>
 `-- /var/www/my-app.com
@@ -251,17 +165,26 @@ set :deploy_via, :rsync_with_remote_cache</pre>
       `-- uploads
         </pre>
         <p>
-            The folders in the releases directory will be the actual deployed code, as timestamped directories. In a symfony1 application, for example, Capistrano symlinks your <code>log</code> &amp; <code>web/uploads</code> directories from your app to the directories in the shared folder so that it doesn’t get erased when you deploy a new version of your code.
+            The folders in the releases directory will be the actual deployed code, as timestamped directories.
+            In a symfony 1.x application, for example, Capistrano symlinks your <code>log</code> &amp; <code>web/uploads</code> directories from your app
+            to the directories in the shared folder so that it doesn’t get erased when you deploy a new version of your code.
         </p>
     </div>
 
     <div class="step">
         <h2>5. Deploy!</h2>
-        <p>To deploy your application, simply run:</p>
+        <p>
+            To deploy your application, simply run:
+        </p>
         <pre>
 <span class="prompt">$&gt;</span> cap deploy</pre>
-        <p>Depending on your setup, you may need to ssh onto your server to setup additional, shared files after your first deployment (e.g. <code>app/config/parameters.ini</code> if you're using Symfony2 with the deployment recipe listed below).</p>
-        <p>Something went wrong???</p>
+        <p>
+            Depending on your setup, you may need to ssh onto your server to setup additional, shared files after your first deployment
+            (e.g. <code>app/config/parameters.yml</code> if you're using Symfony2 with the deployment recipe listed below).
+        </p>
+        <p>
+            Something went wrong???
+        </p>
         <pre>
 <span class="prompt">$&gt;</span> cap deploy:rollback</pre>
     </div>
@@ -269,33 +192,56 @@ set :deploy_via, :rsync_with_remote_cache</pre>
     <div class="step">
         <h2>Symfony2 Deployment</h2>
 
-        <p>If you're deploying a Symfony2 application, then this section is probably for you. This section explains how to configure capifony to deploy an application that uses the <code>bin/vendors</code> file to manage vendor libraries and the <code>app/config/parameters.ini</code> file for server-specific configuration (like database connection information).</p>
-
-        <p>First, add the following to your <code>app/config/deploy.rb</code> file so that the <code>parameters.ini</code> file is shared between all deployments:</p>
-
+        <p>
+            If you're deploying a Symfony2 application, then this section is probably for you. This section explains how to configure capifony to deploy
+            an application that uses the <code>bin/vendors</code> file to manage vendor libraries and the <code>app/config/parameters.yml</code>
+            file for server-specific configuration (like database connection information).
+        </p>
+        <p>
+            First, add the following to your <code>app/config/deploy.rb</code> file so that the <code>parameters.yml</code> file is shared between all deployments:
+        </p>
         <pre>
-set :shared_files,      ["app/config/parameters.ini"]</pre>
+set :shared_files,      ["app/config/parameters.yml"]</pre>
 
-        <p>Next, share the <code>vendor</code> directory between all deployments to make deploying faster:</p>
-
+        <p>
+            Next, share the <code>vendor</code> directory between all deployments to make deploying faster:
+        </p>
         <pre>
 set :shared_children,     [app_path + "/logs", web_path + "/uploads", "vendor"]</pre>
 
-        <p>Finally, each time you deploy, capistrano must run <code>./bin/vendors</code> so that all of the vendor libraries are updated. Add the following code to <code>deploy.rb</code> to make this happen:</p>
+        <p>
+            To install your vendors, capifony will rely on <code>bin/vendors</code> by default.
+            But the recommended dependency manager is now <a href="http://getcomposer.org">Composer</a>.
+            In order to use it, just add the following configuration:
+        </p>
+        <pre>
+set :use_composer, true</pre>
 
+        <p>
+            If you want to update your vendors, add the following parameter:
+        </p>
         <pre>
 set :update_vendors, true</pre>
 
-        <p>Now, each time you deploy, the vendors will be fully updated. This functionality is new in capifony 2.0.8</p>
+        <p>
+            It will run <code>composer.phar update</code> if you use Composer, <code>bin/vendors</code> otherwise.
+            Note that the <code>bin/vendors</code> can be configured using the <code>:vendors_mode</code> parameter to decide which action to run (upgrade, install,
+            or reinstall).
+        </p>
 
-        <p>The final step is to configure your <code>app/config/parameters.ini</code> file. The best way to do this is to create this file in shared folder on server manually:</p>
-
+        <p>
+            The final step is to configure your <code>app/config/parameters.yml</code> file. The best way to do this is to create this file in shared folder on server manually:
+        </p>
         <pre>
 <span class="prompt">$&gt;</span> ssh your_deploy_server
 <span class="prompt">$&gt;</span> mkdir -p /var/www/my-app.com/shared/app/config
-<span class="prompt">$&gt;</span> vim /var/www/my-app.com/shared/app/config/parameters.ini</pre>
+<span class="prompt">$&gt;</span> vim /var/www/my-app.com/shared/app/config/parameters.yml</pre>
 
-        <p>Once your <code>parameters.ini</code> file is correctly configured, you should be able to test your deployed application. On every subsequent deploy, that same <code>app/config/parameters.ini</code> file will by symlinked into your application, meaning you only need to configure after the initial deploy.
+        <p>
+            Once your <code>parameters.yml</code> file is correctly configured, you should be able to test your deployed application.
+            On every subsequent deploy, that same <code>app/config/parameters.yml</code> file will by symlinked into your application,
+            meaning you only need to configure after the initial deploy.
+        </p>
     </div>
 
     <div class="step">
@@ -338,20 +284,29 @@ set :group_writable, false</pre>
 
             <h3>symfony configuration parameters</h3>
             <p>
-                All symfony tasks (both <strong>symfony 1.4</strong> and <strong>Symfony2</strong>) run using the default <code>php</code> binary on the production server. You can change this via:
+                All symfony tasks (both <strong>symfony 1.4</strong> and <strong>Symfony2</strong>) run using the default <code>php</code>
+                binary on the production server. You can change this via:
             </p>
             <pre>
 set :php_bin, "/path/to/php"</pre>
             <p>
-                All symfony tasks (both <strong>symfony 1.4</strong> and <strong>Symfony2</strong>) also run inside the <code>prod</code> environment on production server. You can change this via:
+                All symfony tasks (both <strong>symfony 1.4</strong> and <strong>Symfony2</strong>) also run inside the <code>prod</code>
+                environment on production server. You can change this via:
             </p>
             <pre>
 set :symfony_env_prod, "staging"</pre>
             <p>
-                By default, capifony will try to configure your <code>config/databases.yml</code> on every <strong>symfony 1.4</strong> project deployment (if it's not present) on production. You can turn this behavior off with:
+                By default, capifony will try to configure your <code>config/databases.yml</code> on every <strong>symfony 1.4</strong>
+                project deployment (if it's not present) on production. You can turn this behavior off with:
             </p>
             <pre>
 set :use_orm, false</pre>
+            <p>
+                In Symfony2, you can choose the ORM you are using (Doctrine, or Propel). The default ORM is Doctrine.
+            </p>
+            <pre>
+set :model_manager, "propel"</pre>
+
             <p>
                 If you want to use a shared symfony library instead of one bundled inside a <strong>symfony 1.4</strong> project, define the path to it with:
             </p>
@@ -368,6 +323,13 @@ set :web_path, "my_web"</pre>
             </p>
             <pre>
 set :dump_assetic_assets, true</pre>
+
+            <p>
+                If you are working with a continuous process, you may want to automate everything.
+                You can turn off the interactive mode by setting the following parameter to <code>false</code>:
+            </p>
+            <pre>
+set :interactive_mode, false</pre
     </div>
 
     <div class="step">
@@ -396,6 +358,26 @@ cap shared:{databases OR log OR uploads]:to_local</pre>
         <pre>
 cap shared:{databases OR log OR uploads]:to_remote</pre>
         <p></p>
+
+        <h3>Enable/Disable the application</h3>
+        <p>
+            If you want to quickly disable your application, run:
+        </p>
+        <pre>
+cap deploy:web:disable</pre>
+        <p>
+            It will use the <code>project:disable</code> task with symfony 1.4, or will install a <code>maintenance.html</code>
+            page with Symfony2.
+        </p>
+        <p>
+            To enable the application, just run:
+        </p>
+        <pre>
+cap deploy:web:enable</pre>
+        <p>
+            Same here, it will use the <code>project:enable</code> task with symfony 1.4, and will remove the
+            <code>maintenance.html</code> page with Symfony2.
+    </p>
 
         <h3>Other tasks</h3>
         <p>If you need to deploy and run your migrations you can call:</p>

@@ -1,4 +1,4 @@
-== 2.1.7 / ???
+== 2.1.7 / June 21, 2012
 
 * added maintenance page feature for Symfony2, use symfony 1.4 tasks
   (project:disable, project:enable) to do the same.

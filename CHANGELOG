@@ -1,5 +1,7 @@
 == 2.1.7 / ???
 
+* added maintenance page feature for Symfony2, use symfony 1.4 tasks
+  (project:disable, project:enable) to do the same.
 * added `interactive_mode` variable. Allows to avoid the need to confirm
   task executions, useful for fully automated deployments.
 * fixed propel regression.

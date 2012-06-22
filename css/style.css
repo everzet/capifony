@@ -94,3 +94,13 @@ h3 {
 .step {
     margin-bottom:50px;
 }
+.fork-and-edit {
+    background: url("../images/github.gif") no-repeat scroll 0 0
+    transparent;
+    font-style: italic;
+    height: 40px;
+    width: 640px;
+    padding: 5px 0;
+    text-align: center;
+    border:none;
+}

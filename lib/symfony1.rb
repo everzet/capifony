@@ -72,6 +72,7 @@ def load_database_config(data, env)
   }
 end
 
+# Generate a sql dump command
 def get_sql_dump_cmd(config)
     case config['type']
       when 'mysql'
@@ -80,8 +81,24 @@ def get_sql_dump_cmd(config)
         cmd = "pg_dump -U #{config['user']}"
     end
 
-    cmd+= " -h#{config['host']}" if config['host']
-    cmd+= " --port=#{config['port']}" if  config['port']
+    cmd+= " --host=#{config['host']}" if config['host']
+    cmd+= " --port=#{config['port']}" if config['port']
+    cmd+= " #{config['db']}"
+
+    cmd
+end
+
+# Generate a sql load command
+def get_sql_load_cmd(config)
+    case config['type']
+      when 'mysql'
+        cmd = "mysql -u#{config['user']} --password='#{config['pass']}' #{config['db']}"
+      when 'pgsql'
+        cmd = "psql -U #{config['user']} --password='#{config['pass']}' #{config['db']}"
+      end
+
+    cmd+= " --host=#{config['host']}" if config['host']
+    cmd+= " --port=#{config['port']}" if config['port']
     cmd+= " #{config['db']}"
 
     cmd
@@ -552,12 +569,9 @@ namespace :database do
       f << gz.read
       f.close
 
-      case config['type']
-      when 'mysql'
-        `mysql -u#{config['user']} --password=\"#{config['pass']}\" #{config['db']} < backups/#{sqlfile}`
-      when 'pgsql'
-        `psql -U #{config['user']} --password=\"#{config['pass']}\" #{config['db']} < backups/#{sqlfile}`
-      end
+      sql_load_cmd = get_sql_load_cmd(config)
+      `#{sql_load_cmd} < backups/#{sqlfile}`
+
       FileUtils.rm("backups/#{sqlfile}")
     end
 
@@ -577,15 +591,10 @@ namespace :database do
         config = load_database_config data, symfony_env_prod
       end
 
-      case config['type']
-      when 'mysql'
-        run "mysql -u#{config['user']} --password='#{config['pass']}' #{config['db']} < /tmp/#{sqlfile}" do |ch, stream, data|
-          puts data
-        end
-      when 'pgsql'
-        run "psql -U #{config['user']} --password='#{config['pass']}' #{config['db']} < /tmp/#{sqlfile}" do |ch, stream, data|
-          puts data
-        end
+      sql_load_cmd = get_sql_load_cmd(config)
+
+      run "#{sql_load_cmd} < /tmp/#{sqlfile}" do |ch, stream, data|
+        puts data
       end
 
       run "rm /tmp/#{filename}"

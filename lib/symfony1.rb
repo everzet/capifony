@@ -88,14 +88,46 @@ def get_sql_dump_cmd(config)
     cmd
 end
 
+# Generate sql drop database command
+def get_sql_drop_database(config)
+    case config['type']
+      when 'mysql'
+        cmd = "mysqladmin -f -u#{config['user']} --password='#{config['pass']}' drop"
+      when 'pgsql'
+        cmd = 'dropdb -U #{config['user']}'
+    end
+
+    cmd+= " --host=#{config['host']}" if config['host']
+    cmd+= " --port=#{config['port']}" if config['port']
+    cmd+= " #{config['db']}"
+
+    cmd
+end
+
+# Generate sql create database command
+def get_sql_create_database(config)
+    case config['type']
+      when 'mysql'
+        cmd = "mysqladmin -u#{config['user']} --password='#{config['pass']}' create"
+      when 'pgsql'
+        cmd = "createdb -U #{config['user']}"
+    end
+
+    cmd+= " --host=#{config['host']}" if config['host']
+    cmd+= " --port=#{config['port']}" if config['port']
+    cmd+= " #{config['db']}"
+
+    cmd
+end
+
 # Generate a sql load command
 def get_sql_load_cmd(config)
     case config['type']
       when 'mysql'
-        cmd = "mysql -u#{config['user']} --password='#{config['pass']}' #{config['db']}"
+        cmd = "mysql -u#{config['user']} --password='#{config['pass']}'"
       when 'pgsql'
-        cmd = "psql -U #{config['user']} --password='#{config['pass']}' #{config['db']}"
-      end
+        cmd = "psql -U #{config['user']} --password='#{config['pass']}'"
+    end
 
     cmd+= " --host=#{config['host']}" if config['host']
     cmd+= " --port=#{config['port']}" if config['port']
@@ -533,7 +565,7 @@ namespace :database do
       FileUtils::mkdir_p("backups")
 
       sql_dump_cmd = get_sql_dump_cmd(config)
-      `#{sql_dump_cmd} > #{tmpfile}`
+      run_locally "#{sql_dump_cmd} > #{tmpfile}"
 
       File.open(tmpfile, "r+") do |f|
         gz = Zlib::GzipWriter.open(file)
@@ -556,23 +588,23 @@ namespace :database do
   namespace :move do
     desc "Dump remote database, download it to local & populate here"
     task :to_local do
-      filename  = "#{application}.remote_dump.latest.sql.gz"
-      config    = load_database_config IO.read('config/databases.yml'), symfony_env_local
-      sqlfile   = "#{application}_dump.sql"
 
       database.dump.remote
 
-      require "fileutils"
-      f = File.new("backups/#{sqlfile}", "a+")
-      require "zlib"
-      gz = Zlib::GzipReader.new(File.open("backups/#{filename}", "r"))
-      f << gz.read
-      f.close
+      zipped_file_path  = `readlink -f backups/#{application}.remote_dump.latest.sql.gz`.chop
+      unzipped_file_path   = "backups/#{application}_dump.sql"
+
+      run_locally "gunzip -c #{zipped_file_path} > #{unzipped_file_path}"
+
+      config = load_database_config IO.read('config/databases.yml'), symfony_env_local
+
+      run_locally get_sql_drop_database(config)
+      run_locally get_sql_create_database(config)
 
       sql_load_cmd = get_sql_load_cmd(config)
-      `#{sql_load_cmd} < backups/#{sqlfile}`
+      run_locally "#{sql_load_cmd} < #{unzipped_file_path}"
 
-      FileUtils.rm("backups/#{sqlfile}")
+      FileUtils.rm("#{unzipped_file_path}")
     end
 
     desc "Dump local database, load it to remote & populate there"

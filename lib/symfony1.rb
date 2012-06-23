@@ -72,15 +72,27 @@ def load_database_config(data, env)
   }
 end
 
-# Generate a sql dump command
-def get_sql_dump_cmd(config)
-    case config['type']
-      when 'mysql'
-        cmd = "mysqldump -u#{config['user']} --password='#{config['pass']}'"
-      when 'pgsql'
-        cmd = "pg_dump -U #{config['user']}"
-    end
 
+
+def generate_sql_command(cmd_type, config)
+
+    db_type = config['type']
+    cmd_conf = {
+      'mysql' => {
+        'create' => "mysqladmin -u #{config['user']} --password='#{config['pass']}' create",
+        'dump'   => "mysqldump -u #{config['user']} --password='#{config['pass']}'",
+        'drop'   => "mysqladmin -f -u #{config['user']} --password='#{config['pass']}' drop",
+        'import' => "mysql -u #{config['user']} --password='#{config['pass']}'"
+      },
+      'pgsql' => {
+        'create' => "createdb -U #{config['user']}",
+        'dump'   => "pg_dump -U #{config['user']}",
+        'drop'   => "dropdb -U #{config['user']}",
+        'import' => "psql -U #{config['user']} --password='#{config['pass']}'"
+      }
+    }
+
+    cmd = cmd_conf[db_type][cmd_type]
     cmd+= " --host=#{config['host']}" if config['host']
     cmd+= " --port=#{config['port']}" if config['port']
     cmd+= " #{config['db']}"
@@ -88,53 +100,8 @@ def get_sql_dump_cmd(config)
     cmd
 end
 
-# Generate sql drop database command
-def get_sql_drop_database(config)
-    case config['type']
-      when 'mysql'
-        cmd = "mysqladmin -f -u#{config['user']} --password='#{config['pass']}' drop"
-      when 'pgsql'
-        cmd = 'dropdb -U #{config['user']}'
-    end
 
-    cmd+= " --host=#{config['host']}" if config['host']
-    cmd+= " --port=#{config['port']}" if config['port']
-    cmd+= " #{config['db']}"
 
-    cmd
-end
-
-# Generate sql create database command
-def get_sql_create_database(config)
-    case config['type']
-      when 'mysql'
-        cmd = "mysqladmin -u#{config['user']} --password='#{config['pass']}' create"
-      when 'pgsql'
-        cmd = "createdb -U #{config['user']}"
-    end
-
-    cmd+= " --host=#{config['host']}" if config['host']
-    cmd+= " --port=#{config['port']}" if config['port']
-    cmd+= " #{config['db']}"
-
-    cmd
-end
-
-# Generate a sql load command
-def get_sql_load_cmd(config)
-    case config['type']
-      when 'mysql'
-        cmd = "mysql -u#{config['user']} --password='#{config['pass']}'"
-      when 'pgsql'
-        cmd = "psql -U #{config['user']} --password='#{config['pass']}'"
-    end
-
-    cmd+= " --host=#{config['host']}" if config['host']
-    cmd+= " --port=#{config['port']}" if config['port']
-    cmd+= " #{config['db']}"
-
-    cmd
-end
 
 namespace :deploy do
   desc "Customize migrate task because symfony doesn't need it."
@@ -537,7 +504,7 @@ namespace :database do
         config = load_database_config data, symfony_env_prod
       end
 
-      sql_dump_cmd = get_sql_dump_cmd(config)
+      sql_dump_cmd = generate_sql_command('dump', config)
       run "#{sql_dump_cmd} | gzip -c > #{file}" do |ch, stream, data|
         puts data
       end
@@ -564,7 +531,7 @@ namespace :database do
       require "fileutils"
       FileUtils::mkdir_p("backups")
 
-      sql_dump_cmd = get_sql_dump_cmd(config)
+      sql_dump_cmd = generate_sql_command('dump', config)
       run_locally "#{sql_dump_cmd} > #{tmpfile}"
 
       File.open(tmpfile, "r+") do |f|
@@ -591,24 +558,29 @@ namespace :database do
 
       database.dump.remote
 
-      zipped_file_path  = `readlink -f backups/#{application}.remote_dump.latest.sql.gz`.chop
+      begin
+        zipped_file_path  = `readlink -f backups/#{application}.remote_dump.latest.sql.gz`.chop  # gunzip does not work with a symlink
+      rescue NotImplementedError # hack for windows which doesnt support symlinks
+        zipped_file_path  = "backups/#{application}.remote_dump.latest.sql.gz"
+      end
       unzipped_file_path   = "backups/#{application}_dump.sql"
 
       run_locally "gunzip -c #{zipped_file_path} > #{unzipped_file_path}"
 
       config = load_database_config IO.read('config/databases.yml'), symfony_env_local
 
-      run_locally get_sql_drop_database(config)
-      run_locally get_sql_create_database(config)
+      run_locally generate_sql_command('drop', config)
+      run_locally generate_sql_command('create', config)
 
-      sql_load_cmd = get_sql_load_cmd(config)
-      run_locally "#{sql_load_cmd} < #{unzipped_file_path}"
+      sql_import_cmd = generate_sql_command('import', config)
+      run_locally "#{sql_import_cmd} < #{unzipped_file_path}"
 
       FileUtils.rm("#{unzipped_file_path}")
     end
 
     desc "Dump local database, load it to remote & populate there"
     task :to_remote do
+
       filename  = "#{application}.local_dump.latest.sql.gz"
       file      = "backups/#{filename}"
       sqlfile   = "#{application}_dump.sql"
@@ -623,9 +595,12 @@ namespace :database do
         config = load_database_config data, symfony_env_prod
       end
 
-      sql_load_cmd = get_sql_load_cmd(config)
+      run generate_sql_command('drop', config)
+      run generate_sql_command('create', config)
 
-      run "#{sql_load_cmd} < /tmp/#{sqlfile}" do |ch, stream, data|
+      sql_import_cmd = generate_sql_command('import', config)
+
+      run "#{sql_import_cmd} < /tmp/#{sqlfile}" do |ch, stream, data|
         puts data
       end
 

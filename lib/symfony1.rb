@@ -495,7 +495,7 @@ namespace :database do
   namespace :dump do
     desc "Dump remote database"
     task :remote do
-      filename  = "#{application}.remote_dump.#{Time.now.to_i}.sql.gz"
+      filename  = "#{application}.remote_dump.#{Time.now.strftime("%Y-%m-%d_%H-%M-%S")}.sql.gz"
       file      = "/tmp/#{filename}"
       sqlfile   = "#{application}_dump.sql"
       config    = ""
@@ -522,7 +522,7 @@ namespace :database do
 
     desc "Dump local database"
     task :local do
-      filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.gz"
+      filename  = "#{application}.local_dump.#{Time.now.strftime("%Y-%m-%d_%H-%M-%S")}.sql.gz"
       tmpfile   = "backups/#{application}_dump_tmp.sql"
       file      = "backups/#{filename}"
       config    = load_database_config IO.read('config/databases.yml'), symfony_env_local

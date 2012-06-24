@@ -409,6 +409,16 @@ cap symfony</pre>
 cap -T</pre>
     </div>
 
+    <div class="step">
+        <h2>Known issues</h2>
+
+        <p>
+            If you get the following error message <code>sudo : no tty present and no askpass program specified</code>, add this parameter:
+        </p>
+        <pre>
+default_run_options[:pty] = true</pre>
+    </div>
+
     <p class="fork-and-edit">
         Found a typo? Something is wrong in this documentation? Just <a href="http://github.com/everzet/capifony/edit/gh-pages/index.html">fork and edit</a> it!
     </p>

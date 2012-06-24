@@ -284,19 +284,19 @@ set :group_writable, false</pre>
 
             <h3>symfony configuration parameters</h3>
             <p>
-                All symfony tasks (both <strong>symfony 1.4</strong> and <strong>Symfony2</strong>) run using the default <code>php</code>
+                All symfony tasks (both <strong>symfony 1.x</strong> and <strong>Symfony2</strong>) run using the default <code>php</code>
                 binary on the production server. You can change this via:
             </p>
             <pre>
 set :php_bin, "/path/to/php"</pre>
             <p>
-                All symfony tasks (both <strong>symfony 1.4</strong> and <strong>Symfony2</strong>) also run inside the <code>prod</code>
+                All symfony tasks (both <strong>symfony 1.x</strong> and <strong>Symfony2</strong>) also run inside the <code>prod</code>
                 environment on production server. You can change this via:
             </p>
             <pre>
 set :symfony_env_prod, "staging"</pre>
             <p>
-                By default, capifony will try to configure your <code>config/databases.yml</code> on every <strong>symfony 1.4</strong>
+                By default, capifony will try to configure your <code>config/databases.yml</code> on every <strong>symfony 1.x</strong>
                 project deployment (if it's not present) on production. You can turn this behavior off with:
             </p>
             <pre>
@@ -308,7 +308,7 @@ set :use_orm, false</pre>
 set :model_manager, "propel"</pre>
 
             <p>
-                If you want to use a shared symfony library instead of one bundled inside a <strong>symfony 1.4</strong> project, define the path to it with:
+                If you want to use a shared symfony library instead of one bundled inside a <strong>symfony 1.x</strong> project, define the path to it with:
             </p>
             <pre>
 set :symfony_lib, "/path/to/symfony"</pre>
@@ -350,8 +350,10 @@ cap database:move:to_local</pre>
 cap database:move:to_remove</pre>
         <p></p>
 
-        <h3>Shared folders</h3>
-        <p>If you need to download some shared folders from remote server, run:</p>
+        <h3>Shared folders and symfony 1.x</h3>
+        <p>
+            If you need to download some shared folders from remote server, run:
+        </p>
         <pre>
 cap shared:{databases OR log OR uploads]:to_local</pre>
         <p>If you need to upload some shared folders to remote server, run:</p>
@@ -359,14 +361,14 @@ cap shared:{databases OR log OR uploads]:to_local</pre>
 cap shared:{databases OR log OR uploads]:to_remote</pre>
         <p></p>
 
-        <h3>Enable/Disable the application</h3>
+        <h3>Enabling/Disabling applications</h3>
         <p>
             If you want to quickly disable your application, run:
         </p>
         <pre>
 cap deploy:web:disable</pre>
         <p>
-            It will use the <code>project:disable</code> task with symfony 1.4, or will install a <code>maintenance.html</code>
+            It will use the <code>project:disable</code> task with symfony 1.x, or will install a <code>maintenance.html</code>
             page with Symfony2.
         </p>
         <p>
@@ -375,9 +377,22 @@ cap deploy:web:disable</pre>
         <pre>
 cap deploy:web:enable</pre>
         <p>
-            Same here, it will use the <code>project:enable</code> task with symfony 1.4, and will remove the
+            Same here, it will use the <code>project:enable</code> task with symfony 1.x, and will remove the
             <code>maintenance.html</code> page with Symfony2.
-    </p>
+        </p>
+        <p>
+            For Symfony2 users, you can customize the page by specifying the <code>REASON</code>,
+            and <code>UNTIL</code> environment variables:
+        </p>
+        <pre>
+cap deploy:web:disable \
+    REASON="hardware upgrade" \
+    UNTIL="12pm Central Time"</pre>
+        <p>
+            You can use a different template for the maintenance page by setting the
+            <code>:maintenance_template_path</code> variable in your <code>deploy.rb</code> file. The template file
+            should either be a plaintext or an erb file.
+        </p>
 
         <h3>Other tasks</h3>
         <p>If you need to deploy and run your migrations you can call:</p>

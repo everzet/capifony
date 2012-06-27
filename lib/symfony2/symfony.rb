@@ -56,7 +56,7 @@ namespace :symfony do
         symfony.composer.get
       end
 
-      run "cd #{latest_release} && #{php_bin} composer.phar install"
+      run "cd #{latest_release} && #{php_bin} composer.phar install -v"
     end
 
     desc "Runs composer to update vendors, and composer.lock file"
@@ -65,7 +65,7 @@ namespace :symfony do
         symfony.composer.get
       end
 
-      run "cd #{latest_release} && #{php_bin} composer.phar update"
+      run "cd #{latest_release} && #{php_bin} composer.phar update -v"
     end
   end
 

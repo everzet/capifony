@@ -345,6 +345,17 @@ set :interactive_mode, false</pre>
             </p>
             <pre>
 set :keep_releases, 3</pre>
+            <p>
+                Since capifony 2.1.8, the verbosity has been reduced, and human readable messages are printed, so that you can easily follow
+                the deployment process. If you want to change this behavior, configure the logger in your <code>deploy.rb</code> file:
+            </p>
+            <pre>
+# IMPORTANT = 0
+# INFO      = 1
+# DEBUG     = 2
+# TRACE     = 3
+# MAX_LEVEL = 3
+config.logger = Logger::MAX_LEVEL</pre>
     </div>
 
     <div class="step">

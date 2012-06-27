@@ -76,6 +76,9 @@ if symfony_version == 2
       role :db,         domain, :primary => true       # This is where Rails migrations will run
 
       set  :keep_releases,  3
+
+      # Be more verbose by uncommenting the following line
+      # logger.level = Logger::MAX_LEVEL
     FILE
   }
 else

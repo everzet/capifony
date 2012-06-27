@@ -1,4 +1,13 @@
 load Gem.find_files('capifony.rb').last.to_s
+load_paths.push File.expand_path('../', __FILE__)
+
+load 'symfony2/database'
+load 'symfony2/doctrine'
+load 'symfony2/propel'
+load 'symfony2/symfony'
+load 'symfony2/web'
+
+require 'colored'
 
 # Symfony application path
 set :app_path,              "app"
@@ -69,26 +78,26 @@ def guess_symfony_version
   capture("cd #{latest_release} && #{php_bin} #{symfony_console} --version |cut -d \" \" -f 3")
 end
 
-load_paths.push File.expand_path('../', __FILE__)
-
-load 'symfony2/database'
-load 'symfony2/doctrine'
-load 'symfony2/propel'
-load 'symfony2/symfony'
-load 'symfony2/web'
+# Be less verbose by default
+logger.level = Logger::IMPORTANT
 
 # Overrided Capistrano tasks
 namespace :deploy do
   desc "Symlinks static directories and static files that need to remain between deployments"
   task :share_childs do
     if shared_children
+      puts "--> Creating symlinks for shared directories".green
+
       shared_children.each do |link|
         run "mkdir -p #{shared_path}/#{link}"
         run "if [ -d #{release_path}/#{link} ] ; then rm -rf #{release_path}/#{link}; fi"
         run "ln -nfs #{shared_path}/#{link} #{release_path}/#{link}"
       end
     end
+
     if shared_files
+      puts "--> Creating symlinks for shared files".green
+
       shared_files.each do |link|
         link_dir = File.dirname("#{shared_path}/#{link}")
         run "mkdir -p #{link_dir}"
@@ -101,6 +110,9 @@ namespace :deploy do
   desc "Updates latest release source path"
   task :finalize_update, :except => { :no_release => true } do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
+
+    puts "--> Creating cache directory".green
+
     run "if [ -d #{latest_release}/#{cache_path} ] ; then rm -rf #{latest_release}/#{cache_path}; fi"
     run "mkdir -p #{latest_release}/#{cache_path} && chmod -R 0777 #{latest_release}/#{cache_path}"
     run "chmod -R g+w #{latest_release}/#{cache_path}"
@@ -111,8 +123,10 @@ namespace :deploy do
       stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
       asset_paths = asset_children.map { |p| "#{latest_release}/#{p}" }.join(" ")
 
+      puts "--> Normalizing asset timestamps".green
+
       if asset_paths.chomp.empty?
-        puts "    No asset paths found, skipped"
+        puts "    No asset paths found, skipped".yellow
       else
         run "find #{asset_paths} -exec touch -t #{stamp} {} ';'; true", :env => { "TZ" => "UTC" }
       end
@@ -138,7 +152,7 @@ namespace :deploy do
       symfony.doctrine.migrations.migrate
     else
       if model_manager == "propel"
-        puts "    Propel doesn't have built-in migration for now"
+        puts "    Propel doesn't have built-in migration for now".yellow
       end
     end
   end
@@ -180,4 +194,12 @@ after "deploy:finalize_update" do
   if dump_assetic_assets
     symfony.assetic.dump    # 4. Dump assetic assets
   end
+end
+
+before "deploy:update_code" do
+  puts "--> Updating code base with #{deploy_via} strategy".green
+end
+
+after "deploy:create_symlink" do
+  puts "--> Deployed!".green
 end

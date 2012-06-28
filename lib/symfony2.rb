@@ -81,6 +81,11 @@ end
 # Be less verbose by default
 logger.level = Logger::IMPORTANT
 
+def pretty_puts(msg)
+  msg << '.' * (60 - msg.size)
+  puts msg.green
+end
+
 # Overrided Capistrano tasks
 namespace :deploy do
   desc "Symlinks static directories and static files that need to remain between deployments"

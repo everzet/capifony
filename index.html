@@ -84,6 +84,14 @@ set   :keep_releases, 3</pre>
             <li>run deployment hooks (<code>cache:warmup</code>, <code>cc</code>, etc.)</li>
         </ol>
 
+        <p>
+            If you don't want to clone the whole repository on every deploy, you can set the <code>:deploy_via</code> parameter:
+        </p>
+        <pre>
+set :deploy_via, :remote_cache</pre>
+        <p>
+            In this case, a git repository will be kept on the server and Capifony will only fetch the changes since the last deploy.
+        </p>
 
         <h3>b) deployment &rarr; production (via copy)</h3>
         <p>

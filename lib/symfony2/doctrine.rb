@@ -29,18 +29,6 @@ namespace :symfony do
       end
     end
 
-    namespace :generate do
-      desc "Generates proxy classes for entity classes"
-      task :hydrators do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:generate:proxies --env=#{symfony_env_prod}"
-      end
-
-      desc "Generates repository classes from your mapping information"
-      task :hydrators do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:generate:repositories --env=#{symfony_env_prod}"
-      end
-    end
-
     namespace :schema do
       desc "Processes the schema and either create it directly on EntityManager Storage Connection or generate the SQL output"
       task :create do
@@ -89,23 +77,6 @@ namespace :symfony do
     end
 
     namespace :mongodb do
-      namespace :generate do
-        desc "Generates hydrator classes for document classes"
-        task :hydrators do
-          run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:generate:hydrators --env=#{symfony_env_prod}"
-        end
-
-        desc "Generates proxy classes for document classes"
-        task :hydrators do
-          run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:generate:proxies --env=#{symfony_env_prod}"
-        end
-
-        desc "Generates repository classes for document classes"
-        task :hydrators do
-          run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:generate:repositories --env=#{symfony_env_prod}"
-        end
-      end
-
       namespace :schema do
         desc "Allows you to create databases, collections and indexes for your documents"
         task :create do

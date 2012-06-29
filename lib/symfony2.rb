@@ -1,13 +1,12 @@
 load Gem.find_files('capifony.rb').last.to_s
 load_paths.push File.expand_path('../', __FILE__)
 
+load 'symfony2/output'
 load 'symfony2/database'
 load 'symfony2/doctrine'
 load 'symfony2/propel'
 load 'symfony2/symfony'
 load 'symfony2/web'
-
-require 'colored'
 
 # Symfony application path
 set :app_path,              "app"
@@ -76,25 +75,6 @@ end
 
 def guess_symfony_version
   capture("cd #{latest_release} && #{php_bin} #{symfony_console} --version |cut -d \" \" -f 3")
-end
-
-# Be less verbose by default
-logger.level = Logger::IMPORTANT
-
-STDOUT.sync
-def pretty_print(msg)
-  if logger.level == Logger::IMPORTANT
-    msg << '.' * (55 - msg.size)
-    print msg
-  else
-    puts msg.green
-  end
-end
-
-def puts_ok
-  if logger.level == Logger::IMPORTANT
-    puts '✔'.green
-  end
 end
 
 # Overrided Capistrano tasks
@@ -223,9 +203,10 @@ before "deploy:update_code" do
   msg = "--> Updating code base with #{deploy_via} strategy"
 
   if logger.level == Logger::IMPORTANT
+    pretty_errors
     puts msg
   else
-    puts.green
+    puts msg.green
   end
 end
 

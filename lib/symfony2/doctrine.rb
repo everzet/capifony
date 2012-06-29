@@ -3,39 +3,44 @@ namespace :symfony do
     namespace :cache do
       desc "Clears all metadata cache for a entity manager"
       task :clear_metadata do
-        puts "--> Clearing Doctrine metadata cache".green
+        pretty_print "--> Clearing Doctrine metadata cache"
 
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-metadata --env=#{symfony_env_prod}"
+        puts_ok
       end
 
       desc "Clears all query cache for a entity manager"
       task :clear_query do
-        puts "--> Clearing Doctrine query cache".green
+        pretty_print "--> Clearing Doctrine query cache"
 
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-query --env=#{symfony_env_prod}"
+        puts_ok
       end
 
       desc "Clears result cache for a entity manager"
       task :clear_result do
-        puts "--> Clearing Doctrine result cache".green
+        pretty_print "--> Clearing Doctrine result cache"
 
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-result --env=#{symfony_env_prod}"
+        puts_ok
       end
     end
 
     namespace :database do
       desc "Creates the configured databases"
       task :create do
-        puts "--> Creating databases".green
+        pretty_print "--> Creating databases"
 
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:create --env=#{symfony_env_prod}"
+        puts_ok
       end
 
       desc "Drops the configured databases"
       task :drop do
-        puts "--> Dropping databases".green
+        pretty_print "--> Dropping databases"
 
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:drop --env=#{symfony_env_prod}"
+        puts_ok
       end
     end
 
@@ -67,7 +72,7 @@ namespace :symfony do
         if currentVersion == nil
           raise "Could not find current database migration version"
         end
-        puts "-->     Current database version: #{currentVersion}"
+        puts "    Current database version: #{currentVersion}"
 
         on_rollback {
           if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database back to version #{currentVersion}? (y/N)")
@@ -104,9 +109,10 @@ namespace :symfony do
   namespace :init do
     desc "Mounts ACL tables in the database"
     task :acl do
-      puts "--> Mounting Doctrine ACL tables".green
+      pretty_print "--> Mounting Doctrine ACL tables"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_console} init:acl --env=#{symfony_env_prod}"
+      puts_ok
     end
   end
 end

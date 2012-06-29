@@ -81,9 +81,20 @@ end
 # Be less verbose by default
 logger.level = Logger::IMPORTANT
 
-def pretty_puts(msg)
-  msg << '.' * (60 - msg.size)
-  puts msg.green
+STDOUT.sync
+def pretty_print(msg)
+  if logger.level == Logger::IMPORTANT
+    msg << '.' * (55 - msg.size)
+    print msg
+  else
+    puts msg.green
+  end
+end
+
+def puts_ok
+  if logger.level == Logger::IMPORTANT
+    puts '✔'.green
+  end
 end
 
 # Overrided Capistrano tasks
@@ -91,17 +102,19 @@ namespace :deploy do
   desc "Symlinks static directories and static files that need to remain between deployments"
   task :share_childs do
     if shared_children
-      puts "--> Creating symlinks for shared directories".green
+      pretty_print "--> Creating symlinks for shared directories"
 
       shared_children.each do |link|
         run "mkdir -p #{shared_path}/#{link}"
         run "if [ -d #{release_path}/#{link} ] ; then rm -rf #{release_path}/#{link}; fi"
         run "ln -nfs #{shared_path}/#{link} #{release_path}/#{link}"
       end
+
+      puts_ok
     end
 
     if shared_files
-      puts "--> Creating symlinks for shared files".green
+      pretty_print "--> Creating symlinks for shared files"
 
       shared_files.each do |link|
         link_dir = File.dirname("#{shared_path}/#{link}")
@@ -109,6 +122,8 @@ namespace :deploy do
         run "touch #{shared_path}/#{link}"
         run "ln -nfs #{shared_path}/#{link} #{release_path}/#{link}"
       end
+
+      puts_ok
     end
   end
 
@@ -116,11 +131,13 @@ namespace :deploy do
   task :finalize_update, :except => { :no_release => true } do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
 
-    puts "--> Creating cache directory".green
+    pretty_print "--> Creating cache directory"
 
     run "if [ -d #{latest_release}/#{cache_path} ] ; then rm -rf #{latest_release}/#{cache_path}; fi"
     run "mkdir -p #{latest_release}/#{cache_path} && chmod -R 0777 #{latest_release}/#{cache_path}"
     run "chmod -R g+w #{latest_release}/#{cache_path}"
+
+    puts_ok
 
     share_childs
 
@@ -128,12 +145,13 @@ namespace :deploy do
       stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
       asset_paths = asset_children.map { |p| "#{latest_release}/#{p}" }.join(" ")
 
-      puts "--> Normalizing asset timestamps".green
-
       if asset_paths.chomp.empty?
         puts "    No asset paths found, skipped".yellow
       else
+        pretty_print "--> Normalizing asset timestamps"
+
         run "find #{asset_paths} -exec touch -t #{stamp} {} ';'; true", :env => { "TZ" => "UTC" }
+        puts_ok
       end
     end
   end
@@ -202,9 +220,15 @@ after "deploy:finalize_update" do
 end
 
 before "deploy:update_code" do
-  puts "--> Updating code base with #{deploy_via} strategy".green
+  msg = "--> Updating code base with #{deploy_via} strategy"
+
+  if logger.level == Logger::IMPORTANT
+    puts msg
+  else
+    puts.green
+  end
 end
 
 after "deploy:create_symlink" do
-  puts "--> Deployed!".green
+  puts "--> Successfully deployed!".green
 end

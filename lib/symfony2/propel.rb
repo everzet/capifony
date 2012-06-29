@@ -3,12 +3,18 @@ namespace :symfony do
     namespace :database do
       desc "Creates the configured databases"
       task :create do
+        pretty_print "--> Creating databases"
+
         run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:database:create --env=#{symfony_env_prod}"
+        puts_ok
       end
 
       desc "Drops the configured databases"
       task :drop do
+        pretty_print "--> Dropping databases"
+
         run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:database:drop --env=#{symfony_env_prod}"
+        puts_ok
       end
     end
 
@@ -20,7 +26,10 @@ namespace :symfony do
           command = "propel:build-model"
         end
 
+        pretty_print "--> Generating Propel classes"
+
         run "cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --env=#{symfony_env_prod}"
+        puts_ok
       end
 
       desc "Builds SQL statements"
@@ -30,12 +39,18 @@ namespace :symfony do
           command = "propel:build-sql"
         end
 
+        pretty_print "--> Generating Propel SQL"
+
         run "cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --env=#{symfony_env_prod}"
+        puts_ok
       end
 
       desc "Builds the Model classes, SQL statements and insert SQL"
       task :all_and_load do
+        pretty_print "--> Setting up Propel (classes, SQL)"
+
         run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:build --insert-sql --env=#{symfony_env_prod}"
+        puts_ok
       end
 
       desc "Generates ACLs models"

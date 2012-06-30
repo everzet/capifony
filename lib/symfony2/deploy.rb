@@ -1,5 +1,39 @@
 # Overrided Capistrano tasks
 namespace :deploy do
+  desc <<-DESC
+    Sets permissions for writable_dirs folders as described in the Symfony documentation
+    (http://symfony.com/doc/master/book/installation.html#configuration-and-setup)
+  DESC
+  task :set_permissions, :roles => :app do
+    if writable_dirs && permission_method
+      dirs = []
+
+      writable_dirs.each do |link|
+        if shared_children && shared_children.include?(link)
+          absolute_link = shared_path + "/" + link
+        else
+          absolute_link = latest_release + "/" + link
+        end
+
+        dirs << absolute_link
+      end
+
+      methods = {
+        :chmod => "#{try_sudo} chmod +a \"#{webserver_user} allow delete,write,append,file_inherit,directory_inherit\" %s",
+        :acl   => "#{try_sudo} setfacl -dR -m u:#{webserver_user}:rwx %s",
+        :chown => "#{try_sudo} chown #{webserver_user} %s"
+      }
+
+      # TODO: Automatically detect usable permission system?
+      if methods[permission_method]
+        # TODO: Check owner before executing "chown method" or leave the denied permission error ?
+        run sprintf(methods[permission_method], dirs.join(" "))
+      else
+        puts "    Permission method '#{permission_method}' does not exist."
+      end
+    end
+  end
+
   desc "Symlinks static directories and static files that need to remain between deployments"
   task :share_childs, :except => { :no_release => true } do
     if shared_children

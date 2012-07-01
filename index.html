@@ -178,6 +178,11 @@ set :deploy_via, :rsync_with_remote_cache</pre>
             In a symfony 1.x application, for example, Capistrano symlinks your <code>log</code> &amp; <code>web/uploads</code> directories from your app
             to the directories in the shared folder so that it doesn’t get erased when you deploy a new version of your code.
         </p>
+        <p>
+            To quickly setup a new server, you can do:
+        </p>
+        <pre>
+<span class="prompt">$&gt;</span> cap HOSTS=new.server.com deploy:setup</pre>
     </div>
 
     <div class="step">

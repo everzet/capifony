@@ -15,14 +15,24 @@ def prompt_with_default(var, default, &block)
 end
 
 namespace :deploy do
-  desc "Overwrite the start task because symfony doesn't need it."
-  task :start do ; end
+  desc <<-DESC
+    Blank task exists as a hook into which to install your own environment \
+    specific behaviour.
+  DESC
+  task :start, :roles => :app do
+    # Empty Task to overload with your platform specifics
+  end
+
+  desc <<-DESC
+    Blank task exists as a hook into which to install your own environment \
+    specific behaviour.
+  DESC
+  task :stop, :roles => :app do
+    # Empty Task to overload with your platform specifics
+  end
 
   desc "Overwrite the restart task because symfony doesn't need it."
   task :restart do ; end
-
-  desc "Overwrite the stop task because symfony doesn't need it."
-  task :stop do ; end
 
   desc <<-DESC
     Prepares one or more servers for deployment. Before you can use any \

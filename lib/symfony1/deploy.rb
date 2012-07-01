@@ -49,7 +49,7 @@ namespace :deploy do
   desc "Deploy the application and run the test suite."
   task :testall do
     update_code
-    symlink
+    create_symlink
     symfony.orm.build_db_and_load
     symfony.tests.all
   end

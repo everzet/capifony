@@ -18,13 +18,14 @@
         <p class="intro">
             <a href="https://github.com/capistrano/capistrano">Capistrano</a> is an open source tool for running scripts on multiple servers.
             It’s primary use is for easily deploying applications. While it was built specifically for deploying <a href="http://rubyonrails.org/">Rails</a> apps,
-            it’s pretty simple to customize it to deploy other types of applications. This project is a deployment recipes collection that works with both
-            <a href="http://www.symfony-project.org/">symfony</a> and <a href="http://symfony.com/">Symfony2</a> applications.
+            it’s pretty simple to customize it to deploy other types of applications.
+            <br /><strong>capifony</strong> is a deployment recipes collection that works with both <a href="http://www.symfony-project.org/">symfony</a> and
+            <a href="http://symfony.com/">Symfony2</a> applications.
         </p>
     </div>
 
     <div class="step">
-        <h2>1. Install script</h2>
+        <h2 id="install_script"><a href="#install_script">1. Install script</a></h2>
         <p>
             First, install <code>capifony</code> itself with <a href="http://rubygems.org/">RubyGems</a>:
         </p>
@@ -33,19 +34,19 @@
     </div>
 
     <div class="step">
-        <h2>2. Setup project</h2>
+        <h2 id="setup_projects"><a href="#setup_projects">2. Setup project</a></h2>
         <p>Setup initial deployment configuration for your project:</p>
         <pre>
 <span class="prompt">$&gt;</span> cd path/to/your/project
 <span class="prompt">$&gt;</span> capifony .</pre>
         <p>
-            This will create a <code>Capfile</code> in your project root &amp; a <code>deploy.rb</code> config file in <code>config/</code> (for symfony 1.x projects)
+            This will create a <code>Capfile</code> in your project root, and a <code>deploy.rb</code> config file in <code>config/</code> (for symfony 1.x projects)
             or in <code>app/config/</code> (for Symfony2 projects).
         </p>
     </div>
 
     <div class="step">
-        <h2>3. Configure</h2>
+        <h2 id="configure"><a href="#configure">3. Configure</a></h2>
         <p>
             Fill up your <code>config/deploy.rb</code> (or <code>app/config/deploy.rb</code>) with your server connection data.
             But first, you must choose your deployment strategy.
@@ -144,7 +145,7 @@ set :deploy_via, :rsync_with_remote_cache</pre>
     </div>
 
     <div class="step">
-        <h2>4. Setup server</h2>
+        <h2 id="setup_server"><a href="#setup_server">4. Setup server</a></h2>
         <p>
             Now, you can start the deployment process! To get your server setup with the directory structure that Capistrano expects,
             <code>cd</code> to your local project directory and run:
@@ -180,7 +181,7 @@ set :deploy_via, :rsync_with_remote_cache</pre>
     </div>
 
     <div class="step">
-        <h2>5. Deploy!</h2>
+        <h2 id="deploy"><a href="#deploy">5. Deploy!</a></h2>
         <p>
             To deploy your application, simply run:
         </p>
@@ -198,8 +199,7 @@ set :deploy_via, :rsync_with_remote_cache</pre>
     </div>
 
     <div class="step">
-        <h2>Symfony2 Deployment</h2>
-
+        <h2 id="symfony2_deployment"><a href="#symfony2_deployment">Symfony2 Deployment</a></h2>
         <p>
             If you're deploying a Symfony2 application, then this section is probably for you. This section explains how to configure capifony to deploy
             an application that uses the <code>bin/vendors</code> file to manage vendor libraries and the <code>app/config/parameters.yml</code>
@@ -253,52 +253,51 @@ set :update_vendors, true</pre>
     </div>
 
     <div class="step">
-        <h2>Configuration Reference</h2>
+        <h2 id="configuration_reference"><a href="#configuration_reference">Configuration Reference</a></h2>
+        <p>Capifony is highly configurable, and any option that exists for capistrano also exists for capifony</p>
 
-            <p>Capifony is highly configurable, and any option that exists for capistrano also exists for capifony</p>
-
-            <p>
-                By default, capifony will ssh with your current system user, but you can change this behavior with <code>set :user</code> parameter:
-            </p>
-            <pre>
+        <p>
+            By default, capifony will ssh with your current system user, but you can change this behavior with <code>set :user</code> parameter:
+        </p>
+        <pre>
 set :user, "deployer"</pre>
-            <p>
-                If you’re using your own private keys for git, you might want to tell Capistrano to use agent forwarding (which means that the production server uses your local keys to pull from git):
-            </p>
-            <pre>
+        <p>
+            If you’re using your own private keys for git, you might want to tell Capistrano to use agent forwarding (which means that the production server uses your local keys to pull from git):
+        </p>
+        <pre>
 ssh_options[:forward_agent] = true</pre>
-            <p>
-                You can also tell cap the exact branch to pull from during deployment:
-            </p>
-            <pre>
+        <p>
+            You can also tell cap the exact branch to pull from during deployment:
+        </p>
+        <pre>
 set :branch, "v0.2.0"</pre>
-            <p>
-                If you’re using git submodules, you must tell cap to fetch them:
-            </p>
-            <pre>
+        <p>
+            If you’re using git submodules, you must tell cap to fetch them:
+        </p>
+        <pre>
 set :git_enable_submodules, 1</pre>
-            <p>
-                If you connect to your production server using a non-traditional port, set the port manually:
-            </p>
-            <pre>
+        <p>
+            If you connect to your production server using a non-traditional port, set the port manually:
+        </p>
+        <pre>
 ssh_options[:port] = "22123"</pre>
-            <p>If you are not allowed sudo ability on your host you can use the following configuration:</p>
-            <pre>
+        <p>If you are not allowed sudo ability on your host you can use the following configuration:</p>
+        <pre>
 set :use_sudo, false</pre>
-            <p>If your host complains about the entire project being group-writable, add the following configuration:</p>
-            <pre>
+        <p>If your host complains about the entire project being group-writable, add the following configuration:</p>
+        <pre>
 set :group_writable, false</pre>
-            <p>
-                You can use the <code>cap deploy:cleanup</code> task to delete old releases on the server. By default, Capifony will keep the last 5 releases.
-                You can choose to keep a different number of releases by setting the <code>keep_releases</code> parameter:
-            </p>
-            <pre>
+        <p>
+            You can use the <code>cap deploy:cleanup</code> task to delete old releases on the server. By default, Capifony will keep the last 5 releases.
+            You can choose to keep a different number of releases by setting the <code>keep_releases</code> parameter:
+        </p>
+        <pre>
 set :keep_releases, 3</pre>
-            <p>
-                Since capifony 2.1.8, the verbosity has been reduced, and human readable messages are printed, so that you can easily follow
-                the deployment process. If you want to change this behavior, configure the logger in your <code>deploy.rb</code> file:
-            </p>
-            <pre>
+        <p>
+            Since capifony 2.1.8, the verbosity has been reduced, and human readable messages are printed, so that you can easily follow
+            the deployment process. If you want to change this behavior, configure the logger in your <code>deploy.rb</code> file:
+        </p>
+        <pre>
 # IMPORTANT = 0
 # INFO      = 1
 # DEBUG     = 2
@@ -306,60 +305,60 @@ set :keep_releases, 3</pre>
 # MAX_LEVEL = 3
 config.logger = Logger::MAX_LEVEL</pre>
 
-            <p></p>
+        <p></p>
 
-            <h3>Symfony configuration parameters</h3>
-            <p>
-                All symfony tasks (both <strong>symfony 1.x</strong> and <strong>Symfony2</strong>) run using the default <code>php</code>
-                binary on the production server. You can change this via:
-            </p>
-            <pre>
+        <h3>Symfony configuration parameters</h3>
+        <p>
+            All symfony tasks (both <strong>symfony 1.x</strong> and <strong>Symfony2</strong>) run using the default <code>php</code>
+            binary on the production server. You can change this via:
+        </p>
+        <pre>
 set :php_bin, "/path/to/php"</pre>
-            <p>
-                All symfony tasks (both <strong>symfony 1.x</strong> and <strong>Symfony2</strong>) also run inside the <code>prod</code>
-                environment on production server. You can change this via:
-            </p>
-            <pre>
+        <p>
+            All symfony tasks (both <strong>symfony 1.x</strong> and <strong>Symfony2</strong>) also run inside the <code>prod</code>
+            environment on production server. You can change this via:
+        </p>
+        <pre>
 set :symfony_env_prod, "staging"</pre>
-            <p>
-                By default, capifony will try to configure your <code>config/databases.yml</code> on every <strong>symfony 1.x</strong>
-                project deployment (if it's not present) on production. You can turn this behavior off with:
-            </p>
-            <pre>
+        <p>
+            By default, capifony will try to configure your <code>config/databases.yml</code> on every <strong>symfony 1.x</strong>
+            project deployment (if it's not present) on production. You can turn this behavior off with:
+        </p>
+        <pre>
 set :use_orm, false</pre>
-            <p>
-                In Symfony2, you can choose the ORM you are using (Doctrine, or Propel). The default ORM is Doctrine.
-            </p>
-            <pre>
+        <p>
+            In Symfony2, you can choose the ORM you are using (Doctrine, or Propel). The default ORM is Doctrine.
+        </p>
+        <pre>
 set :model_manager, "propel"</pre>
 
-            <p>
-                If you want to use a shared symfony library instead of one bundled inside a <strong>symfony 1.x</strong> project, define the path to it with:
-            </p>
-            <pre>
+        <p>
+            If you want to use a shared symfony library instead of one bundled inside a <strong>symfony 1.x</strong> project, define the path to it with:
+        </p>
+        <pre>
 set :symfony_lib, "/path/to/symfony"</pre>
-            <p>
-                If your <code>app</code> or <code>web</code> paths in <strong>Symfony2</strong> differ from default the default paths, you can specify them with:
-            </p>
-            <pre>
+        <p>
+            If your <code>app</code> or <code>web</code> paths in <strong>Symfony2</strong> differ from default the default paths, you can specify them with:
+        </p>
+        <pre>
 set :app_path, "my_app"
 set :web_path, "my_web"</pre>
-            <p>
-                If you use <strong>AsseticBundle</strong> with <strong>Symfony2</strong>, then you probably want to dump assets on every deploy:
-            </p>
-            <pre>
+        <p>
+            If you use <strong>AsseticBundle</strong> with <strong>Symfony2</strong>, then you probably want to dump assets on every deploy:
+        </p>
+        <pre>
 set :dump_assetic_assets, true</pre>
 
-            <p>
-                If you are working with a continuous process, you may want to automate everything.
-                You can turn off the interactive mode by setting the following parameter to <code>false</code>:
-            </p>
-            <pre>
+        <p>
+            If you are working with a continuous process, you may want to automate everything.
+            You can turn off the interactive mode by setting the following parameter to <code>false</code>:
+        </p>
+        <pre>
 set :interactive_mode, false</pre>
     </div>
 
     <div class="step">
-        <h2>Other Features</h2>
+        <h2 id="other_features"><a href="#other_features">Other Features</a></h2>
 
         <h3>Databases</h3>
         <p>If you need to dump remote database, and download this dump to local <code>backups/</code> folder, run:</p>
@@ -436,7 +435,7 @@ cap -T</pre>
     </div>
 
     <div class="step">
-        <h2>Known issues</h2>
+        <h2 id="known_issues"><a href="#known_issues">Known issues</a></h2>
 
         <p>
             If you get the following error message <code>sudo : no tty present and no askpass program specified</code>, add this parameter:

@@ -21,18 +21,24 @@ def puts_ok
   end
 end
 
+$pretty_errors_defined = false
+
 def pretty_errors
-  class << $stderr
-    @@firstLine = true
-    alias _write write
+  if !$pretty_errors_defined
+    $pretty_errors_defined = true
 
-    def write(s)
-      if @@firstLine
-        s = '✘' << "\n" << s
-        @@firstLine = false
+    class << $stderr
+      @@firstLine = true
+      alias _write write
+
+      def write(s)
+        if @@firstLine
+          s = '✘' << "\n" << s
+          @@firstLine = false
+        end
+
+        _write(s.red)
       end
-
-      _write(s.red)
     end
   end
 end

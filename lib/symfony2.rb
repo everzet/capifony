@@ -9,6 +9,8 @@ load 'symfony2/propel'
 load 'symfony2/symfony'
 load 'symfony2/web'
 
+require 'yaml'
+
 # Symfony application path
 set :app_path,              "app"
 

@@ -57,6 +57,15 @@ set :shared_children,       [log_path, web_path + "/uploads"]
 # Asset folders (that need to be timestamped)
 set :asset_children,        [web_path + "/css", web_path + "/images", web_path + "/js"]
 
+# Dirs that need to be writable by the HTTP Server (i.e. cache, log dirs)
+set :server_writable_dirs,  [log_path, cache_path]
+
+# Name used by the HTTP Server (i.e. www-data for Apache)
+set :server_user,           "www-data"
+
+# Method used to set permissions (:chmod, :acl, or :chown)
+set :permission_method,     false
+
 # Model manager: (doctrine, propel)
 set :model_manager,         "doctrine"
 
@@ -79,6 +88,38 @@ end
 
 # Overrided Capistrano tasks
 namespace :deploy do
+  desc "Sets permissions for server_writable_dirs folders"
+  task :set_permissions, :roles => :app do
+    if server_writable_dirs && permission_method
+      dirs = []
+      
+      server_writable_dirs.each do |link|
+        if shared_children && shared_children.include?(link)
+          absolute_link = shared_path + "/" + link
+        else
+          absolute_link = latest_release + "/" + link
+        end
+        
+        dirs << absolute_link
+      end
+      
+      # TODO: add prepend umask to file method?
+      methods = {
+        :chmod => "#{try_sudo} chmod +a \"#{server_user} allow delete,write,append,file_inherit,directory_inherit\" %s",
+        :acl   => "#{try_sudo} setfacl -dR -m u:#{server_user}:rwx %s",
+        :chown => "#{try_sudo} chown #{server_user} %s"
+      }
+      
+      # TODO: Automaticly detect usable permission system?
+      if methods[permission_method]
+        # TODO: Check owner before executing "chown method" or leave the denied permission error ?
+        run sprintf(methods[permission_method], dirs.join(" "))
+      else
+        puts "    Permission method '#{permission_method}' does not exist."
+      end
+    end
+  end
+  
   desc "Symlinks static directories and static files that need to remain between deployments"
   task :share_childs do
     if shared_children
@@ -120,6 +161,7 @@ namespace :deploy do
     puts_ok
 
     share_childs
+    set_permissions
 
     if fetch(:normalize_asset_timestamps, true)
       stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")

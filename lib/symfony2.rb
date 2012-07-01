@@ -23,6 +23,15 @@ set :log_path,              app_path + "/logs"
 # Symfony cache path
 set :cache_path,            app_path + "/cache"
 
+# Symfony config path
+set :config_path,           app_path + "/config"
+
+# Parameters dir
+set :parameters_dir,        config_path + "/parameters"
+
+# Parameters file to automatically deploy
+set :parameters_file,       false
+
 # Symfony bin vendors
 set :symfony_vendors,       "bin/vendors"
 
@@ -79,6 +88,23 @@ end
 
 # Overrided Capistrano tasks
 namespace :deploy do
+  desc "Automatically upload parameters file"
+  task :upload_parameters do
+    origin_file = parameters_dir + "/" + parameters_file if parameters_dir && parameters_file
+    if origin_file && File.exists?(origin_file)
+      ext = File.extname(parameters_file)
+      relative_path = config_path + "/parameters" + ext
+
+      destination_file = latest_release + "/" + relative_path
+      if shared_files && shared_files.include?(relative_path)
+        destination_file = shared_path + "/" + relative_path
+      end
+      run "#{try_sudo} mkdir -p #{File.dirname(destination_file)}"
+
+      top.upload(origin_file, destination_file)
+    end
+  end
+
   desc "Symlinks static directories and static files that need to remain between deployments"
   task :share_childs do
     if shared_children
@@ -119,6 +145,7 @@ namespace :deploy do
 
     puts_ok
 
+    upload_parameters
     share_childs
 
     if fetch(:normalize_asset_timestamps, true)

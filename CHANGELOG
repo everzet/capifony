@@ -1,5 +1,12 @@
 == 2.1.8 / ???
 
+* added red color for error messages.
+* added commented lines in the generated deploy.rb file to set verbosity as
+  before.
+* BC break: verbose mode is disabled by default (log level = IMPORTANT), so
+  that it's more readable.
+* added dependency to 'colored'.
+* added human readable messages in deploy related tasks.
 * removed unexistent Doctrine commands
 
 == 2.1.7 / June 21, 2012

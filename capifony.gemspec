@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.executables << "capifony"
 
   spec.add_dependency 'capistrano', ">= 2.5.10"
+  spec.add_dependency 'colored', ">= 1.2.0"
 
   spec.authors = [ "Konstantin Kudryashov", "William Durand" ]
   spec.email = [ "ever.zet@gmail.com", "william.durand1@gmail.com" ]

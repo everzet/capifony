@@ -1,5 +1,3 @@
-require 'yaml'
-
 load Gem.find_files('capifony.rb').last.to_s
 load_paths.push File.expand_path('../', __FILE__)
 
@@ -10,6 +8,8 @@ load 'symfony2/propel'
 load 'symfony1/shared'
 load 'symfony1/symfony'
 load 'symfony1/web'
+
+require 'yaml'
 
 # Dirs that need to remain the same between deploys (shared dirs)
 set :shared_children,   %w(log web/uploads)

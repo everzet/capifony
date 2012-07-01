@@ -288,9 +288,27 @@ set :use_sudo, false</pre>
             <p>If your host complains about the entire project being group-writable, add the following configuration:</p>
             <pre>
 set :group_writable, false</pre>
+            <p>
+                You can use the <code>cap deploy:cleanup</code> task to delete old releases on the server. By default, Capifony will keep the last 5 releases.
+                You can choose to keep a different number of releases by setting the <code>keep_releases</code> parameter:
+            </p>
+            <pre>
+set :keep_releases, 3</pre>
+            <p>
+                Since capifony 2.1.8, the verbosity has been reduced, and human readable messages are printed, so that you can easily follow
+                the deployment process. If you want to change this behavior, configure the logger in your <code>deploy.rb</code> file:
+            </p>
+            <pre>
+# IMPORTANT = 0
+# INFO      = 1
+# DEBUG     = 2
+# TRACE     = 3
+# MAX_LEVEL = 3
+config.logger = Logger::MAX_LEVEL</pre>
+
             <p></p>
 
-            <h3>symfony configuration parameters</h3>
+            <h3>Symfony configuration parameters</h3>
             <p>
                 All symfony tasks (both <strong>symfony 1.x</strong> and <strong>Symfony2</strong>) run using the default <code>php</code>
                 binary on the production server. You can change this via:
@@ -338,24 +356,6 @@ set :dump_assetic_assets, true</pre>
             </p>
             <pre>
 set :interactive_mode, false</pre>
-
-            <p>
-                You can use the <code>cap deploy:cleanup</code> task to delete old releases on the server. By default, Capifony will keep the last 5 releases.
-                You can choose to keep a different number of releases by setting the <code>keep_releases</code> parameter:
-            </p>
-            <pre>
-set :keep_releases, 3</pre>
-            <p>
-                Since capifony 2.1.8, the verbosity has been reduced, and human readable messages are printed, so that you can easily follow
-                the deployment process. If you want to change this behavior, configure the logger in your <code>deploy.rb</code> file:
-            </p>
-            <pre>
-# IMPORTANT = 0
-# INFO      = 1
-# DEBUG     = 2
-# TRACE     = 3
-# MAX_LEVEL = 3
-config.logger = Logger::MAX_LEVEL</pre>
     </div>
 
     <div class="step">

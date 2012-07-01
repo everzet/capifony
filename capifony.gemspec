@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.bindir = "bin"
   spec.executables << "capifony"
 
-  spec.add_dependency 'capistrano', ">= 2.5.10"
+  spec.add_dependency 'capistrano', ">= 2.11.0"
   spec.add_dependency 'colored', ">= 1.2.0"
 
   spec.authors = [ "Konstantin Kudryashov", "William Durand" ]

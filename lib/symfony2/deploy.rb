@@ -69,7 +69,7 @@ namespace :deploy do
   desc "Deploys the application and runs the test suite"
   task :testall do
     update_code
-    symlink
+    create_symlink
     run "cd #{latest_release} && phpunit -c #{app_path} src"
   end
 

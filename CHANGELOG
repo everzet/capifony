@@ -1,5 +1,12 @@
-== 2.1.8 / ???
+== 2.1.9 / ???
 
+n/a
+
+== 2.1.8 / July 2, 2012
+
+* bugfixes
+* fix database tasks to use role :db
+* BC break: capifony now requires Capistrano >= 2.11.0
 * added red color for error messages.
 * added commented lines in the generated deploy.rb file to set verbosity as
   before.

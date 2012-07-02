@@ -3,8 +3,8 @@ load_paths.push File.expand_path('../', __FILE__)
 
 load 'symfony1/database'
 load 'symfony1/deploy'
-load 'symfony2/doctrine'
-load 'symfony2/propel'
+load 'symfony1/doctrine'
+load 'symfony1/propel'
 load 'symfony1/shared'
 load 'symfony1/symfony'
 load 'symfony1/web'

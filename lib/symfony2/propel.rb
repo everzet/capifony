@@ -2,7 +2,7 @@ namespace :symfony do
   namespace :propel do
     namespace :database do
       desc "Creates the configured databases"
-      task :create do
+      task :create, :roles => :db, :only => { :primary => true } do
         pretty_print "--> Creating databases"
 
         run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:database:create --env=#{symfony_env_prod}"
@@ -10,7 +10,7 @@ namespace :symfony do
       end
 
       desc "Drops the configured databases"
-      task :drop do
+      task :drop, :roles => :db, :only => { :primary => true } do
         pretty_print "--> Dropping databases"
 
         run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:database:drop --env=#{symfony_env_prod}"
@@ -45,6 +45,19 @@ namespace :symfony do
         puts_ok
       end
 
+      desc "Inserts SQL statements"
+      task :sql_load, :roles => :db, :only => { :primary => true } do
+        command = "propel:sql:insert"
+        if /2\.0\.[0-9]+.*/ =~ symfony_version
+          command = "propel:insert-sql"
+        end
+
+        pretty_print "--> Inserting Propel SQL"
+
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --force --env=#{symfony_env_prod}"
+        puts_ok
+      end
+
       desc "Builds the Model classes, SQL statements and insert SQL"
       task :all_and_load do
         pretty_print "--> Setting up Propel (classes, SQL)"
@@ -59,7 +72,7 @@ namespace :symfony do
       end
 
       desc "Inserts propel ACL tables"
-      task :acl_load do
+      task :acl_load, :roles => :db, :only => { :primary => true } do
         run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:acl:init --env=#{symfony_env_prod} --force"
       end
     end

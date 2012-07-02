@@ -28,7 +28,7 @@ namespace :symfony do
 
     namespace :database do
       desc "Creates the configured databases"
-      task :create do
+      task :create, :roles => :db, :only => { :primary => true } do
         pretty_print "--> Creating databases"
 
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:create --env=#{symfony_env_prod}"
@@ -36,7 +36,7 @@ namespace :symfony do
       end
 
       desc "Drops the configured databases"
-      task :drop do
+      task :drop, :roles => :db, :only => { :primary => true } do
         pretty_print "--> Dropping databases"
 
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:drop --env=#{symfony_env_prod}"
@@ -58,7 +58,7 @@ namespace :symfony do
 
     namespace :migrations do
       desc "Executes a migration to a specified version or the latest available version"
-      task :migrate do
+      task :migrate, :roles => :db, :only => { :primary => true } do
         currentVersion = nil
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:status --env=#{symfony_env_prod}" do |ch, stream, out|
           if stream == :out and out =~ /Current Version:[^$]+\(([\w]+)\)/
@@ -108,7 +108,7 @@ namespace :symfony do
 
   namespace :init do
     desc "Mounts ACL tables in the database"
-    task :acl do
+    task :acl, :roles => :db, :only => { :primary => true } do
       pretty_print "--> Mounting Doctrine ACL tables"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_console} init:acl --env=#{symfony_env_prod}"

@@ -270,7 +270,7 @@ set :user, "deployer"</pre>
             If you’re using your own private keys for git, you might want to tell Capistrano to use agent forwarding (which means that the production server uses your local keys to pull from git):
         </p>
         <pre>
-ssh_options[:forward_agent] = true</pre>
+set :ssh_options, {:forward_agent => true}</pre>
         <p>
             You can also tell cap the exact branch to pull from during deployment:
         </p>

@@ -19,7 +19,7 @@ namespace :symfony do
   namespace :assetic do
     desc "Dumps all assets to the filesystem"
     task :dump do
-      puts "--> Dumping all assets to the filesystem"
+      pretty_print "--> Dumping all assets to the filesystem"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump --env=#{symfony_env_prod} --no-debug"
       puts_ok

@@ -8,7 +8,7 @@ namespace :symfony do
 
   namespace :assets do
     desc "Installs bundle's assets"
-    task :install do
+    task :install, :except => { :no_release => true } do
       pretty_print "--> Installing bundle's assets"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{web_path} --env=#{symfony_env_prod}"
@@ -18,7 +18,7 @@ namespace :symfony do
 
   namespace :assetic do
     desc "Dumps all assets to the filesystem"
-    task :dump do
+    task :dump, :except => { :no_release => true } do
       pretty_print "--> Dumping all assets to the filesystem"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump --env=#{symfony_env_prod} --no-debug"
@@ -28,7 +28,7 @@ namespace :symfony do
 
   namespace :vendors do
     desc "Runs the bin/vendors script to install the vendors (fast if already installed)"
-    task :install do
+    task :install, :except => { :no_release => true } do
       pretty_print "--> Installing vendors"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_vendors} install"
@@ -36,7 +36,7 @@ namespace :symfony do
     end
 
     desc "Runs the bin/vendors script to reinstall the vendors"
-    task :reinstall do
+    task :reinstall, :except => { :no_release => true } do
       pretty_print "--> Reinstalling vendors"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_vendors} install --reinstall"
@@ -44,7 +44,7 @@ namespace :symfony do
     end
 
     desc "Runs the bin/vendors script to upgrade the vendors"
-    task :upgrade do
+    task :upgrade, :except => { :no_release => true } do
       pretty_print "--> Upgrading vendors"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_vendors} update"
@@ -54,7 +54,7 @@ namespace :symfony do
 
   namespace :bootstrap do
     desc "Runs the bin/build_bootstrap script"
-    task :build do
+    task :build, :except => { :no_release => true } do
       pretty_print "--> Building bootstrap file"
 
       run "cd #{latest_release} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} || echo '#{build_bootstrap} not found, skipped'"
@@ -64,7 +64,7 @@ namespace :symfony do
 
   namespace :composer do
     desc "Gets composer and installs it"
-    task :get do
+    task :get, :except => { :no_release => true } do
         pretty_print "--> Downloading Composer"
 
         run "cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}"
@@ -72,7 +72,7 @@ namespace :symfony do
     end
 
     desc "Runs composer to install vendors from composer.lock file"
-    task :install do
+    task :install, :except => { :no_release => true } do
       if !File.exist?("#{latest_release}/composer.phar")
         symfony.composer.get
       end
@@ -84,7 +84,7 @@ namespace :symfony do
     end
 
     desc "Runs composer to update vendors, and composer.lock file"
-    task :update do
+    task :update, :except => { :no_release => true } do
       if !File.exist?("#{latest_release}/composer.phar")
         symfony.composer.get
       end
@@ -98,7 +98,7 @@ namespace :symfony do
 
   namespace :cache do
     desc "Clears cache"
-    task :clear do
+    task :clear, :except => { :no_release => true } do
       pretty_print "--> Clearing cache"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_console} cache:clear --env=#{symfony_env_prod}"
@@ -107,7 +107,7 @@ namespace :symfony do
     end
 
     desc "Warms up an empty cache"
-    task :warmup do
+    task :warmup, :except => { :no_release => true } do
       pretty_print "--> Warming up cache"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_console} cache:warmup --env=#{symfony_env_prod}"

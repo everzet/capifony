@@ -1,7 +1,7 @@
 # Overrided Capistrano tasks
 namespace :deploy do
   desc "Symlinks static directories and static files that need to remain between deployments"
-  task :share_childs do
+  task :share_childs, :except => { :no_release => true } do
     if shared_children
       pretty_print "--> Creating symlinks for shared directories"
 
@@ -67,7 +67,7 @@ namespace :deploy do
   end
 
   desc "Deploys the application and runs the test suite"
-  task :testall do
+  task :testall, :except => { :no_release => true } do
     update_code
     create_symlink
     run "cd #{latest_release} && phpunit -c #{app_path} src"

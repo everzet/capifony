@@ -51,6 +51,9 @@ set :dump_assetic_assets,   false
 # Assets install
 set :assets_install,        true
 
+# Whether to update `assets_version` in `config.yml`
+set :update_assets_version, false
+
 # Files that need to remain the same between deploys
 set :shared_files,          false
 
@@ -77,7 +80,7 @@ def load_database_config(data, env)
 end
 
 def guess_symfony_version
-  capture("cd #{latest_release} && #{php_bin} #{symfony_console} --version |cut -d \" \" -f 3")
+  capture("cd #{latest_release} && #{php_bin} #{symfony_console} --version |cut -d \" \" -f 3")
 end
 
 after "deploy:finalize_update" do
@@ -105,15 +108,19 @@ after "deploy:finalize_update" do
   end
 
   if assets_install
-    symfony.assets.install  # 2. Publish bundle assets
+    symfony.assets.install          # 2. Publish bundle assets
   end
 
   if cache_warmup
-    symfony.cache.warmup    # 3. Warmup clean cache
+    symfony.cache.warmup            # 3. Warmup clean cache
+  end
+
+  if update_assets_version
+    symfony.assets.update_version   # 4. Update `assets_version`
   end
 
   if dump_assetic_assets
-    symfony.assetic.dump    # 4. Dump assetic assets
+    symfony.assetic.dump            # 5. Dump assetic assets
   end
 end
 

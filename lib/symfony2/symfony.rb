@@ -7,6 +7,11 @@ namespace :symfony do
   end
 
   namespace :assets do
+    desc "Updates assets version (in config.yml)"
+    task :update_version, :except => { :no_release => true } do
+       run "sed -i 's/\\(assets_version: \\)\\(.*\\)$/\\1 #{real_revision}/g' #{latest_release}/app/config/config.yml"
+    end
+
     desc "Installs bundle's assets"
     task :install, :except => { :no_release => true } do
       pretty_print "--> Installing bundle's assets"

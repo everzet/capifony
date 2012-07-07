@@ -1,9 +1,12 @@
 require 'colored'
 
+STDOUT.sync
+$error = false
+$pretty_errors_defined = false
+
 # Be less verbose by default
 logger.level = Logger::IMPORTANT
 
-STDOUT.sync
 def pretty_print(msg)
   if logger.level == Logger::IMPORTANT
     pretty_errors
@@ -16,12 +19,12 @@ def pretty_print(msg)
 end
 
 def puts_ok
-  if logger.level == Logger::IMPORTANT
+  if logger.level == Logger::IMPORTANT && !$error
     puts '✔'.green
   end
-end
 
-$pretty_errors_defined = false
+  $error = false
+end
 
 def pretty_errors
   if !$pretty_errors_defined
@@ -38,6 +41,7 @@ def pretty_errors
         end
 
         _write(s.red)
+        $error = true
       end
     end
   end

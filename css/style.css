@@ -88,7 +88,7 @@ h2 {
     float:left;
     text-align:right;
     padding-right:20px;
-    width:200px;
+    width:210px;
     font-family:georgia;
     font-size:28px;
     font-weight:normal;
@@ -140,4 +140,15 @@ span.title {
 hr {
     height: 30px;
     border: 0;
+}
+
+a.anchor-link {
+    padding-left: 2px;
+    color: #EEE;
+    text-decoration: none;
+    font-size: 60%;
+}
+
+a.anchor-link:hover {
+    color: #666;
 }

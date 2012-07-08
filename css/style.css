@@ -71,10 +71,6 @@ code {
     color:#000;
 }
 
-pre .prompt {
-    color:#7a7a7a;
-}
-
 p.intro {
     font-style:italic;
 }
@@ -125,4 +121,23 @@ h3 {
 
 h2 a {
     text-decoration: none;
+}
+
+span.title {
+    font-size: 2em;
+    line-height: 1em;
+    color: #000;
+    padding-top: 5px;
+    display: block;
+    font-style: normal;
+    font-weight: bold;
+}
+
+.content {
+    margin-bottom: 30px;
+}
+
+hr {
+    height: 30px;
+    border: 0;
 }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>{{ page.title }}</title>
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link rel="stylesheet" href="/css/base_syntax.css" type="text/css">
+</head>
+
+<body>
+    <a href="http://github.com/everzet/capifony">
+        <img style="position: absolute; top: 0; left: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Fork me on GitHub" />
+    </a>
+
+    <div class="step">
+        <a id="logo" href="/">
+            <img src="/images/logo.png" alt="capifony"/>
+        </a>
+        <p class="intro">
+            <a href="https://github.com/capistrano/capistrano">Capistrano</a> is an open source tool for running scripts on multiple servers.
+            It’s primary use is for easily deploying applications. While it was built specifically for deploying <a href="http://rubyonrails.org/">Rails</a> apps,
+            it’s pretty simple to customize it to deploy other types of applications.
+            <br /><strong>capifony</strong> is a deployment recipes collection that works with both <a href="http://www.symfony-project.org/">symfony</a> and
+            <a href="http://symfony.com/">Symfony2</a> applications.
+        </p>
+    </div>
+
+    <div class="content">
+        {{ content }}
+    </div>
+
+    <p class="fork-and-edit">
+        Found a typo? Something is wrong in this documentation? Just <a href="http://github.com/everzet/capifony/edit/gh-pages{{ page.url|replace:'.html','' }}.markdown">fork and edit</a> it !
+    </p>
+
+    <a id="developedby" href="http://www.knplabs.com/en">
+        <img src="/images/developedby.png" alt="knpLabs product"/>
+    </a>
+
+    <div style="clear:both"></div>
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-7062980-15']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+</body>
+</html>

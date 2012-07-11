@@ -84,7 +84,7 @@ namespace :symfony do
 
       pretty_print "--> Installing Composer dependencies"
 
-      run "cd #{latest_release} && #{php_bin} composer.phar install -v"
+      run "cd #{latest_release} && #{php_bin} composer.phar install --no-scripts --verbose"
       puts_ok
     end
 
@@ -96,7 +96,7 @@ namespace :symfony do
 
       pretty_print "--> Updating Composer dependencies"
 
-      run "cd #{latest_release} && #{php_bin} composer.phar update -v"
+      run "cd #{latest_release} && #{php_bin} composer.phar update --no-scripts --verbose"
       puts_ok
     end
   end

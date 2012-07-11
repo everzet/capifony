@@ -261,7 +261,7 @@ If you want to see all available tasks, you can run:
 
 <hr />
 
-## Configuration Reference
+## Configuration References
 
 [Capistrano Configuration](reference/capistrano.html)
 

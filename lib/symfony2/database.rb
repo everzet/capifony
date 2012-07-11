@@ -20,7 +20,7 @@ namespace :database do
           puts data
         end
       when "pdo_pgsql", "pgsql"
-        run "pg_dump -U #{config['database_user']} #{config['database_name']} | gzip -c > #{file}" do |ch, stream, data|
+        run "pg_dump -U #{config['database_user']} #{config['database_name']} --clean | gzip -c > #{file}" do |ch, stream, data|
           puts data
         end
       end
@@ -49,7 +49,7 @@ namespace :database do
       when "pdo_mysql", "mysql"
         `mysqldump -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} > #{tmpfile}`
       when "pdo_pgsql", "pgsql"
-        `pg_dump -U #{config['database_user']} #{config['database_name']} > #{tmpfile}`
+        `pg_dump -U #{config['database_user']} #{config['database_name']} --clean > #{tmpfile}`
       end
 
       File.open(tmpfile, "r+") do |f|
@@ -88,7 +88,7 @@ namespace :database do
       when "pdo_mysql", "mysql"
         `mysql -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} < backups/#{sqlfile}`
       when "pdo_pgsql", "pgsql"
-        `psql -U #{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} < backups/#{sqlfile}`
+        `psql -U #{config['database_user']} #{config['database_name']} < backups/#{sqlfile}`
       end
       FileUtils.rm("backups/#{sqlfile}")
     end
@@ -115,7 +115,7 @@ namespace :database do
           puts data
         end
       when "pdo_pgsql", "pgsql"
-        run "psql -U #{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} < /tmp/#{sqlfile}" do |ch, stream, data|
+        run "psql -U #{config['database_user']} #{config['database_name']} < /tmp/#{sqlfile}" do |ch, stream, data|
           puts data
         end
       end

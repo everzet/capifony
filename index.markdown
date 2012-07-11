@@ -1,6 +1,6 @@
 ---
 layout: home
-title: capifony &mdash; symfony and Symfony2 deployment
+title: symfony and Symfony2 deployment
 ---
 
 ## 1. Install script
@@ -241,210 +241,7 @@ meaning you only need to configure after the initial deploy.
 
 <hr />
 
-## Configuration Reference
-
-Capistrano is highly configurable, and any option that exists for Capistrano
-also exists for capifony.
-
-By default, capifony will ssh with your current system user, but you can change
-this behavior with `set :user` parameter:
-
-{% highlight ruby %}
-set :user, "deployer"
-{% endhighlight %}
-
-If you’re using your own private keys for git, you might want to tell Capistrano
-to use agent forwarding (which means that the production server uses your local
-keys to pull from git):
-
-{% highlight ruby %}
-ssh_options[:forward_agent] = true
-{% endhighlight %}
-
-You can also tell cap the exact branch to pull from during deployment:
-
-{% highlight ruby %}
-set :branch, "v0.2.0"
-{% endhighlight %}
-
-If you’re using git submodules, you must tell cap to fetch them:
-
-{% highlight ruby %}
-set :git_enable_submodules, 1
-{% endhighlight %}
-
-If you connect to your production server using a non-traditional port,
-set the port manually:
-
-{% highlight ruby %}
-ssh_options[:port] = "22123"
-{% endhighlight %}
-
-If you are not allowed sudo ability on your host you can use the following
-configuration:
-
-{% highlight ruby %}
-set :use_sudo, false
-{% endhighlight %}
-
-If your host complains about the entire project being group-writable, add the
-following configuration:
-
-{% highlight ruby %}
-set :group_writable, false
-{% endhighlight %}
-
-You can use the `cap deploy:cleanup` task to delete old releases on the server.
-By default, Capifony will keep the last 5 releases.
-You can choose to keep a different number of releases by setting the
-`keep_releases` parameter:
-
-{% highlight ruby %}
-set :keep_releases, 3
-{% endhighlight %}
-
-Since capifony 2.1.8, the verbosity has been reduced, and human readable
-messages are printed, so that you can easily follow the deployment process.
-If you want to change this behavior, configure the logger in your `deploy.rb`
-file:
-
-{% highlight ruby %}
-# IMPORTANT = 0
-# INFO      = 1
-# DEBUG     = 2
-# TRACE     = 3
-# MAX_LEVEL = 3
-logger.level = Logger::MAX_LEVEL
-{% endhighlight %}
-
-
-### Symfony configuration parameters
-
-All symfony tasks (both **symfony 1.x** and **Symfony2**) run using the default
-`php` binary on the production server. You can change this via:
-
-{% highlight ruby %}
-set :php_bin, "/path/to/php"
-{% endhighlight %}
-
-All symfony tasks (both **symfony 1.x** and **Symfony2**) also run inside the
-`prod` environment on production server. You can change this via:
-
-{% highlight ruby %}
-set :symfony_env_prod, "staging"
-{% endhighlight %}
-
-By default, capifony will try to configure your `config/databases.yml` on every
-**symfony 1.x** project deployment (if it's not present) on production.
-You can turn this behavior off with:
-
-{% highlight ruby %}
-set :use_orm, false
-{% endhighlight %}
-
-In Symfony2, you can choose the ORM you are using (Doctrine, or Propel).
-The default ORM is Doctrine.
-
-{% highlight ruby %}
-set :model_manager, "propel"
-{% endhighlight %}
-
-If you want to use a shared symfony library instead of one bundled inside a
-**symfony 1.x** project, define the path to it with:
-
-{% highlight ruby %}
-set :symfony_lib, "/path/to/symfony"
-{% endhighlight %}
-
-If your `app` or `web` paths in **Symfony2** differ from default the default
-paths, you can specify them with:
-
-{% highlight ruby %}
-set :app_path, "my_app"
-set :web_path, "my_web"
-{% endhighlight %}
-
-If you use **AsseticBundle** with **Symfony2**, then you probably want to dump
-assets on every deploy:
-
-{% highlight ruby %}
-set :dump_assetic_assets, true
-{% endhighlight %}
-
-If you are working with a continuous process, you may want to automate everything.
-You can turn off the interactive mode by setting the following parameter to `false`:
-
-{% highlight ruby %}
-set :interactive_mode, false
-{% endhighlight %}
-
-<hr />
-
-## Other Features
-
-### Databases
-
-If you need to dump remote database, and download this dump to local `backups/`
-folder, run:
-
-    cap database:dump:remote
-
-If you need to dump local database, and put this dump to local `backups/` folder,
-run:
-
-    cap database:dump:local
-
-If you need to dump remote database, and populate this dump on local machine,
-run:
-
-    cap database:move:to_local
-
-If you need to dump local database, and populate this dump on remote server,
-run:
-
-    cap database:move:to_remote
-
-
-### Shared folders and symfony 1.x
-
-If you need to download some shared folders from remote server, run:
-
-    cap shared:{databases OR log OR uploads]:to_local
-
-If you need to upload some shared folders to remote server, run:
-
-    cap shared:{databases OR log OR uploads]:to_remote
-
-
-### Enabling/Disabling applications
-
-If you want to quickly disable your application, run:
-
-    cap deploy:web:disable
-
-It will use the `project:disable` task with symfony 1.x, or will install a
-`maintenance.html` page with Symfony2.
-
-To enable the application, just run:
-
-    cap deploy:web:enable
-
-Same here, it will use the `project:enable` task with symfony 1.x, and will
-remove the `maintenance.html` page with Symfony2.
-
-For Symfony2 users, you can customize the page by specifying the `REASON`,
-and `UNTIL` environment variables:
-
-    cap deploy:web:disable \
-    REASON="hardware upgrade" \
-    UNTIL="12pm Central Time"
-
-You can use a different template for the maintenance page by setting the
-`:maintenance_template_path` variable in your `deploy.rb` file. The template
-file should either be a plaintext or an erb file.
-
-
-### Other tasks
+## Useful Tasks
 
 If you need to deploy and run your migrations you can call:
 
@@ -464,6 +261,30 @@ If you want to see all available tasks, you can run:
 
 <hr />
 
+## Configuration Reference
+
+[Capistrano Configuration](reference/capistrano.html)
+
+[Symfony Configuration](reference/symfony.html)
+
+<hr />
+
+## Cookbook
+
+To learn more about **capifony**, you can read these recipes:
+
+[Enabling/Disabling
+applications](cookbook/enabling-disabling-applications.html)
+
+[Using the Multistage
+extension](cookbook/using-the-multistage-extension.html)
+
+[Shared folders with symfony 1.x](cookbook/shared-folders-with-symfony-1x.html)
+
+[Working with databases](cookbook/working-with-databases.html)
+
+<hr />
+
 ## Known Issues
 
 If you get the following error message `sudo : no tty present and no askpass
@@ -472,11 +293,3 @@ program specified`, add this parameter:
 {% highlight ruby %}
 default_run_options[:pty] = true
 {% endhighlight %}
-
-<hr />
-
-## Cookbook
-
-To learn more about **capifony**, you can read these recipes:
-
-* [Using the Multistage extension](cookbook/using-the-multistage-extension.html)

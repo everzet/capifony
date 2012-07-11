@@ -53,7 +53,7 @@ if symfony_version == 2
   files = {
     "Capfile" => unindent(<<-FILE),
       load 'deploy' if respond_to?(:namespace) # cap2 differentiator
-      Dir['vendor/bundles/*/*/recipes/*.rb'].each { |bundle| load(bundle) }
+      Dir['vendor/**/Resources/recipes/*.rb'].each { |bundle| load(bundle) }
       load Gem.find_files('symfony2.rb').last.to_s
       load '#{symfony_app_path}/config/deploy'
     FILE
@@ -73,7 +73,7 @@ if symfony_version == 2
 
       role :web,        domain                         # Your HTTP server, Apache/etc
       role :app,        domain                         # This may be the same as your `Web` server
-      role :db,         domain, :primary => true       # This is where Rails migrations will run
+      role :db,         domain, :primary => true       # This is where Symfony2 migrations will run
 
       set  :keep_releases,  3
 
@@ -100,7 +100,7 @@ set :scm,         :git
 
 role :web,        domain                         # Your HTTP server, Apache/etc
 role :app,        domain                         # This may be the same as your `Web` server
-role :db,         domain, :primary => true       # This is where Rails migrations will run
+role :db,         domain, :primary => true       # This is where symfony migrations will run
 
 set  :keep_releases,  3'
   }
@@ -122,4 +122,4 @@ files.each do |file, content|
   end
 end
 
-puts "[done] Symfony#{symfony_version.to_s} project capifonied!"
+puts "[done] symfony #{symfony_version.to_s} project capifonied!"

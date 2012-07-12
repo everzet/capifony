@@ -1,3 +1,7 @@
+def remote_file_exists?(full_path)
+  'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
+end
+
 namespace :symfony do
   desc "Runs custom symfony command"
   task :default do
@@ -78,7 +82,7 @@ namespace :symfony do
 
     desc "Runs composer to install vendors from composer.lock file"
     task :install, :except => { :no_release => true } do
-      if !File.exist?("#{latest_release}/composer.phar")
+      if !remote_file_exists?("#{latest_release}/composer.phar")
         symfony.composer.get
       end
 
@@ -90,7 +94,7 @@ namespace :symfony do
 
     desc "Runs composer to update vendors, and composer.lock file"
     task :update, :except => { :no_release => true } do
-      if !File.exist?("#{latest_release}/composer.phar")
+      if !remote_file_exists?("#{latest_release}/composer.phar")
         symfony.composer.get
       end
 

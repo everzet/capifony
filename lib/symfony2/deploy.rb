@@ -24,10 +24,11 @@ namespace :deploy do
         :chown => "#{try_sudo} chown #{webserver_user} %s"
       }
 
-      # TODO: Automatically detect usable permission system?
       if methods[permission_method]
-        # TODO: Check owner before executing "chown method" or leave the denied permission error ?
+        pretty_print "--> Setting permissions"
+
         run sprintf(methods[permission_method], dirs.join(" "))
+        puts_ok
       else
         puts "    Permission method '#{permission_method}' does not exist."
       end

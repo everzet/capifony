@@ -27,10 +27,23 @@ namespace :deploy do
       if methods[permission_method]
         pretty_print "--> Setting permissions"
 
-        run sprintf(methods[permission_method], dirs.join(" "))
+        if use_sudo
+          run sprintf(methods[permission_method], dirs.join(' '))
+        else if permission_method == :chown
+          puts "    You can't use chown method without sudoing"
+        else
+          dirs.each do |dir|
+            is_owner = (capture "`echo stat #{dir} -c %U`").chomp == user
+            if is_owner && permission_method != :chown
+              run sprintf(methods[permission_method], dir)
+            else
+              puts "  * #{dir} is not owned by #{user} or you are using 'chown' method without 'use_sudo'"
+            end
+          end
+        end
         puts_ok
       else
-        puts "    Permission method '#{permission_method}' does not exist."
+        puts "  * Permission method '#{permission_method}' does not exist."
       end
     end
   end

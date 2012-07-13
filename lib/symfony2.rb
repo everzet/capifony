@@ -83,6 +83,10 @@ def guess_symfony_version
   capture("cd #{latest_release} && #{php_bin} #{symfony_console} --version |cut -d \" \" -f 3")
 end
 
+def remote_file_exists?(full_path)
+  'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
+end
+
 after "deploy:finalize_update" do
   if use_composer
     if update_vendors

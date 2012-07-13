@@ -63,6 +63,15 @@ set :shared_children,       [log_path, web_path + "/uploads"]
 # Asset folders (that need to be timestamped)
 set :asset_children,        [web_path + "/css", web_path + "/images", web_path + "/js"]
 
+# Dirs that need to be writable by the HTTP Server (i.e. cache, log dirs)
+set :writable_dirs,         [log_path, cache_path]
+
+# Name used by the Web Server (i.e. www-data for Apache)
+set :webserver_user,        "www-data"
+
+# Method used to set permissions (:chmod, :acl, or :chown)
+set :permission_method,     false
+
 # Model manager: (doctrine, propel)
 set :model_manager,         "doctrine"
 

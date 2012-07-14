@@ -281,6 +281,8 @@ extension](cookbook/using-the-multistage-extension.html)
 
 [Shared folders with symfony 1.x](cookbook/shared-folders-with-symfony-1x.html)
 
+[Specifying Deployment Dependencies](cookbook/specifying-deployment-dependencies.markdown)
+
 [Working with databases](cookbook/working-with-databases.html)
 
 <hr />

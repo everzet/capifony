@@ -85,7 +85,7 @@ namespace :deploy do
       else
         pretty_print "--> Normalizing asset timestamps"
 
-        run "find #{asset_paths} -exec touch -t #{stamp} {} ';'; true", :env => { "TZ" => "UTC" }
+        run "find #{asset_paths} -exec touch -t #{stamp} {} ';' >& /dev/null || true", :env => { "TZ" => "UTC" }
         puts_ok
       end
     end

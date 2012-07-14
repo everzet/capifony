@@ -18,15 +18,15 @@ method adds rules to the `deploy:check` process:
 
 You can either add `:local` rules, or `:remote` rules.
 
-<hr />
-
-## Remote Dependencies
-
 Locally, you can check if a command is available or not, but remotely,
-Capistrano offers more checkers like:
+Capistrano offers more rules:
 
-* `:directory`: check the presence of a directory;
-* `:file`: check the presence of a file;
-* `:writable`: check whether a directory/file is writable;
-* `:command`: check if a command is available;
-* `:deb`: check if a package is installed;
+`:directory` checks the presence of a directory.
+
+`:file` checks the presence of a file.
+
+`:writable` checks whether a directory/file is writable.
+
+`:command` checks if a command is available.
+
+`:deb` checks if a package is installed.

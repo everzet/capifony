@@ -111,10 +111,10 @@ after "deploy:finalize_update" do
         when "install" then symfony.vendors.install
         when "reinstall" then symfony.vendors.reinstall
       end
-    else
-      symfony.bootstrap.build
     end
   end
+
+  symfony.bootstrap.build
 
   if model_manager == "propel"
     symfony.propel.build.model

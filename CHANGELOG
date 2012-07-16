@@ -1,3 +1,7 @@
+== 2.1.11 / ???
+
+n/a
+
 == 2.1.10 / July 16, 2012
 
 * Fix CS
@@ -15,7 +19,7 @@
 * Add task for updating `assets_version` in `config.yml`
 * Avoid the use of try_sudo
 * More `:no_release`...
-*  Since `:roles` isn't used in Capifony, these need `:no_release` *at least*.
+* Since `:roles` isn't used in Capifony, these need `:no_release` *at least*.
 * Fixing missing `pretty_print`.
 
 == 2.1.9 / July 3, 2012

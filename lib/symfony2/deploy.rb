@@ -29,7 +29,7 @@ namespace :deploy do
 
         if use_sudo
           run sprintf(methods[permission_method], dirs.join(' '))
-        else if permission_method == :chown
+        elsif permission_method == :chown
           puts "    You can't use chown method without sudoing"
         else
           dirs.each do |dir|

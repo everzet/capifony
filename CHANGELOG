@@ -1,6 +1,22 @@
-== 2.1.10 / ???
+== 2.1.10 / July 16, 2012
 
-n/a
+* Fix CS
+* Add ownership check before changing permissions
+* Add pretty output
+* Fix normalizing assets
+* Fix build bootstrap
+* Added set_permissions task
+* Fix PR #158
+* fix for remote check of composer.phar, File.exist? only checks local files
+* Fix capifony script
+* Use `--no-scripts` during `composer install/update` to avoid useless/duplicate processing.
+* Fixed database tasks for postgresql
+* Better pretty output if error raised
+* Add task for updating `assets_version` in `config.yml`
+* Avoid the use of try_sudo
+* More `:no_release`...
+*  Since `:roles` isn't used in Capifony, these need `:no_release` *at least*.
+* Fixing missing `pretty_print`.
 
 == 2.1.9 / July 3, 2012
 

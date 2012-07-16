@@ -37,13 +37,13 @@ namespace :deploy do
             if is_owner && permission_method != :chown
               run sprintf(methods[permission_method], dir)
             else
-              puts "  * #{dir} is not owned by #{user} or you are using 'chown' method without 'use_sudo'"
+              puts "    #{dir} is not owned by #{user} or you are using 'chown' method without 'use_sudo'"
             end
           end
         end
         puts_ok
       else
-        puts "  * Permission method '#{permission_method}' does not exist."
+        puts "    Permission method '#{permission_method}' does not exist.".yellow
       end
     end
   end

@@ -283,9 +283,9 @@ extension](cookbook/using-the-multistage-extension.html)
 
 [Specifying Deployment Dependencies](cookbook/specifying-deployment-dependencies.html)
 
-[Working with databases](cookbook/working-with-databases.html)
-
 [Setup an automatic upload of parameters file](cookbook/upload-parameters-file.html)
+
+[Working with databases](cookbook/working-with-databases.html)
 
 <hr />
 

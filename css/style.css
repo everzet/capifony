@@ -42,6 +42,10 @@ p, pre, h3, h4, ol, ul {
     font-size:16px;
 }
 
+h4 {
+    font-size: 14px;
+}
+
 ol, ul {
     padding:0px;
     padding-bottom:10px;
@@ -151,4 +155,15 @@ a.anchor-link {
 
 a.anchor-link:hover {
     color: #666;
+}
+
+blockquote {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+blockquote p {
+    border: 0;
+    margin-left: 180px;
+    background-color: #C8FDC5;
 }

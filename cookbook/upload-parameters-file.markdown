@@ -3,7 +3,8 @@ layout: cookbook
 title: Automatically upload your parameters.yml file
 ---
 
-As recommanded by the [Symfony2 documentation](http://symfony.com/doc/master/cookbook/workflow/new_project_git.html#initial-project-setup)
+As recommanded by the [Symfony2 documentation](
+http://symfony.com/doc/master/cookbook/workflow/new_project_git.html#initial-project-setup)
 you shoud not put "parameters.ini" or "parameters.yml" file under version
 control. This cookbook will show you a way to automatically upload your
 parameters file during your deployment process.
@@ -18,6 +19,8 @@ You can just copy and paste the snippet code below inside your `deploy.rb` file
 replacing the origin_file value with yours (i.e. for Symfony 2.0.* replace
 parameters.yml by parameters.ini).
 
+#### Unshared parameters files:
+
 {% highlight ruby %}
 task :upload_parameters do
   origin_file = "app/config/parameters.yml"
@@ -31,8 +34,8 @@ end
 before "deploy:share_childs", "upload_parameters"
 {% endhighlight %}
 
->> Unshared parameters files
 
+####  Shared parameters files:
 
 {% highlight ruby %}
 task :upload_parameters do
@@ -46,8 +49,6 @@ end
 
 after "deploy:setup", "upload_parameters"
 {% endhighlight %}
-
->> Shared parameters files
 
 <hr />
 
@@ -63,6 +64,8 @@ You can then use the same snippets as described in the previous part and past
 it on you `staging.rb` and `prod.rb` files replacing the `origin_file` variable
 if needed.
 
+#### In case of a shared parameters file:
+
 {% highlight ruby %}
 # app/config/deploy/prod.rb - Shared parameters file.
 
@@ -70,7 +73,7 @@ task :upload_parameters do
   origin_file = "app/config/parameters/parameters_prod.yml"
   destination_file = shared_path + "/app/config/parameters.yml" # Notice the
   shared_path
-  
+
   run "#{try_sudo} mkdir -p #{File.dirname(destination_file)}"
   top.upload(origin_file, destination_file)
 end
@@ -78,9 +81,8 @@ end
 after "deploy:setup", "upload_parameters"
 {% endhighlight %}
 
->>In case of a shared parameters file
 
-<hr />
+#### In case of an unshared parameters file:
 
 {% highlight ruby %}
 # app/config/deploy/staging.rb - Unshared parameters file.
@@ -89,15 +91,13 @@ task :upload_parameters do
   origin_file = "app/config/parameters/parameters_staging.yml"
   destination_file = latest_release + "/app/config/parameters.yml" # Notice the
   latest_release.
-  
+
   run "#{try_sudo} mkdir -p #{File.dirname(destination_file)}"
   top.upload(origin_file, destination_file)
 end
 
 before "deploy:share_childs", "upload_parameters"
 {% endhighlight %}
-
->>In case of an unshared parameters file
 
 <hr />
 
@@ -107,7 +107,6 @@ In the previous section we saw how to process this task easily but it needs
 a lot of copy and paste in case of multistage usage. This second method is
 a simple implementation that you can simply throw in your `deploy.rb` then you'll
 just need to override variables in each of your stage specific \*.rb files.
-
 
 {% highlight ruby %}
 # app/config/deploy.rb
@@ -139,11 +138,13 @@ corresponding line right after the previous task.
 - For a **shared** parameters file: `after 'deploy:setup', 'upload_parameters'`
 - For an **unshared** parameters file: `before 'deploy:share_childs', 'upload_parameters'`
 
->>NOTE: In case of a shared parameters file, the upload of the file will occur
->>during the deployement setup phase, while for an unshared parameters file the
->>upload will occur every time you run your deploy task.
+> NOTE: In case of a shared parameters file, the upload of the file will occur
+> during the deployement setup phase, while for an unshared parameters file the
+> upload will occur every time you run your deploy task.
 
 Then you can specify the right parameters file for each stage.
+
+#### For the prod.rb file:
 
 {% highlight ruby %}
 # app/config/deploy/prod.rb
@@ -151,13 +152,10 @@ Then you can specify the right parameters file for each stage.
 set :parameters_file, "parameters_prod.yml"
 {% endhighlight %}
 
->>For the prod.rb file
-
+#### For the staging.rb file:
 
 {% highlight ruby %}
 # app/config/deploy/staging.rb
 
 set :parameters_file, "parameters_staging.yml"
 {% endhighlight %}
-
->>For the staging.rb file

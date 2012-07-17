@@ -285,6 +285,8 @@ extension](cookbook/using-the-multistage-extension.html)
 
 [Working with databases](cookbook/working-with-databases.html)
 
+[Setup an automatic upload of parameters file](cookbook/upload-parameters-file.html)
+
 <hr />
 
 ## Known Issues

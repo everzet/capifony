@@ -33,7 +33,7 @@ lot easier.
 
 ## What's next? ##
 
-Read the [capifony documentation](http://everzet.github.com/capifony/)
+Read the [capifony documentation](http://capifony.org/)
 
 
 ## Contributors ##

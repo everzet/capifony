@@ -1,7 +1,7 @@
 namespace :database do
   namespace :dump do
     desc "Dump remote database"
-    task :remote do
+    task :remote, :roles => :db, :only => { :primary => true } do
       filename  = "#{application}.remote_dump.#{Time.now.strftime("%Y-%m-%d_%H-%M-%S")}.sql.gz"
       file      = "/tmp/#{filename}"
       sqlfile   = "#{application}_dump.sql"
@@ -61,7 +61,7 @@ namespace :database do
 
   namespace :move do
     desc "Dump remote database, download it to local & populate here"
-    task :to_local do
+    task :to_local, :roles => :db, :only => { :primary => true } do
 
       database.dump.remote
 
@@ -86,7 +86,7 @@ namespace :database do
     end
 
     desc "Dump local database, load it to remote & populate there"
-    task :to_remote do
+    task :to_remote, :roles => :db, :only => { :primary => true } do
 
       filename  = "#{application}.local_dump.latest.sql.gz"
       file      = "backups/#{filename}"

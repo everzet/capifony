@@ -2,7 +2,7 @@ namespace :symfony do
   namespace :doctrine do
     namespace :cache do
       desc "Clears all metadata cache for a entity manager"
-      task :clear_metadata do
+      task :clear_metadata, :roles => :app, :except => { :no_release => true } do
         pretty_print "--> Clearing Doctrine metadata cache"
 
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-metadata --env=#{symfony_env_prod}"
@@ -10,7 +10,7 @@ namespace :symfony do
       end
 
       desc "Clears all query cache for a entity manager"
-      task :clear_query do
+      task :clear_query, :roles => :app, :except => { :no_release => true } do
         pretty_print "--> Clearing Doctrine query cache"
 
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-query --env=#{symfony_env_prod}"
@@ -18,7 +18,7 @@ namespace :symfony do
       end
 
       desc "Clears result cache for a entity manager"
-      task :clear_result do
+      task :clear_result, :roles => :app, :except => { :no_release => true } do
         pretty_print "--> Clearing Doctrine result cache"
 
         run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-result --env=#{symfony_env_prod}"
@@ -27,40 +27,39 @@ namespace :symfony do
     end
 
     namespace :database do
-      desc "Creates the configured databases"
-      task :create, :roles => :db, :only => { :primary => true } do
-        pretty_print "--> Creating databases"
+      [:create, :drop].each do |action|
+        desc "#{action.to_s.capitalize}s the configured databases"
+        task action, :roles => :app, :except => { :no_release => true } do
+          case action.to_s
+          when "create"
+            pretty_print "--> Creating databases"
+          when "drop"
+            pretty_print "--> Dropping databases"
+          end
 
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:create --env=#{symfony_env_prod}"
-        puts_ok
-      end
-
-      desc "Drops the configured databases"
-      task :drop, :roles => :db, :only => { :primary => true } do
-        pretty_print "--> Dropping databases"
-
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:drop --env=#{symfony_env_prod}"
-        puts_ok
+          run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:#{action.to_s} --env=#{symfony_env_prod}", :once => true
+          puts_ok
+        end
       end
     end
 
     namespace :schema do
       desc "Processes the schema and either create it directly on EntityManager Storage Connection or generate the SQL output"
-      task :create do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:create --env=#{symfony_env_prod}"
+      task :create, :roles => :app, :except => { :no_release => true } do
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:create --env=#{symfony_env_prod}", :once => true
       end
 
       desc "Drops the complete database schema of EntityManager Storage Connection or generate the corresponding SQL output"
-      task :drop do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:drop --env=#{symfony_env_prod}"
+      task :drop, :roles => :app, :except => { :no_release => true } do
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:drop --env=#{symfony_env_prod}", :once => true
       end
     end
 
     namespace :migrations do
       desc "Executes a migration to a specified version or the latest available version"
-      task :migrate, :roles => :db, :only => { :primary => true } do
+      task :migrate, :roles => :app, :except => { :no_release => true } do
         currentVersion = nil
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:status --env=#{symfony_env_prod}" do |ch, stream, out|
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:status --env=#{symfony_env_prod}", :once => true do |ch, stream, out|
           if stream == :out and out =~ /Current Version:[^$]+\(([\w]+)\)/
             currentVersion = Regexp.last_match(1)
           end
@@ -76,31 +75,41 @@ namespace :symfony do
 
         on_rollback {
           if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database back to version #{currentVersion}? (y/N)")
-            run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate #{currentVersion} --env=#{symfony_env_prod} --no-interaction"
+            run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate #{currentVersion} --env=#{symfony_env_prod} --no-interaction", :once => true
           end
         }
 
         if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database? (y/N)")
-          run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate --env=#{symfony_env_prod} --no-interaction"
+          run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate --env=#{symfony_env_prod} --no-interaction", :once => true
         end
       end
 
       desc "Views the status of a set of migrations"
-      task :status do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:status --env=#{symfony_env_prod}"
+      task :status, :roles => :app, :except => { :no_release => true } do
+        run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:status --env=#{symfony_env_prod}", :once => true
       end
     end
 
     namespace :mongodb do
-      namespace :schema do
-        desc "Allows you to create databases, collections and indexes for your documents"
-        task :create do
-          run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:schema:create --env=#{symfony_env_prod}"
+      [:create, :update, :drop].each do |action|
+        namespace :schema do
+          desc "Allows you to #{action.to_s} databases, collections and indexes for your documents"
+          task action, :roles => :app, :except => { :no_release => true } do
+            pretty_print "--> Executing MongoDB schema #{action.to_s}"
+
+            run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:schema:#{action.to_s} --env=#{symfony_env_prod}", :once => true
+            puts_ok
+          end
         end
 
-        desc "Allows you to drop databases, collections and indexes for your documents"
-        task :drop do
-          run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:schema:drop --env=#{symfony_env_prod}"
+        namespace :indexes do
+          desc "Allows you to #{action.to_s} indexes *only* for your documents"
+          task action, :roles => :app do
+            pretty_print "--> Executing MongoDB indexes #{action.to_s}"
+
+            run "cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:schema:#{action.to_s} --index --env=#{symfony_env_prod}", :once => true
+            puts_ok
+          end
         end
       end
     end
@@ -108,10 +117,10 @@ namespace :symfony do
 
   namespace :init do
     desc "Mounts ACL tables in the database"
-    task :acl, :roles => :db, :only => { :primary => true } do
+    task :acl, :roles => :app, :except => { :no_release => true } do
       pretty_print "--> Mounting Doctrine ACL tables"
 
-      run "cd #{latest_release} && #{php_bin} #{symfony_console} init:acl --env=#{symfony_env_prod}"
+      run "cd #{latest_release} && #{php_bin} #{symfony_console} init:acl --env=#{symfony_env_prod}", :once => true
       puts_ok
     end
   end

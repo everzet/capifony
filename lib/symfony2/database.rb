@@ -4,7 +4,7 @@ require "zlib"
 namespace :database do
   namespace :dump do
     desc "Dumps remote database"
-    task :remote do
+    task :remote, :roles => :db, :only => { :primary => true } do
       filename  = "#{application}.remote_dump.#{Time.now.to_i}.sql.gz"
       file      = "/tmp/#{filename}"
       sqlfile   = "#{application}_dump.sql"
@@ -24,7 +24,6 @@ namespace :database do
           puts data
         end
       end
-
 
       FileUtils.mkdir_p("backups")
       get file, "backups/#{filename}"
@@ -72,7 +71,7 @@ namespace :database do
 
   namespace :move do
     desc "Dumps remote database, downloads it to local, and populates here"
-    task :to_local do
+    task :to_local, :roles => :db, :only => { :primary => true } do
       filename  = "#{application}.remote_dump.latest.sql.gz"
       config    = load_database_config IO.read('app/config/parameters.yml'), symfony_env_local
       sqlfile   = "#{application}_dump.sql"
@@ -94,7 +93,7 @@ namespace :database do
     end
 
     desc "Dumps local database, loads it to remote, and populates there"
-    task :to_remote do
+    task :to_remote, :roles => :db, :only => { :primary => true } do
       filename  = "#{application}.local_dump.latest.sql.gz"
       file      = "backups/#{filename}"
       sqlfile   = "#{application}_dump.sql"

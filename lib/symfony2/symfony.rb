@@ -1,6 +1,6 @@
 namespace :symfony do
   desc "Runs custom symfony command"
-  task :default do
+  task :default, :roles => :app, :except => { :no_release => true } do
     prompt_with_default(:task_arguments, "cache:clear")
 
     stream "cd #{latest_release} && #{php_bin} #{symfony_console} #{task_arguments} --env=#{symfony_env_prod}"
@@ -8,12 +8,12 @@ namespace :symfony do
 
   namespace :assets do
     desc "Updates assets version (in config.yml)"
-    task :update_version, :except => { :no_release => true } do
+    task :update_version, :roles => :app, :except => { :no_release => true } do
        run "sed -i 's/\\(assets_version: \\)\\(.*\\)$/\\1 #{real_revision}/g' #{latest_release}/app/config/config.yml"
     end
 
     desc "Installs bundle's assets"
-    task :install, :except => { :no_release => true } do
+    task :install, :roles => :app, :except => { :no_release => true } do
       pretty_print "--> Installing bundle's assets"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{web_path} --env=#{symfony_env_prod}"
@@ -23,7 +23,7 @@ namespace :symfony do
 
   namespace :assetic do
     desc "Dumps all assets to the filesystem"
-    task :dump, :except => { :no_release => true } do
+    task :dump, :roles => :app,  :except => { :no_release => true } do
       pretty_print "--> Dumping all assets to the filesystem"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump --env=#{symfony_env_prod} --no-debug"
@@ -33,7 +33,7 @@ namespace :symfony do
 
   namespace :vendors do
     desc "Runs the bin/vendors script to install the vendors (fast if already installed)"
-    task :install, :except => { :no_release => true } do
+    task :install, :roles => :app, :except => { :no_release => true } do
       pretty_print "--> Installing vendors"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_vendors} install"
@@ -41,7 +41,7 @@ namespace :symfony do
     end
 
     desc "Runs the bin/vendors script to reinstall the vendors"
-    task :reinstall, :except => { :no_release => true } do
+    task :reinstall, :roles => :app, :except => { :no_release => true } do
       pretty_print "--> Reinstalling vendors"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_vendors} install --reinstall"
@@ -49,7 +49,7 @@ namespace :symfony do
     end
 
     desc "Runs the bin/vendors script to upgrade the vendors"
-    task :upgrade, :except => { :no_release => true } do
+    task :upgrade, :roles => :app, :except => { :no_release => true } do
       pretty_print "--> Upgrading vendors"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_vendors} update"
@@ -59,7 +59,7 @@ namespace :symfony do
 
   namespace :bootstrap do
     desc "Runs the bin/build_bootstrap script"
-    task :build, :except => { :no_release => true } do
+    task :build, :roles => :app, :except => { :no_release => true } do
       pretty_print "--> Building bootstrap file"
 
       if !remote_file_exists?("#{latest_release}/#{build_bootstrap}") && true == use_composer then
@@ -75,15 +75,22 @@ namespace :symfony do
 
   namespace :composer do
     desc "Gets composer and installs it"
-    task :get, :except => { :no_release => true } do
+    task :get, :roles => :app, :except => { :no_release => true } do
+      if remote_command_exists?('composer')
+        pretty_print "--> Updating Composer in PATH"
+
+        run "composer self-update"
+      else
         pretty_print "--> Downloading Composer"
 
         run "cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}"
-        puts_ok
+      end
+
+      puts_ok
     end
 
     desc "Runs composer to install vendors from composer.lock file"
-    task :install, :except => { :no_release => true } do
+    task :install, :roles => :app, :except => { :no_release => true } do
       if !remote_file_exists?("#{latest_release}/composer.phar")
         symfony.composer.get
       end
@@ -95,7 +102,7 @@ namespace :symfony do
     end
 
     desc "Runs composer to update vendors, and composer.lock file"
-    task :update, :except => { :no_release => true } do
+    task :update, :roles => :app, :except => { :no_release => true } do
       if !remote_file_exists?("#{latest_release}/composer.phar")
         symfony.composer.get
       end
@@ -109,7 +116,7 @@ namespace :symfony do
 
   namespace :cache do
     desc "Clears cache"
-    task :clear, :except => { :no_release => true } do
+    task :clear, :roles => :app, :except => { :no_release => true } do
       pretty_print "--> Clearing cache"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_console} cache:clear --env=#{symfony_env_prod}"
@@ -118,7 +125,7 @@ namespace :symfony do
     end
 
     desc "Warms up an empty cache"
-    task :warmup, :except => { :no_release => true } do
+    task :warmup, :roles => :app, :except => { :no_release => true } do
       pretty_print "--> Warming up cache"
 
       run "cd #{latest_release} && #{php_bin} #{symfony_console} cache:warmup --env=#{symfony_env_prod}"

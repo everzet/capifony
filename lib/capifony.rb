@@ -19,7 +19,7 @@ namespace :deploy do
     Blank task exists as a hook into which to install your own environment \
     specific behaviour.
   DESC
-  task :start, :roles => :app do
+  task :start, :roles => :app, :except => { :no_release => true } do
     # Empty Task to overload with your platform specifics
   end
 
@@ -27,12 +27,17 @@ namespace :deploy do
     Blank task exists as a hook into which to install your own environment \
     specific behaviour.
   DESC
-  task :stop, :roles => :app do
+  task :stop, :roles => :app, :except => { :no_release => true } do
     # Empty Task to overload with your platform specifics
   end
 
-  desc "Overwrite the restart task because symfony doesn't need it."
-  task :restart do ; end
+  desc <<-DESC
+    Blank task exists as a hook into which to install your own environment \
+    specific behaviour.
+  DESC
+  task :restart, :roles => :app, :except => { :no_release => true } do
+    # Empty Task to overload with your platform specifics
+  end
 
   desc <<-DESC
     Prepares one or more servers for deployment. Before you can use any \
@@ -46,7 +51,7 @@ namespace :deploy do
     It is safe to run this task on servers that have already been set up; it \
     will not destroy any deployed revisions or data.
   DESC
-  task :setup, :except => { :no_release => true } do
+  task :setup, :roles => :app, :except => { :no_release => true } do
     dirs = [deploy_to, releases_path, shared_path]
     run "mkdir -p #{dirs.join(' ')}"
     run "chmod g+w #{dirs.join(' ')}" if fetch(:group_writable, true)

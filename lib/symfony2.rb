@@ -93,7 +93,11 @@ def guess_symfony_version
 end
 
 def remote_file_exists?(full_path)
-  'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
+  'true' == capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
+end
+
+def remote_command_exists?(command)
+  'true' == capture("type -P #{command} &>/dev/null && echo 'true' || echo 'false'")
 end
 
 after "deploy:finalize_update" do

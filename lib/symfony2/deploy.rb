@@ -4,7 +4,7 @@ namespace :deploy do
     Sets permissions for writable_dirs folders as described in the Symfony documentation
     (http://symfony.com/doc/master/book/installation.html#configuration-and-setup)
   DESC
-  task :set_permissions, :roles => :app do
+  task :set_permissions, :roles => :app, :except => { :no_release => true } do
     if writable_dirs && permission_method
       dirs = []
 
@@ -49,7 +49,7 @@ namespace :deploy do
   end
 
   desc "Symlinks static directories and static files that need to remain between deployments"
-  task :share_childs, :except => { :no_release => true } do
+  task :share_childs, :roles => :app, :except => { :no_release => true } do
     if shared_children
       pretty_print "--> Creating symlinks for shared directories"
 
@@ -77,7 +77,7 @@ namespace :deploy do
   end
 
   desc "Updates latest release source path"
-  task :finalize_update, :except => { :no_release => true } do
+  task :finalize_update, :roles => :app, :except => { :no_release => true } do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
 
     pretty_print "--> Creating cache directory"
@@ -109,20 +109,20 @@ namespace :deploy do
     Deploys and starts a `cold' application. This is useful if you have not \
     deployed your application before.
   DESC
-  task :cold do
+  task :cold, :roles => :app, :except => { :no_release => true } do
     update
     start
   end
 
   desc "Deploys the application and runs the test suite"
-  task :testall, :except => { :no_release => true } do
+  task :testall, :roles => :app, :except => { :no_release => true } do
     update_code
     create_symlink
     run "cd #{latest_release} && phpunit -c #{app_path} src"
   end
 
   desc "Runs the Symfony2 migrations"
-  task :migrate do
+  task :migrate, :roles => :app, :except => { :no_release => true }, :only => { :primary => true } do
     if model_manager == "doctrine"
       symfony.doctrine.migrations.migrate
     else

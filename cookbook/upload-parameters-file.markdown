@@ -27,7 +27,7 @@ task :upload_parameters do
   destination_file = latest_release + "/app/config/parameters.yml" # Notice the
   latest_release
 
-  run "#{try_sudo} mkdir -p #{File.dirname(destination_file)}"
+  try_sudo "mkdir -p #{File.dirname(destination_file)}"
   top.upload(origin_file, destination_file)
 end
 
@@ -43,7 +43,7 @@ task :upload_parameters do
   destination_file = shared_path + "/app/config/parameters.yml" # Notice the
   shared_path
 
-  run "#{try_sudo} mkdir -p #{File.dirname(destination_file)}"
+  try_sudo "mkdir -p #{File.dirname(destination_file)}"
   top.upload(origin_file, destination_file)
 end
 
@@ -74,7 +74,7 @@ task :upload_parameters do
   destination_file = shared_path + "/app/config/parameters.yml" # Notice the
   shared_path
 
-  run "#{try_sudo} mkdir -p #{File.dirname(destination_file)}"
+  try_sudo "mkdir -p #{File.dirname(destination_file)}"
   top.upload(origin_file, destination_file)
 end
 
@@ -92,7 +92,7 @@ task :upload_parameters do
   destination_file = latest_release + "/app/config/parameters.yml" # Notice the
   latest_release.
 
-  run "#{try_sudo} mkdir -p #{File.dirname(destination_file)}"
+  try_sudo "mkdir -p #{File.dirname(destination_file)}"
   top.upload(origin_file, destination_file)
 end
 
@@ -125,7 +125,7 @@ task :upload_parameters do
     else
       destination_file = latest_release + "/" + relative_path
     end
-    run "#{try_sudo} mkdir -p #{File.dirname(destination_file)}"
+    try_sudo "mkdir -p #{File.dirname(destination_file)}"
 
     top.upload(origin_file, destination_file)
   end

@@ -33,9 +33,9 @@ namespace :deploy do
           puts "    You can't use chown method without sudoing"
         else
           dirs.each do |dir|
-            is_owner = true # (capture "`echo stat #{dir} -c %U`").chomp == user
+            is_owner = (capture "`echo stat #{dir} -c %U`").chomp == user
             if is_owner && permission_method != :chown
-              run sprintf(methods[permission_method], dirs.join(' '))
+              run sprintf(methods[permission_method], dir)
             else
               puts "    #{dir} is not owned by #{user} or you are using 'chown' method without ':use_sudo'"
             end

@@ -1,6 +1,14 @@
-== 2.1.11 / ???
+== 2.1.11 / July 20, 2012
 
-n/a
+* Fix hard-coded "app" references
+* Fix hard-coded path to "app"
+* Fix set_permissions task. Refs #166
+* Try to fix #166
+* Setting :roles, etc. for each task (Symfony2 only currently)
+* Fix set_permissions task. Refs #166
+* Fix documentation link
+* Fix #163
+* fix elsif synthax
 
 == 2.1.10 / July 16, 2012
 

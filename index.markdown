@@ -147,15 +147,15 @@ Symfony2 application:
     `-- /var/www/my-app.com
     |-- current → /var/www/my-app.com/releases/20100512131539
     |-- releases
-    |-- 20100512131539
-    |-- 20100509150741
-    `-- 20100509145325
+    |   `-- 20100512131539
+    |   `-- 20100509150741
+    |   `-- 20100509145325
     `-- shared
-    |-- log
-    |-- config
-        `-- databases.yml
-    `-- web
-        `-- uploads
+       |-- web
+       |    `-- uploads
+       |-- log
+       `-- config
+           `-- databases.yml
 
 The folders in the releases directory will be the actual deployed code, as
 timestamped directories. In a symfony 1.x application, for example, Capistrano

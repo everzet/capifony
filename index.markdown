@@ -1,5 +1,5 @@
 ---
-layout: base
+layout: default
 title: symfony and Symfony2 deployment
 ---
 

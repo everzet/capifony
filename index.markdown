@@ -1,5 +1,5 @@
 ---
-layout: home
+layout: base
 title: symfony and Symfony2 deployment
 ---
 

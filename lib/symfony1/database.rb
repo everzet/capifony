@@ -3,7 +3,7 @@ namespace :database do
     desc "Dump remote database"
     task :remote, :roles => :db, :only => { :primary => true } do
       filename  = "#{application}.remote_dump.#{Time.now.strftime("%Y-%m-%d_%H-%M-%S")}.sql.gz"
-      file      = "/tmp/#{filename}"
+      file      = "#{remote_tmp_dir}/#{filename}"
       sqlfile   = "#{application}_dump.sql"
       config    = ""
 
@@ -95,8 +95,8 @@ namespace :database do
 
       database.dump.local
 
-      upload(file, "/tmp/#{filename}", :via => :scp)
-      run "gunzip -c /tmp/#{filename} > /tmp/#{sqlfile}"
+      upload(file, "#{remote_tmp_dir}/#{filename}", :via => :scp)
+      run "gunzip -c #{remote_tmp_dir}/#{filename} > #{remote_tmp_dir}/#{sqlfile}"
 
       run "cat #{shared_path}/config/databases.yml" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
@@ -107,12 +107,12 @@ namespace :database do
 
       sql_import_cmd = generate_sql_command('import', config)
 
-      run "#{sql_import_cmd} < /tmp/#{sqlfile}" do |ch, stream, data|
+      run "#{sql_import_cmd} < #{remote_tmp_dir}/#{sqlfile}" do |ch, stream, data|
         puts data
       end
 
-      run "rm /tmp/#{filename}"
-      run "rm /tmp/#{sqlfile}"
+      run "rm #{remote_tmp_dir}/#{filename}"
+      run "rm #{remote_tmp_dir}/#{sqlfile}"
     end
   end
 end

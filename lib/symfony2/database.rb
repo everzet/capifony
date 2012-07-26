@@ -6,7 +6,7 @@ namespace :database do
     desc "Dumps remote database"
     task :remote, :roles => :db, :only => { :primary => true } do
       filename  = "#{application}.remote_dump.#{Time.now.to_i}.sql.gz"
-      file      = "/tmp/#{filename}"
+      file      = "#{remote_tmp_dir}/#{filename}"
       sqlfile   = "#{application}_dump.sql"
       config    = ""
 
@@ -101,8 +101,8 @@ namespace :database do
 
       database.dump.local
 
-      upload(file, "/tmp/#{filename}", :via => :scp)
-      run "gunzip -c /tmp/#{filename} > /tmp/#{sqlfile}"
+      upload(file, "#{remote_tmp_dir}/#{filename}", :via => :scp)
+      run "gunzip -c #{remote_tmp_dir}/#{filename} > #{remote_tmp_dir}/#{sqlfile}"
 
       run "cat #{shared_path}/config/databases.yml" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
@@ -110,17 +110,17 @@ namespace :database do
 
       case config['database_driver']
       when "pdo_mysql", "mysql"
-        run "mysql -u#{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} < /tmp/#{sqlfile}" do |ch, stream, data|
+        run "mysql -u#{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}" do |ch, stream, data|
           puts data
         end
       when "pdo_pgsql", "pgsql"
-        run "psql -U #{config['database_user']} #{config['database_name']} < /tmp/#{sqlfile}" do |ch, stream, data|
+        run "psql -U #{config['database_user']} #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}" do |ch, stream, data|
           puts data
         end
       end
 
-      run "rm /tmp/#{filename}"
-      run "rm /tmp/#{sqlfile}"
+      run "rm #{remote_tmp_dir}/#{filename}"
+      run "rm #{remote_tmp_dir}/#{sqlfile}"
     end
   end
 end

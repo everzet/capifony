@@ -5,6 +5,22 @@ namespace :symfony do
 
     stream "cd #{latest_release} && #{php_bin} #{symfony_console} #{task_arguments} --env=#{symfony_env_prod}"
   end
+  
+  namespace :logs do
+    [:tail, :tail_dev].each do |action|
+      lines = ENV['lines'].nil? ? '50' : ENV['lines']
+      log   = action.to_s == 'tail' ? 'prod.log' : 'dev.log'
+      desc "Tail #{log}"
+      task action, :roles => :app, :except => { :no_release => true } do
+        run "tail -n #{lines} -f #{shared_path}/#{log_path}/#{log}" do |channel, stream, data|
+          trap("INT") { puts 'Interupted'; exit 0; }
+          puts
+          puts "#{channel[:host]}: #{data}"
+          break if stream == :err
+        end
+      end
+    end
+  end
 
   namespace :assets do
     desc "Updates assets version (in config.yml)"

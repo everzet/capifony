@@ -50,6 +50,8 @@ set :dump_assetic_assets,   false
 
 # Assets install
 set :assets_install,        true
+set :assets_symlinks,       false
+set :assets_relative,       false
 
 # Whether to update `assets_version` in `config.yml`
 set :update_assets_version, false

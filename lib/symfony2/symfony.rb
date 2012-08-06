@@ -5,7 +5,7 @@ namespace :symfony do
 
     stream "cd #{latest_release} && #{php_bin} #{symfony_console} #{task_arguments} --env=#{symfony_env_prod}"
   end
-  
+
   namespace :logs do
     [:tail, :tail_dev].each do |action|
       lines = ENV['lines'].nil? ? '50' : ENV['lines']
@@ -32,7 +32,17 @@ namespace :symfony do
     task :install, :roles => :app, :except => { :no_release => true } do
       pretty_print "--> Installing bundle's assets"
 
-      run "cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{web_path} --env=#{symfony_env_prod}"
+      install_options = ''
+
+      if true == assets_symlinks then
+          install_options += " --symlink"
+      end
+
+      if true == assets_relative then
+          install_options += " --relative"
+      end
+
+      run "cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{web_path} #{install_options} --env=#{symfony_env_prod}"
       puts_ok
     end
   end

@@ -1,6 +1,9 @@
-== 2.1.12 / ???
+== 2.1.12 / August 6, 2012
 
-n/a
+* Enable options for assets:install
+* Looked for sf1 settings DB file instead of sf2 one
+* Add ability to tail `dev|prod.log`
+* Put remote tmp directory in a variable so that it can be overriden
 
 == 2.1.11 / July 20, 2012
 

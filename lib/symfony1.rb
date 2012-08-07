@@ -53,6 +53,11 @@ def guess_symfony_lib
 end
 
 def deep_merge(hash1, hash2)
+
+    #There might not be a second has to cascade to 
+    if(hash2 == nil)
+      return hash1;
+    end
     hash1.merge(hash2){|key, subhash1, subhash2|
         if (subhash1.is_a?(Hash) && subhash2.is_a?(Hash))
             next deep_merge(subhash1, subhash2)

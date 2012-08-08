@@ -117,25 +117,31 @@ namespace :symfony do
 
     desc "Runs composer to install vendors from composer.lock file"
     task :install, :roles => :app, :except => { :no_release => true } do
-      if !remote_file_exists?("#{latest_release}/composer.phar")
+      composer_bin = "#{php_bin} composer.phar"
+      if remote_command_exists?('composer')
+        composer_bin = "composer"
+      elsif !remote_file_exists?("#{latest_release}/composer.phar")
         symfony.composer.get
       end
 
       pretty_print "--> Installing Composer dependencies"
 
-      run "cd #{latest_release} && #{php_bin} composer.phar install --no-scripts --verbose"
+      run "cd #{latest_release} && #{composer_bin} install --no-scripts --verbose"
       puts_ok
     end
 
     desc "Runs composer to update vendors, and composer.lock file"
     task :update, :roles => :app, :except => { :no_release => true } do
-      if !remote_file_exists?("#{latest_release}/composer.phar")
+      composer_bin = "#{php_bin} composer.phar"
+      if remote_command_exists?('composer')
+        composer_bin = "composer"
+      elsif !remote_file_exists?("#{latest_release}/composer.phar")
         symfony.composer.get
       end
 
       pretty_print "--> Updating Composer dependencies"
 
-      run "cd #{latest_release} && #{php_bin} composer.phar update --no-scripts --verbose"
+      run "cd #{latest_release} && #{composer_bin} update --no-scripts --verbose"
       puts_ok
     end
   end

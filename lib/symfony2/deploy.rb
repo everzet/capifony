@@ -19,23 +19,30 @@ namespace :deploy do
       end
 
       methods = {
-        :chmod => "chmod +a \"#{webserver_user} allow delete,write,append,file_inherit,directory_inherit\" %s",
-        :acl   => "setfacl -dR -m u:#{webserver_user}:rwx %s",
-        :chown => "chown #{webserver_user} %s"
+        :chmod => [
+          "chmod +a \"#{user} allow delete,write,append,file_inherit,directory_inherit\" %s",
+          "chmod +a \"#{webserver_user} allow delete,write,append,file_inherit,directory_inherit\" %s"
+        ],
+        :acl   => ["setfacl -dR -m u:#{user}:rwx -m u:#{webserver_user}:rwx %s"],
+        :chown => ["chown #{webserver_user} %s"]
       }
 
       if methods[permission_method]
         pretty_print "--> Setting permissions"
 
         if fetch(:use_sudo, false)
-          sudo sprintf(methods[permission_method], dirs.join(' '))
+          methods[permission_method].each do |cmd|
+            sudo sprintf(cmd, dirs.join(' '))
+          end
         elsif permission_method == :chown
           puts "    You can't use chown method without sudoing"
         else
           dirs.each do |dir|
             is_owner = (capture "`echo stat #{dir} -c %U`").chomp == user
             if is_owner && permission_method != :chown
-              run sprintf(methods[permission_method], dir)
+              methods[permission_method].each do |cmd|
+                run sprintf(cmd, dir)
+              end
             else
               puts "    #{dir} is not owned by #{user} or you are using 'chown' method without ':use_sudo'"
             end

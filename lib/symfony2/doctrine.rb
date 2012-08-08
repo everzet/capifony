@@ -60,7 +60,7 @@ namespace :symfony do
       task :migrate, :roles => :app, :except => { :no_release => true } do
         currentVersion = nil
         run "cd #{latest_release} && #{php_bin} #{symfony_console} --no-ansi doctrine:migrations:status --env=#{symfony_env_prod}", :once => true do |ch, stream, out|
-          if stream == :out and out =~ /Current Version:[^$]+\(([\w]+)\)/
+          if stream == :out and out =~ /Current Version:.+\(([\w]+)\)/
             currentVersion = Regexp.last_match(1)
           end
           if stream == :out and out =~ /Current Version:\s*0\s*$/

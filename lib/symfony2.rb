@@ -99,7 +99,7 @@ def remote_file_exists?(full_path)
 end
 
 def remote_command_exists?(command)
-  'true' == capture("type -P #{command} &>/dev/null && echo 'true' || echo 'false'")
+  'true' == capture("type -P #{command} &>/dev/null && echo 'true' || echo 'false'").strip
 end
 
 after "deploy:finalize_update" do

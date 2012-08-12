@@ -1,6 +1,10 @@
 == 2.1.13 / ??? ==
 
-n/a
+* Fix currentVersion regex always returning nil
+* Improve composer path checking
+* Fix remote_command_exists
+* Fix running doctrine migrations with allocated PTY
+* Update lib/symfony1.rb
 
 == 2.1.12 / August 6, 2012
 

@@ -287,6 +287,8 @@ extension](cookbook/using-the-multistage-extension.html)
 
 [Setup proper permissions](cookbook/set-permissions.html)
 
+[Speeding up deploy](cookbook/speeding-up-deploy.html)
+
 [Working with databases](cookbook/working-with-databases.html)
 
 <hr />

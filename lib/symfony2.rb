@@ -56,6 +56,9 @@ set :assets_relative,       false
 # Whether to update `assets_version` in `config.yml`
 set :update_assets_version, false
 
+# Need to clear *_dev controllers
+set :clear_controllers, true
+
 # Files that need to remain the same between deploys
 set :shared_files,          false
 
@@ -140,6 +143,10 @@ after "deploy:finalize_update" do
 
   if dump_assetic_assets
     symfony.assetic.dump            # 5. Dump assetic assets
+  end
+
+  if clear_controllers
+    symfony.project.clear_controllers
   end
 end
 

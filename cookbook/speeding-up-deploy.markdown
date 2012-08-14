@@ -43,11 +43,11 @@ If you don't need a prompt asking you if you want to copy vendors, you can use
 the following code:
 
 {% highlight ruby %}
-before 'symfony:composer:install', 'composer:copy_previous_dir'
-before 'symfony:composer:update', 'composer:copy_previous_dir'
+before 'symfony:composer:install', 'composer:copy_vendors'
+before 'symfony:composer:update', 'composer:copy_vendors'
 
 namespace :composer do
-  task :copy_previous_dir, :except => { :no_release => true } do
+  task :copy_vendors, :except => { :no_release => true } do
     pretty_print "--> Copy vendor file from previous release"
 
     run "vendorDir=#{current_path}/vendor; if [ -d $vendorDir ] || [ -h $vendorDir ]; then cp -a $vendorDir #{latest_release}/vendor; fi;"

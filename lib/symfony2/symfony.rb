@@ -165,4 +165,14 @@ namespace :symfony do
       puts_ok
     end
   end
+
+  namespace :project do
+    desc "Clears all non production environment controllers"
+    task :clear_controllers do
+      pretty_print "--> Clear controllers"
+
+      run "for file in #{latest_release}/web/*.php; do grep -q -P \"new AppKernel\\('(?!prod)[a-z]+'\" $file && rm $file; done"
+      puts_ok
+    end
+  end
 end

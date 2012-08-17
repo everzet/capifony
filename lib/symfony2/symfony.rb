@@ -12,7 +12,7 @@ namespace :symfony do
       log   = action.to_s == 'tail' ? 'prod.log' : 'dev.log'
       desc "Tail #{log}"
       task action, :roles => :app, :except => { :no_release => true } do
-        run "tail -n #{lines} -f #{shared_path}/#{log_path}/#{log}" do |channel, stream, data|
+        try_sudo "tail -n #{lines} -f #{shared_path}/#{log_path}/#{log}" do |channel, stream, data|
           trap("INT") { puts 'Interupted'; exit 0; }
           puts
           puts "#{channel[:host]}: #{data}"
@@ -25,7 +25,7 @@ namespace :symfony do
   namespace :assets do
     desc "Updates assets version (in config.yml)"
     task :update_version, :roles => :app, :except => { :no_release => true } do
-       run "sed -i 's/\\(assets_version: \\)\\(.*\\)$/\\1 #{real_revision}/g' #{latest_release}/#{app_path}/config/config.yml"
+       try_sudo "sed -i 's/\\(assets_version: \\)\\(.*\\)$/\\1 #{real_revision}/g' #{latest_release}/#{app_path}/config/config.yml"
     end
 
     desc "Installs bundle's assets"
@@ -42,7 +42,7 @@ namespace :symfony do
           install_options += " --relative"
       end
 
-      run "cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{web_path} #{install_options} --env=#{symfony_env_prod}"
+      try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{web_path} #{install_options} --env=#{symfony_env_prod}'"
       puts_ok
     end
   end
@@ -52,7 +52,7 @@ namespace :symfony do
     task :dump, :roles => :app,  :except => { :no_release => true } do
       pretty_print "--> Dumping all assets to the filesystem"
 
-      run "cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump --env=#{symfony_env_prod} --no-debug"
+      try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump --env=#{symfony_env_prod} --no-debug'"
       puts_ok
     end
   end
@@ -62,7 +62,7 @@ namespace :symfony do
     task :install, :roles => :app, :except => { :no_release => true } do
       pretty_print "--> Installing vendors"
 
-      run "cd #{latest_release} && #{php_bin} #{symfony_vendors} install"
+      try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_vendors} install'"
       puts_ok
     end
 
@@ -70,7 +70,7 @@ namespace :symfony do
     task :reinstall, :roles => :app, :except => { :no_release => true } do
       pretty_print "--> Reinstalling vendors"
 
-      run "cd #{latest_release} && #{php_bin} #{symfony_vendors} install --reinstall"
+      try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_vendors} install --reinstall'"
       puts_ok
     end
 
@@ -78,7 +78,7 @@ namespace :symfony do
     task :upgrade, :roles => :app, :except => { :no_release => true } do
       pretty_print "--> Upgrading vendors"
 
-      run "cd #{latest_release} && #{php_bin} #{symfony_vendors} update"
+      try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_vendors} update'"
       puts_ok
     end
   end
@@ -90,9 +90,9 @@ namespace :symfony do
 
       if !remote_file_exists?("#{latest_release}/#{build_bootstrap}") && true == use_composer then
         set :build_bootstrap, "vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php"
-        run "cd #{latest_release} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} #{app_path} || echo '#{build_bootstrap} not found, skipped'"
+        try_sudo "sh -c 'cd #{latest_release} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} #{app_path} || echo '#{build_bootstrap} not found, skipped''"
       else
-        run "cd #{latest_release} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} || echo '#{build_bootstrap} not found, skipped'"
+        try_sudo "sh -c 'cd #{latest_release} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} || echo '#{build_bootstrap} not found, skipped''"
       end
 
       puts_ok
@@ -105,11 +105,11 @@ namespace :symfony do
       if remote_command_exists?('composer')
         pretty_print "--> Updating Composer in PATH"
 
-        run "composer self-update"
+        try_sudo "composer self-update"
       else
         pretty_print "--> Downloading Composer"
 
-        run "cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}"
+        try_sudo "sh -c 'cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}'"
       end
 
       puts_ok
@@ -126,7 +126,7 @@ namespace :symfony do
 
       pretty_print "--> Installing Composer dependencies"
 
-      run "cd #{latest_release} && #{composer_bin} install --no-scripts --verbose"
+      try_sudo "sh -c 'cd #{latest_release} && #{composer_bin} install --no-scripts --verbose'"
       puts_ok
     end
 
@@ -141,7 +141,7 @@ namespace :symfony do
 
       pretty_print "--> Updating Composer dependencies"
 
-      run "cd #{latest_release} && #{composer_bin} update --no-scripts --verbose"
+      try_sudo "sh -c 'cd #{latest_release} && #{composer_bin} update --no-scripts --verbose'"
       puts_ok
     end
   end
@@ -151,8 +151,8 @@ namespace :symfony do
     task :clear, :roles => :app, :except => { :no_release => true } do
       pretty_print "--> Clearing cache"
 
-      run "cd #{latest_release} && #{php_bin} #{symfony_console} cache:clear --env=#{symfony_env_prod}"
-      run "chmod -R g+w #{latest_release}/#{cache_path}"
+      try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} cache:clear --env=#{symfony_env_prod}'"
+      try_sudo "chmod -R g+w #{latest_release}/#{cache_path}"
       puts_ok
     end
 
@@ -160,8 +160,8 @@ namespace :symfony do
     task :warmup, :roles => :app, :except => { :no_release => true } do
       pretty_print "--> Warming up cache"
 
-      run "cd #{latest_release} && #{php_bin} #{symfony_console} cache:warmup --env=#{symfony_env_prod}"
-      run "chmod -R g+w #{latest_release}/#{cache_path}"
+      try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} cache:warmup --env=#{symfony_env_prod}'"
+      try_sudo "chmod -R g+w #{latest_release}/#{cache_path}"
       puts_ok
     end
   end
@@ -171,7 +171,7 @@ namespace :symfony do
     task :clear_controllers do
       pretty_print "--> Clear controllers"
 
-      run "for file in #{latest_release}/web/*.php; do grep -q -P \"new AppKernel\\('(?!prod)[a-z]+'\" $file && rm $file; done"
+      try_sudo "sh -c 'for file in #{latest_release}/web/*.php; do grep -q -P \"new AppKernel\\('(?!prod)[a-z]+'\" $file && rm $file; done'"
       puts_ok
     end
   end

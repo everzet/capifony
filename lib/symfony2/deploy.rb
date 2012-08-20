@@ -41,7 +41,7 @@ namespace :deploy do
             is_owner = (capture "`echo stat #{dir} -c %U`").chomp == user
             if is_owner && permission_method != :chown
               methods[permission_method].each do |cmd|
-                run sprintf(cmd, dir)
+                try_sudo sprintf(cmd, dir)
               end
             else
               puts "    #{dir} is not owned by #{user} or you are using 'chown' method without ':use_sudo'"
@@ -61,9 +61,9 @@ namespace :deploy do
       pretty_print "--> Creating symlinks for shared directories"
 
       shared_children.each do |link|
-        run "mkdir -p #{shared_path}/#{link}"
-        run "if [ -d #{release_path}/#{link} ] ; then rm -rf #{release_path}/#{link}; fi"
-        run "ln -nfs #{shared_path}/#{link} #{release_path}/#{link}"
+        try_sudo "mkdir -p #{shared_path}/#{link}"
+        try_sudo "sh -c 'if [ -d #{release_path}/#{link} ] ; then rm -rf #{release_path}/#{link}; fi'"
+        try_sudo "ln -nfs #{shared_path}/#{link} #{release_path}/#{link}"
       end
 
       puts_ok
@@ -74,9 +74,9 @@ namespace :deploy do
 
       shared_files.each do |link|
         link_dir = File.dirname("#{shared_path}/#{link}")
-        run "mkdir -p #{link_dir}"
-        run "touch #{shared_path}/#{link}"
-        run "ln -nfs #{shared_path}/#{link} #{release_path}/#{link}"
+        try_sudo "mkdir -p #{link_dir}"
+        try_sudo "touch #{shared_path}/#{link}"
+        try_sudo "ln -nfs #{shared_path}/#{link} #{release_path}/#{link}"
       end
 
       puts_ok
@@ -85,13 +85,13 @@ namespace :deploy do
 
   desc "Updates latest release source path"
   task :finalize_update, :roles => :app, :except => { :no_release => true } do
-    run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
+    try_sudo "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
 
     pretty_print "--> Creating cache directory"
 
-    run "if [ -d #{latest_release}/#{cache_path} ] ; then rm -rf #{latest_release}/#{cache_path}; fi"
-    run "mkdir -p #{latest_release}/#{cache_path} && chmod -R 0777 #{latest_release}/#{cache_path}"
-    run "chmod -R g+w #{latest_release}/#{cache_path}"
+    try_sudo "sh -c 'if [ -d #{latest_release}/#{cache_path} ] ; then rm -rf #{latest_release}/#{cache_path}; fi'"
+    try_sudo "sh -c 'mkdir -p #{latest_release}/#{cache_path} && chmod -R 0777 #{latest_release}/#{cache_path}'"
+    try_sudo "chmod -R g+w #{latest_release}/#{cache_path}"
 
     puts_ok
 
@@ -106,7 +106,7 @@ namespace :deploy do
       else
         pretty_print "--> Normalizing asset timestamps"
 
-        run "find #{asset_paths} -exec touch -t #{stamp} {} ';' &> /dev/null || true", :env => { "TZ" => "UTC" }
+        try_sudo "find #{asset_paths} -exec touch -t #{stamp} {} ';' &> /dev/null || true", :env => { "TZ" => "UTC" }
         puts_ok
       end
     end
@@ -125,7 +125,7 @@ namespace :deploy do
   task :testall, :roles => :app, :except => { :no_release => true } do
     update_code
     create_symlink
-    run "cd #{latest_release} && phpunit -c #{app_path} src"
+    try_sudo "sh -c 'cd #{latest_release} && phpunit -c #{app_path} src'"
   end
 
   desc "Runs the Symfony2 migrations"

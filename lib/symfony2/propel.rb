@@ -11,7 +11,7 @@ namespace :symfony do
             pretty_print "--> Dropping databases"
           end
 
-          run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:database:#{action.to_s} --env=#{symfony_env_prod}", :once => true
+          try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:database:#{action.to_s} --env=#{symfony_env_prod}'", :once => true
           puts_ok
         end
       end
@@ -27,7 +27,7 @@ namespace :symfony do
 
         pretty_print "--> Generating Propel classes"
 
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --env=#{symfony_env_prod}"
+        try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --env=#{symfony_env_prod}'"
         puts_ok
       end
 
@@ -40,7 +40,7 @@ namespace :symfony do
 
         pretty_print "--> Generating Propel SQL"
 
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --env=#{symfony_env_prod}"
+        try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --env=#{symfony_env_prod}'"
         puts_ok
       end
 
@@ -53,7 +53,7 @@ namespace :symfony do
 
         pretty_print "--> Inserting Propel SQL"
 
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --force --env=#{symfony_env_prod}", :once => true
+        try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --force --env=#{symfony_env_prod}'", :once => true
         puts_ok
       end
 
@@ -61,18 +61,18 @@ namespace :symfony do
       task :all_and_load, :roles => :app, :except => { :no_release => true } do
         pretty_print "--> Setting up Propel (classes, SQL)"
 
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:build --insert-sql --env=#{symfony_env_prod}"
+        try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:build --insert-sql --env=#{symfony_env_prod}'"
         puts_ok
       end
 
       desc "Generates ACLs models"
       task :acl, :roles => :app, :except => { :no_release => true } do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:acl:init --env=#{symfony_env_prod}"
+        try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:acl:init --env=#{symfony_env_prod}'"
       end
 
       desc "Inserts propel ACL tables"
       task :acl_load, :roles => :app, :except => { :no_release => true } do
-        run "cd #{latest_release} && #{php_bin} #{symfony_console} propel:acl:init --env=#{symfony_env_prod} --force", :once => true
+        try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:acl:init --env=#{symfony_env_prod} --force'", :once => true
       end
     end
   end

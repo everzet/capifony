@@ -40,7 +40,7 @@ namespace :shared do
     task :download do
       prompt_with_default(:version, symfony_version)
 
-      run <<-CMD
+      try_sudo <<-CMD
         if [ ! -d #{shared_path}/symfony-#{version} ]; then
           wget -q http://www.symfony-project.org/get/symfony-#{version}.tgz -O- | tar -zxf - -C #{shared_path};
         fi

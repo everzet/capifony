@@ -1,5 +1,11 @@
-== 2.1.13 / ??? ==
+== 2.1.13 / August 21, 2012
 
+* check all .php files in stead of only _app.php
+* fix clear controllers to also work with try_sudo
+* use try_sudo in stead of run to execute commands, refs #189
+* Add a symfony:project:clear_controllers
+* .first instead of .last as the selected gem for symfony1/symfony2
+* Enhance deploy:set_permissions to grant permissions to the shell user
 * Fix currentVersion regex always returning nil
 * Improve composer path checking
 * Fix remote_command_exists

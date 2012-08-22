@@ -1,6 +1,6 @@
-== 2.1.14 / ???
+== 2.1.14 / August 22, 2012
 
-n/a
+* Fix escaping in clear controllers #195
 
 == 2.1.13 / August 21, 2012
 

@@ -171,7 +171,7 @@ namespace :symfony do
     task :clear_controllers do
       pretty_print "--> Clear controllers"
 
-      try_sudo "rm -f app_*.php"
+      try_sudo "rm -f #{latest_release}/web/app_*.php"
       puts_ok
     end
   end

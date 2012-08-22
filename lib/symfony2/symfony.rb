@@ -171,7 +171,7 @@ namespace :symfony do
     task :clear_controllers do
       pretty_print "--> Clear controllers"
 
-      try_sudo "sh -c 'for file in #{latest_release}/web/*.php; do grep -HLP \"new AppKernel\\('prod[a-z]*'\" $file | xargs -I {} rm -f {}; done;'"
+      try_sudo "for file in #{latest_release}/web/*.php; do grep -HLP \"new AppKernel\\\('prod'\" $file | xargs -I {} rm -f {}; done;"
       puts_ok
     end
   end

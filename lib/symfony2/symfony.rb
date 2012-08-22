@@ -169,10 +169,12 @@ namespace :symfony do
   namespace :project do
     desc "Clears all non production environment controllers"
     task :clear_controllers do
-      pretty_print "--> Clear controllers"
-
-      try_sudo "sh -c 'cd #{latest_release} && rm -f #{web_path}/app_*.php'"
-      puts_ok
+      if symfony_env_prod == "prod"
+        pretty_print "--> Clear controllers"
+  
+        try_sudo "sh -c 'cd #{latest_release} && rm -f #{web_path}/app_*.php'"
+        puts_ok
+      end
     end
   end
 end

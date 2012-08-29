@@ -36,6 +36,9 @@ set :build_bootstrap,       "bin/build_bootstrap"
 # If set to false, it will use the bin/vendors script
 set :use_composer,          false
 
+# Add --no-scripts param to composer command
+set :composer_no_scripts,   true
+
 # Whether to update vendors using the configured dependency manager (composer or bin/vendors)
 set :update_vendors,        false
 

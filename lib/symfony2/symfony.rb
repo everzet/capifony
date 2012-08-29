@@ -125,8 +125,9 @@ namespace :symfony do
       end
 
       pretty_print "--> Installing Composer dependencies"
+      additional_params = composer_no_scripts ? "--no-scripts" : ""
 
-      try_sudo "sh -c 'cd #{latest_release} && #{composer_bin} install --no-scripts --verbose'"
+      try_sudo "sh -c 'cd #{latest_release} && #{composer_bin} install #{additional_params} --verbose'"
       puts_ok
     end
 
@@ -140,8 +141,9 @@ namespace :symfony do
       end
 
       pretty_print "--> Updating Composer dependencies"
+      additional_params = composer_no_scripts ? "--no-scripts" : ""
 
-      try_sudo "sh -c 'cd #{latest_release} && #{composer_bin} update --no-scripts --verbose'"
+      try_sudo "sh -c 'cd #{latest_release} && #{composer_bin} update #{additional_params} --verbose'"
       puts_ok
     end
   end

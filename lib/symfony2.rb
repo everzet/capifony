@@ -145,7 +145,7 @@ after "deploy:finalize_update" do
     symfony.assetic.dump            # 5. Dump assetic assets
   end
 
-  if clear_controllers
+  if clear_controllers and symfony_env_prod == "prod"
     symfony.project.clear_controllers
   end
 end

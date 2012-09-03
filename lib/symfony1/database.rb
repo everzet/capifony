@@ -12,9 +12,7 @@ namespace :database do
       end
 
       sql_dump_cmd = generate_sql_command('dump', config)
-      try_sudo "#{sql_dump_cmd} | gzip -c > #{file}" do |ch, stream, data|
-        puts data
-      end
+      try_sudo "#{sql_dump_cmd} | gzip -c > #{file}"
 
       require "fileutils"
       FileUtils.mkdir_p("backups")
@@ -107,9 +105,7 @@ namespace :database do
 
       sql_import_cmd = generate_sql_command('import', config)
 
-      try_sudo "#{sql_import_cmd} < #{remote_tmp_dir}/#{sqlfile}" do |ch, stream, data|
-        puts data
-      end
+      try_sudo "#{sql_import_cmd} < #{remote_tmp_dir}/#{sqlfile}"
 
       try_sudo "rm #{remote_tmp_dir}/#{filename}"
       try_sudo "rm #{remote_tmp_dir}/#{sqlfile}"

@@ -7,7 +7,7 @@ namespace :database do
       sqlfile   = "#{application}_dump.sql"
       config    = ""
 
-      try_sudo "cat #{shared_path}/config/databases.yml" do |ch, st, data|
+      run "#{try_sudo} cat #{shared_path}/config/databases.yml" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
       end
 
@@ -98,7 +98,7 @@ namespace :database do
       upload(file, "#{remote_tmp_dir}/#{filename}", :via => :scp)
       try_sudo "gunzip -c #{remote_tmp_dir}/#{filename} > #{remote_tmp_dir}/#{sqlfile}"
 
-      try_sudo "cat #{shared_path}/config/databases.yml" do |ch, st, data|
+      run "#{try_sudo} cat #{shared_path}/config/databases.yml" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
       end
 

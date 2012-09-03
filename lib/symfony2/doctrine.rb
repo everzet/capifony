@@ -53,6 +53,11 @@ namespace :symfony do
       task :drop, :roles => :app, :except => { :no_release => true } do
         try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:drop --env=#{symfony_env_prod}'", :once => true
       end
+
+      desc "Updates database schema of EntityManager Storage Connection"
+      task :update, :roles => :app, :except => { :no_release => true } do
+        try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:update --force --env=#{symfony_env_prod}'", :once => true
+      end
     end
 
     namespace :migrations do

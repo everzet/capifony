@@ -126,7 +126,7 @@ namespace :symfony do
 
       pretty_print "--> Installing Composer dependencies"
 
-      try_sudo "sh -c 'cd #{latest_release} && #{composer_bin} install --no-scripts --verbose'"
+      try_sudo "sh -c 'cd #{latest_release} && #{composer_bin} install #{composer_options}'"
       puts_ok
     end
 
@@ -141,7 +141,7 @@ namespace :symfony do
 
       pretty_print "--> Updating Composer dependencies"
 
-      try_sudo "sh -c 'cd #{latest_release} && #{composer_bin} update --no-scripts --verbose'"
+      try_sudo "sh -c 'cd #{latest_release} && #{composer_bin} update #{composer_options}'"
       puts_ok
     end
   end

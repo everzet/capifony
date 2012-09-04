@@ -36,6 +36,9 @@ set :build_bootstrap,       "bin/build_bootstrap"
 # If set to false, it will use the bin/vendors script
 set :use_composer,          false
 
+# Options to pass to composer when installing/updating
+set :composer_options,      "--no-scripts --verbose"
+
 # Whether to update vendors using the configured dependency manager (composer or bin/vendors)
 set :update_vendors,        false
 
@@ -57,7 +60,7 @@ set :assets_relative,       false
 set :update_assets_version, false
 
 # Need to clear *_dev controllers
-set :clear_controllers, true
+set :clear_controllers,     true
 
 # Files that need to remain the same between deploys
 set :shared_files,          false

@@ -36,6 +36,10 @@ set :build_bootstrap,       "bin/build_bootstrap"
 # If set to false, it will use the bin/vendors script
 set :use_composer,          false
 
+# Path to composer binary
+# If set to false, Capifony will download/install composer
+set :composer_bin,          false
+
 # Options to pass to composer when installing/updating
 set :composer_options,      "--no-scripts --verbose"
 

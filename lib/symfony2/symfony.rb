@@ -58,28 +58,21 @@ namespace :symfony do
   end
 
   namespace :vendors do
-    desc "Runs the bin/vendors script to install the vendors (fast if already installed)"
-    task :install, :roles => :app, :except => { :no_release => true } do
-      pretty_print "--> Installing vendors"
+    [:install, :reinstall, :upgrade].each do |action|
+      desc "Runs the bin/vendors script to #{action.to_s} the vendors"
+      task action, :roles => :app, :except => { :no_release => true } do
+        pretty_print "--> #{action.to_s.capitalize}ing vendors"
 
-      try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_vendors} install'"
-      puts_ok
-    end
-
-    desc "Runs the bin/vendors script to reinstall the vendors"
-    task :reinstall, :roles => :app, :except => { :no_release => true } do
-      pretty_print "--> Reinstalling vendors"
-
-      try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_vendors} install --reinstall'"
-      puts_ok
-    end
-
-    desc "Runs the bin/vendors script to upgrade the vendors"
-    task :upgrade, :roles => :app, :except => { :no_release => true } do
-      pretty_print "--> Upgrading vendors"
-
-      try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_vendors} update'"
-      puts_ok
+        cmd = action.to_s
+        case action
+        when :reinstall
+          cmd = "install --reinstall"
+        when :upgrade
+          cmd = "update"
+        end
+        try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_vendors} #{cmd}'"
+        puts_ok
+      end
     end
   end
 
@@ -147,32 +140,20 @@ namespace :symfony do
   end
 
   namespace :cache do
-    desc "Clears cache"
-    task :clear, :roles => :app, :except => { :no_release => true } do
-      pretty_print "--> Clearing cache"
+    [:clear, :warmup].each do |action|
+      desc "Cache #{action.to_s}"
+      task action, :roles => :app, :except => { :no_release => true } do
+        case action
+        when :clear
+          pretty_print "--> Clearing cache"
+        when :warmup
+          pretty_print "--> Warming up cache"
+        end
 
-      try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} cache:clear --env=#{symfony_env_prod}'"
-      try_sudo "chmod -R g+w #{latest_release}/#{cache_path}"
-      puts_ok
-    end
-
-    desc "Warms up an empty cache"
-    task :warmup, :roles => :app, :except => { :no_release => true } do
-      pretty_print "--> Warming up cache"
-
-      try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} cache:warmup --env=#{symfony_env_prod}'"
-      try_sudo "chmod -R g+w #{latest_release}/#{cache_path}"
-      puts_ok
-    end
-  end
-
-  namespace :project do
-    desc "Clears all non production environment controllers"
-    task :clear_controllers do
-      pretty_print "--> Clear controllers"
-
-      try_sudo "sh -c 'cd #{latest_release} && rm -f #{web_path}/app_*.php'"
-      puts_ok
+        try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} cache:#{action.to_s} --env=#{symfony_env_prod}'"
+        try_sudo "chmod -R g+w #{latest_release}/#{cache_path}"
+        puts_ok
+      end
     end
   end
 end

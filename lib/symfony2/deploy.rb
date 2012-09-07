@@ -141,4 +141,15 @@ namespace :deploy do
       end
     end
   end
+
+  desc "Removes files that shouldn't exist after a deploy"
+  task :remove_after, :roles => :app, :except => { :no_release => true } do
+    if remove_after_deploy
+      pretty_print "--> Removing configured files..."
+      remove_after_deploy.each do |pattern|
+        try_sudo "sh -c 'cd #{latest_release} && rm -f #{pattern}'"
+      end
+      puts_ok
+    end
+  end
 end

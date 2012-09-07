@@ -7,12 +7,12 @@ namespace :database do
       sqlfile   = "#{application}_dump.sql"
       config    = ""
 
-      try_sudo "cat #{shared_path}/config/databases.yml" do |ch, st, data|
+      run "#{try_sudo} cat #{shared_path}/config/databases.yml" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
       end
 
       sql_dump_cmd = generate_sql_command('dump', config)
-      try_sudo "#{sql_dump_cmd} | gzip -c > #{file}" do |ch, stream, data|
+      run "#{try_sudo} #{sql_dump_cmd} | gzip -c > #{file}" do |ch, stream, data|
         puts data
       end
 
@@ -24,7 +24,7 @@ namespace :database do
       rescue NotImplementedError # hack for windows which doesnt support symlinks
         FileUtils.cp_r("backups/#{filename}", "backups/#{application}.remote_dump.latest.sql.gz")
       end
-      try_sudo "rm #{file}"
+      run "#{try_sudo} rm #{file}"
     end
 
     desc "Dump local database"
@@ -96,9 +96,9 @@ namespace :database do
       database.dump.local
 
       upload(file, "#{remote_tmp_dir}/#{filename}", :via => :scp)
-      try_sudo "gunzip -c #{remote_tmp_dir}/#{filename} > #{remote_tmp_dir}/#{sqlfile}"
+      run "#{try_sudo} gunzip -c #{remote_tmp_dir}/#{filename} > #{remote_tmp_dir}/#{sqlfile}"
 
-      try_sudo "cat #{shared_path}/config/databases.yml" do |ch, st, data|
+      run "#{try_sudo} cat #{shared_path}/config/databases.yml" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
       end
 
@@ -107,12 +107,12 @@ namespace :database do
 
       sql_import_cmd = generate_sql_command('import', config)
 
-      try_sudo "#{sql_import_cmd} < #{remote_tmp_dir}/#{sqlfile}" do |ch, stream, data|
+      run "#{try_sudo} #{sql_import_cmd} < #{remote_tmp_dir}/#{sqlfile}" do |ch, stream, data|
         puts data
       end
 
-      try_sudo "rm #{remote_tmp_dir}/#{filename}"
-      try_sudo "rm #{remote_tmp_dir}/#{sqlfile}"
+      run "#{try_sudo} rm #{remote_tmp_dir}/#{filename}"
+      run "#{try_sudo} rm #{remote_tmp_dir}/#{sqlfile}"
     end
   end
 end

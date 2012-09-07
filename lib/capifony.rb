@@ -55,7 +55,7 @@ namespace :deploy do
   DESC
   task :setup, :roles => :app, :except => { :no_release => true } do
     dirs = [deploy_to, releases_path, shared_path]
-    try_sudo "mkdir -p #{dirs.join(' ')}"
-    try_sudo "chmod g+w #{dirs.join(' ')}" if fetch(:group_writable, true)
+    run "#{try_sudo} mkdir -p #{dirs.join(' ')}"
+    run "#{try_sudo} chmod g+w #{dirs.join(' ')}" if fetch(:group_writable, true)
   end
 end

@@ -57,6 +57,7 @@ set :assets_relative,       false
 set :update_assets_version, false
 
 # Need to clear *_dev controllers
+# @deprecated Use `:remove_after_deploy` instead
 set :clear_controllers, true
 
 # Files that need to remain the same between deploys
@@ -86,6 +87,10 @@ set(:symfony_version)       { guess_symfony_version }
 # If set to false, it will never ask for confirmations (migrations task for instance)
 # Use it carefully, really!
 set :interactive_mode,      true
+
+# Array of files (can include glob pattern) that is passed to `rm -f`
+# after a deploy
+set :remove_after_deploy,   [web_path + "/app_*.php"]
 
 def load_database_config(data, env)
   parameters = YAML::load(data)
@@ -145,9 +150,7 @@ after "deploy:finalize_update" do
     symfony.assetic.dump            # 5. Dump assetic assets
   end
 
-  if clear_controllers
-    symfony.project.clear_controllers
-  end
+  deploy.remove_after
 end
 
 before "deploy:update_code" do

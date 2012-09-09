@@ -102,46 +102,47 @@ namespace :symfony do
   namespace :composer do
     desc "Gets composer and installs it"
     task :get, :roles => :app, :except => { :no_release => true } do
-      if remote_command_exists?('composer')
-        pretty_print "--> Updating Composer in PATH"
-
-        try_sudo "composer self-update"
-      else
-        pretty_print "--> Downloading Composer"
-
+      pretty_print "--> Downloading Composer"
+      if !remote_file_exists?("#{latest_release}/composer.phar")
         try_sudo "sh -c 'cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}'"
+      else
+        try_sudo "cd #{latest_release} && #{php_bin} composer.phar self-update"
       end
+      puts_ok
+    end
 
+    desc "Updates composer"
+    task :update, :roles => :app, :except => { :no_release => true } do
+      pretty_print "--> Updating Composer"
+      try_sudo "#{composer_bin} self-update"
       puts_ok
     end
 
     desc "Runs composer to install vendors from composer.lock file"
     task :install, :roles => :app, :except => { :no_release => true } do
-      composer_bin = "#{php_bin} composer.phar"
-      if remote_command_exists?('composer')
-        composer_bin = "composer"
-      elsif !remote_file_exists?("#{latest_release}/composer.phar")
+      if composer_bin
+        symfony.composer.update
+      else
         symfony.composer.get
+        composer_bin = "#{php_bin} composer.phar"
       end
 
       pretty_print "--> Installing Composer dependencies"
-
-      try_sudo "sh -c 'cd #{latest_release} && #{composer_bin} install --no-scripts --verbose'"
+      try_sudo "sh -c 'cd #{latest_release} && #{composer_bin} install #{composer_options}'"
       puts_ok
     end
 
     desc "Runs composer to update vendors, and composer.lock file"
     task :update, :roles => :app, :except => { :no_release => true } do
-      composer_bin = "#{php_bin} composer.phar"
-      if remote_command_exists?('composer')
-        composer_bin = "composer"
-      elsif !remote_file_exists?("#{latest_release}/composer.phar")
+      if composer_bin
+        symfony.composer.update
+      else
         symfony.composer.get
+        composer_bin = "#{php_bin} composer.phar"
       end
 
       pretty_print "--> Updating Composer dependencies"
-
-      try_sudo "sh -c 'cd #{latest_release} && #{composer_bin} update --no-scripts --verbose'"
+      try_sudo "sh -c 'cd #{latest_release} && #{composer_bin} update #{composer_options}'"
       puts_ok
     end
   end

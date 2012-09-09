@@ -102,13 +102,15 @@ namespace :symfony do
           end
         end
 
-        namespace :indexes do
-          desc "Allows you to #{action.to_s} indexes *only* for your documents"
-          task action, :roles => :app do
-            pretty_print "--> Executing MongoDB indexes #{action.to_s}"
+        if action != :update
+          namespace :indexes do
+            desc "Allows you to #{action.to_s} indexes *only* for your documents"
+            task action, :roles => :app do
+              pretty_print "--> Executing MongoDB indexes #{action.to_s}"
 
-            try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:schema:#{action.to_s} --index --env=#{symfony_env_prod}'", :once => true
-            puts_ok
+              try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:schema:#{action.to_s} --index --env=#{symfony_env_prod}'", :once => true
+              puts_ok
+            end
           end
         end
       end

@@ -1,6 +1,16 @@
-== 2.1.15 / ???
+== 2.1.15 / September 10, 2012
 
-n/a
+* Fix #203
+* Preliminary testing seems to show that this is generally how try_sudo was meant to be implemented, and is in fact how it is required to be implemented to work with things that depend on the output of run.
+* --index is an invalid option when doing an update
+* Setup a configurable Composer binary also. Refs #212
+* Make the Composer options configurable
+* Added symfony:doctrine:schema:update
+* Remove unnecessary code.
+* Fix regression. 'try_sudo' behaves differently from 'run' regarding the 'do' block.
+* Possible fix for #202
+* set_permissions: fix for acl method
+* Fix this fucking dumb task. #195
 
 == 2.1.14 / August 22, 2012
 

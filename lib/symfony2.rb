@@ -137,19 +137,19 @@ after "deploy:finalize_update" do
   end
 
   if assets_install
-    symfony.assets.install          # 2. Publish bundle assets
-  end
-
-  if cache_warmup
-    symfony.cache.warmup            # 3. Warmup clean cache
+    symfony.assets.install          # Publish bundle assets
   end
 
   if update_assets_version
-    symfony.assets.update_version   # 4. Update `assets_version`
+    symfony.assets.update_version   # Update `assets_version`
+  end
+
+  if cache_warmup
+    symfony.cache.warmup            # Warmup clean cache
   end
 
   if dump_assetic_assets
-    symfony.assetic.dump            # 5. Dump assetic assets
+    symfony.assetic.dump            # Dump assetic assets
   end
 
   if clear_controllers

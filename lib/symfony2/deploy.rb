@@ -145,7 +145,7 @@ namespace :deploy do
   desc "Totaly drops :deploy_to directory"
   task :drop do
     if Capistrano::CLI.ui.ask("Are you sure remove #{deploy_to} (y/n)") == 'y'
-      run "rm -rf #{deploy_to}"
+      try_sudo "rm -rf #{deploy_to}"
     end
   end
 end

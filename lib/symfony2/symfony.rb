@@ -25,7 +25,7 @@ namespace :symfony do
   namespace :assets do
     desc "Updates assets version (in config.yml)"
     task :update_version, :roles => :app, :except => { :no_release => true } do
-       run "#{try_sudo} sed -i 's/\\(assets_version: \\)\\(.*\\)$/\\1 #{real_revision}/g' #{latest_release}/#{app_path}/config/config.yml"
+       run "sed -i 's/\\(assets_version: \\)\\([a-zA-Z0-9_]*\\)\\(.*\\)$/\\1 \"#{real_revision[0,7]}\"\\3/g' #{latest_release}/#{app_path}/config/config.yml"
     end
 
     desc "Installs bundle's assets"

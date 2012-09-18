@@ -119,6 +119,8 @@ after "deploy:finalize_update" do
     else
       symfony.composer.install
     end
+
+    symfony.composer.dump_autoload
   else
     if update_vendors
       vendors_mode.chomp # To remove trailing whiteline

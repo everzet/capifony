@@ -145,6 +145,20 @@ namespace :symfony do
       run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} update #{composer_options}'"
       puts_ok
     end
+
+    desc "Dumps an optimized autoloader"
+    task :dump_autoload, :roles => :app, :except => { :no_release => true } do
+      if composer_bin
+        symfony.composer.update
+      else
+        symfony.composer.get
+        composer_bin = "#{php_bin} composer.phar"
+      end
+
+      pretty_print "--> Dumping an optimized autoloader"
+      run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} dump-autoload --optimize'"
+      puts_ok
+    end
   end
 
   namespace :cache do

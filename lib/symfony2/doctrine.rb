@@ -46,16 +46,19 @@ namespace :symfony do
     namespace :schema do
       desc "Processes the schema and either create it directly on EntityManager Storage Connection or generate the SQL output"
       task :create, :roles => :app, :except => { :no_release => true } do
+        pretty_print "--> Creating schema"
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:create --env=#{symfony_env_prod}'", :once => true
       end
 
       desc "Drops the complete database schema of EntityManager Storage Connection or generate the corresponding SQL output"
       task :drop, :roles => :app, :except => { :no_release => true } do
+        pretty_print "--> Droping schema"
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:drop --env=#{symfony_env_prod}'", :once => true
       end
 
       desc "Updates database schema of EntityManager Storage Connection"
       task :update, :roles => :app, :except => { :no_release => true } do
+        pretty_print "--> Updating schema"
         try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:update --force --env=#{symfony_env_prod}'", :once => true
       end
     end

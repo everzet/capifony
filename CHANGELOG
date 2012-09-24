@@ -1,6 +1,11 @@
-== 2.1.16 / ???
+== 2.1.16 / September 25, 2012
 
-n/a
+* Add composer:dump_autoload to the finalize_update after hook
+* Add new task to allow composer dump-autoload
+* Added back the '#{try_sudo}' option to the command
+* Tweaked the way 'assets_version' value is updated
+* run "#{try_sudo}"
+* Use try_sudo instead of run
 
 == 2.1.15 / September 10, 2012
 

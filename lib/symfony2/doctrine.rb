@@ -59,7 +59,7 @@ namespace :symfony do
       desc "Executes a migration to a specified version or the latest available version"
       task :migrate, :roles => :app, :except => { :no_release => true } do
         currentVersion = nil
-        try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} --no-ansi doctrine:migrations:status --env=#{symfony_env_prod}'", :once => true do |ch, stream, out|
+        run "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} --no-ansi doctrine:migrations:status --env=#{symfony_env_prod}'", :once => true do |ch, stream, out|
           if stream == :out and out =~ /Current Version:.+\(([\w]+)\)/
             currentVersion = Regexp.last_match(1)
           end
@@ -71,22 +71,22 @@ namespace :symfony do
         if currentVersion == nil
           raise "Could not find current database migration version"
         end
-        puts "    Current database version: #{currentVersion}"
+        logger.info "    Current database version: #{currentVersion}"
 
         on_rollback {
           if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database back to version #{currentVersion}? (y/N)")
-            try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate #{currentVersion} --env=#{symfony_env_prod} --no-interaction'", :once => true
+            run "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate #{currentVersion} --env=#{symfony_env_prod} --no-interaction'", :once => true
           end
         }
 
         if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database? (y/N)")
-          try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate --env=#{symfony_env_prod} --no-interaction'", :once => true
+          run "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate --env=#{symfony_env_prod} --no-interaction'", :once => true
         end
       end
 
       desc "Views the status of a set of migrations"
       task :status, :roles => :app, :except => { :no_release => true } do
-        try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:status --env=#{symfony_env_prod}'", :once => true
+        run "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:status --env=#{symfony_env_prod}'", :once => true
       end
     end
 

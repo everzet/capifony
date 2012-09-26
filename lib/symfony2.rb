@@ -9,7 +9,7 @@ load 'symfony2/propel'
 load 'symfony2/symfony'
 load 'symfony2/web'
 
-require 'IniFile'
+require 'inifile'
 require 'yaml'
 
 # Symfony application path

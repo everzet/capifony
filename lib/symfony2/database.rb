@@ -10,17 +10,17 @@ namespace :database do
       sqlfile   = "#{application}_dump.sql"
       config    = ""
 
-      try_sudo "cat #{current_path}/#{app_config_path}/#{app_config_file}" do |ch, st, data|
+      run "cat #{current_path}/#{app_config_path}/#{app_config_file}" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
       end
 
       case config['database_driver']
       when "pdo_mysql", "mysql"
-        try_sudo "mysqldump -u#{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} | gzip -c > #{file}" do |ch, stream, data|
+        run "mysqldump -u#{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} | gzip -c > #{file}" do |ch, stream, data|
           puts data
         end
       when "pdo_pgsql", "pgsql"
-        try_sudo "pg_dump -U #{config['database_user']} #{config['database_name']} --clean | gzip -c > #{file}" do |ch, stream, data|
+        run "pg_dump -U #{config['database_user']} #{config['database_name']} --clean | gzip -c > #{file}" do |ch, stream, data|
           puts data
         end
       end
@@ -32,7 +32,7 @@ namespace :database do
       rescue NotImplementedError # hack for windows which doesnt support symlinks
         FileUtils.cp_r("backups/#{filename}", "backups/#{application}.remote_dump.latest.sql.gz")
       end
-      try_sudo "rm #{file}"
+      run "rm #{file}"
     end
 
     desc "Dumps local database"
@@ -102,25 +102,25 @@ namespace :database do
       database.dump.local
 
       upload(file, "#{remote_tmp_dir}/#{filename}", :via => :scp)
-      try_sudo "gunzip -c #{remote_tmp_dir}/#{filename} > #{remote_tmp_dir}/#{sqlfile}"
+      run "gunzip -c #{remote_tmp_dir}/#{filename} > #{remote_tmp_dir}/#{sqlfile}"
 
-      try_sudo "cat #{current_path}/#{app_config_path}/#{app_config_file}" do |ch, st, data|
+      run "cat #{current_path}/#{app_config_path}/#{app_config_file}" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
       end
 
       case config['database_driver']
       when "pdo_mysql", "mysql"
-        try_sudo "mysql -u#{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}" do |ch, stream, data|
+        run "mysql -u#{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}" do |ch, stream, data|
           puts data
         end
       when "pdo_pgsql", "pgsql"
-        try_sudo "psql -U #{config['database_user']} #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}" do |ch, stream, data|
+        run "psql -U #{config['database_user']} #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}" do |ch, stream, data|
           puts data
         end
       end
 
-      try_sudo "rm #{remote_tmp_dir}/#{filename}"
-      try_sudo "rm #{remote_tmp_dir}/#{sqlfile}"
+      run "rm #{remote_tmp_dir}/#{filename}"
+      run "rm #{remote_tmp_dir}/#{sqlfile}"
     end
   end
 end

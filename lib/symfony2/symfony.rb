@@ -134,9 +134,7 @@ namespace :symfony do
 
     desc "Runs composer to update vendors, and composer.lock file"
     task :update, :roles => :app, :except => { :no_release => true } do
-      if composer_bin
-        symfony.composer.update
-      else
+      if !composer_bin
         symfony.composer.get
         composer_bin = "#{php_bin} composer.phar"
       end

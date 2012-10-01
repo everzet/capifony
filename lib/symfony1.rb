@@ -54,8 +54,8 @@ end
 
 def deep_merge(hash1, hash2)
 
-    #if both 'all' and env keys are nil brek
-    if(hash1 ==nil && hash2 == nil)
+    #if both 'all' and env keys are nil break
+    if(hash1 == nil && hash2 == nil)
       return nil
     end
   
@@ -66,7 +66,7 @@ def deep_merge(hash1, hash2)
 
     #if only the 'all' key is specified 
     #There might not be a second has to cascade to 
-    if(hash2 == nil && hash1 !=nil)
+    if(hash2 == nil && hash1 != nil)
       return hash1;
     end
     hash1.merge(hash2){|key, subhash1, subhash2|

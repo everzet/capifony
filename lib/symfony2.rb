@@ -41,7 +41,7 @@ set :use_composer,          false
 set :composer_bin,          false
 
 # Options to pass to composer when installing/updating
-set :composer_options,      "--no-scripts --verbose"
+set :composer_options,      "--no-scripts --verbose --prefer-dist"
 
 # Whether to update vendors using the configured dependency manager (composer or bin/vendors)
 set :update_vendors,        false

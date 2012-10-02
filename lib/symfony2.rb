@@ -9,10 +9,17 @@ load 'symfony2/propel'
 load 'symfony2/symfony'
 load 'symfony2/web'
 
+require 'inifile'
 require 'yaml'
 
 # Symfony application path
 set :app_path,              "app"
+
+# Symfony config file path
+set :app_config_path,       app_path + "/config"
+
+# Symfony config file (parameters.(ini|yml|etc...)
+set :app_config_file,       "parameters.yml"
 
 # Symfony web path
 set :web_path,              "web"
@@ -84,7 +91,7 @@ set :webserver_user,        "www-data"
 # Method used to set permissions (:chmod, :acl, or :chown)
 set :permission_method,     false
 
-# Model manager: (doctrine, propel)
+# Model manager: (doctrine|propel)
 set :model_manager,         "doctrine"
 
 # Symfony2 version
@@ -95,9 +102,15 @@ set(:symfony_version)       { guess_symfony_version }
 set :interactive_mode,      true
 
 def load_database_config(data, env)
-  parameters = YAML::load(data)
+  read_parameters(data)['parameters']
+end
 
-  parameters['parameters']
+def read_parameters(data)
+  if '.ini' === File.extname(app_config_file) then
+    File.readable?(data) ? IniFile::load(data) : IniFile.new(data)
+  else
+    YAML::load(data)
+  end
 end
 
 def guess_symfony_version

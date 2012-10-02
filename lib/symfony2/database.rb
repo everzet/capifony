@@ -5,12 +5,13 @@ namespace :database do
   namespace :dump do
     desc "Dumps remote database"
     task :remote, :roles => :db, :only => { :primary => true } do
-      filename  = "#{application}.remote_dump.#{Time.now.to_i}.sql.gz"
+      env       = fetch(:deploy_env, "remote")
+      filename  = "#{application}.#{env}_dump.#{Time.now.to_i}.sql.gz"
       file      = "#{remote_tmp_dir}/#{filename}"
       sqlfile   = "#{application}_dump.sql"
       config    = ""
 
-      run "#{try_sudo} cat #{current_path}/#{app_path}/config/parameters.yml" do |ch, st, data|
+      run "#{try_sudo} cat #{current_path}/#{app_config_path}/#{app_config_file}" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
       end
 
@@ -28,9 +29,9 @@ namespace :database do
       FileUtils.mkdir_p("backups")
       get file, "backups/#{filename}"
       begin
-        FileUtils.ln_sf(filename, "backups/#{application}.remote_dump.latest.sql.gz")
+        FileUtils.ln_sf(filename, "backups/#{application}.#{env}_dump.latest.sql.gz")
       rescue NotImplementedError # hack for windows which doesnt support symlinks
-        FileUtils.cp_r("backups/#{filename}", "backups/#{application}.remote_dump.latest.sql.gz")
+        FileUtils.cp_r("backups/#{filename}", "backups/#{application}.#{env}_dump.latest.sql.gz")
       end
       run "#{try_sudo} rm #{file}"
     end
@@ -40,7 +41,7 @@ namespace :database do
       filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.gz"
       tmpfile   = "backups/#{application}_dump_tmp.sql"
       file      = "backups/#{filename}"
-      config    = load_database_config IO.read("#{app_path}/config/parameters.yml"), symfony_env_local
+      config    = load_database_config IO.read("#{app_config_path}/#{app_config_file}"), symfony_env_local
       sqlfile   = "#{application}_dump.sql"
 
       FileUtils::mkdir_p("backups")
@@ -72,8 +73,9 @@ namespace :database do
   namespace :move do
     desc "Dumps remote database, downloads it to local, and populates here"
     task :to_local, :roles => :db, :only => { :primary => true } do
-      filename  = "#{application}.remote_dump.latest.sql.gz"
-      config    = load_database_config IO.read("#{app_path}/config/parameters.yml"), symfony_env_local
+      env       = fetch(:deploy_env, "remote")
+      filename  = "#{application}.#{env}_dump.latest.sql.gz"
+      config    = load_database_config IO.read("#{app_config_path}/#{app_config_file}"), symfony_env_local
       sqlfile   = "#{application}_dump.sql"
 
       database.dump.remote
@@ -104,7 +106,7 @@ namespace :database do
       upload(file, "#{remote_tmp_dir}/#{filename}", :via => :scp)
       run "#{try_sudo} gunzip -c #{remote_tmp_dir}/#{filename} > #{remote_tmp_dir}/#{sqlfile}"
 
-      run "#{try_sudo} cat #{current_path}/#{app_path}/config/parameters.yml" do |ch, st, data|
+      run "#{try_sudo} cat #{current_path}/#{app_config_path}/#{app_config_file}" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
       end
 

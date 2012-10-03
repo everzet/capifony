@@ -79,7 +79,7 @@ namespace :symfony do
         if currentVersion == nil
           raise "Could not find current database migration version"
         end
-        puts "    Current database version: #{currentVersion}"
+        logger.info "    Current database version: #{currentVersion}"
 
         on_rollback {
           if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database back to version #{currentVersion}? (y/N)")

@@ -106,7 +106,7 @@ namespace :symfony do
       if !remote_file_exists?("#{latest_release}/composer.phar")
         run "#{try_sudo} sh -c 'cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}'"
       else
-        run "#{try_sudo} cd #{latest_release} && #{php_bin} composer.phar self-update"
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} composer.phar self-update'"
       end
       puts_ok
     end

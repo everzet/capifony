@@ -24,7 +24,7 @@ namespace :symfony do
     if Capistrano::CLI.ui.agree("Do you want to copy last release vendor dir then do composer install ?: (y/N)")
       pretty_print "--> Copying vendors from previous release"
 
-      run "cp -a #{previous_release}/vendor/* #{latest_release}/vendor/"
+      run "cp -a #{previous_release}/vendor #{latest_release}/"
       puts_ok
     end
   end

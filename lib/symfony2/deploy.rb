@@ -19,10 +19,7 @@ namespace :deploy do
       end
 
       methods = {
-        :chmod => [
-          "chmod +a \"#{user} allow delete,write,append,file_inherit,directory_inherit\" %s",
-          "chmod +a \"#{webserver_user} allow delete,write,append,file_inherit,directory_inherit\" %s"
-        ],
+        :chmod => ["chmod -R 0777 %s"],
         :acl   => [
           "setfacl -R -m u:#{user}:rwx -m u:#{webserver_user}:rwx %s",
           "setfacl -dR -m u:#{user}:rwx -m u:#{webserver_user}:rwx %s"

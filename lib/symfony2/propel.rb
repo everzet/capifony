@@ -6,9 +6,9 @@ namespace :symfony do
         task action, :roles => :app, :except => { :no_release => true } do
           case action.to_s
           when "create"
-            pretty_print "--> Creating databases"
+            pretty_print_msg "--> Creating databases"
           when "drop"
-            pretty_print "--> Dropping databases"
+            pretty_print_msg "--> Dropping databases"
           end
 
           run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:database:#{action.to_s} --env=#{symfony_env_prod}'", :once => true
@@ -25,7 +25,7 @@ namespace :symfony do
           command = "propel:build-model"
         end
 
-        pretty_print "--> Generating Propel classes"
+        pretty_print_msg "--> Generating Propel classes"
 
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --env=#{symfony_env_prod}'"
         puts_ok
@@ -38,7 +38,7 @@ namespace :symfony do
           command = "propel:build-sql"
         end
 
-        pretty_print "--> Generating Propel SQL"
+        pretty_print_msg "--> Generating Propel SQL"
 
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --env=#{symfony_env_prod}'"
         puts_ok
@@ -51,7 +51,7 @@ namespace :symfony do
           command = "propel:insert-sql"
         end
 
-        pretty_print "--> Inserting Propel SQL"
+        pretty_print_msg "--> Inserting Propel SQL"
 
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --force --env=#{symfony_env_prod}'", :once => true
         puts_ok
@@ -59,7 +59,7 @@ namespace :symfony do
 
       desc "Builds the Model classes, SQL statements and insert SQL"
       task :all_and_load, :roles => :app, :except => { :no_release => true } do
-        pretty_print "--> Setting up Propel (classes, SQL)"
+        pretty_print_msg "--> Setting up Propel (classes, SQL)"
 
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:build --insert-sql --env=#{symfony_env_prod}'"
         puts_ok

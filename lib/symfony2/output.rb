@@ -7,7 +7,7 @@ $pretty_errors_defined = false
 # Be less verbose by default
 logger.level = Logger::IMPORTANT
 
-def pretty_print(msg)
+def pretty_print_msg(msg)
   if logger.level == Logger::IMPORTANT
     pretty_errors
 

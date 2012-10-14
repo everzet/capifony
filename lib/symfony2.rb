@@ -1,21 +1,7 @@
-<<<<<<< HEAD
-load Gem.find_files('capifony.rb').last.to_s
-load_paths.push File.expand_path('../', __FILE__)
-
-load 'symfony2/output'
-load 'symfony2/database'
-load 'symfony2/deploy'
-load 'symfony2/doctrine'
-load 'symfony2/propel'
-load 'symfony2/symfony'
-load 'symfony2/web'
-
-require 'inifile'
-=======
 require 'capistrano'
 require 'colored'
 require 'fileutils'
->>>>>>> Refactored Symfony2 code
+require 'inifile'
 require 'yaml'
 require 'zlib'
 
@@ -24,16 +10,6 @@ module Capifony
     def self.load_into(configuration)
       configuration.load do
 
-<<<<<<< HEAD
-# Symfony config file path
-set :app_config_path,       app_path + "/config"
-
-# Symfony config file (parameters.(ini|yml|etc...)
-set :app_config_file,       "parameters.yml"
-
-# Symfony web path
-set :web_path,              "web"
-=======
         load_paths.push File.expand_path('../', __FILE__)
         load 'capifony'
         load 'symfony2/symfony'
@@ -41,8 +17,7 @@ set :web_path,              "web"
         load 'symfony2/deploy'
         load 'symfony2/doctrine'
         load 'symfony2/propel'
-        load 'symfony2/web'
->>>>>>> Refactored Symfony2 code
+#        load 'symfony2/web'
 
         # Symfony application path
         set :app_path,              "app"
@@ -59,27 +34,28 @@ set :web_path,              "web"
         # Symfony cache path
         set :cache_path,            app_path + "/cache"
 
+        # Symfony config file path
+        set :app_config_path,       app_path + "/config"
+
+        # Symfony config file (parameters.(ini|yml|etc...)
+        set :app_config_file,       "parameters.yml"
+
         # Symfony bin vendors
         set :symfony_vendors,       "bin/vendors"
 
         # Symfony build_bootstrap script
         set :build_bootstrap,       "bin/build_bootstrap"
 
-<<<<<<< HEAD
-# Options to pass to composer when installing/updating
-set :composer_options,      "--no-scripts --verbose --prefer-dist"
-=======
         # Whether to use composer to install vendors.
         # If set to false, it will use the bin/vendors script
         set :use_composer,          false
->>>>>>> Refactored Symfony2 code
 
         # Path to composer binary
         # If set to false, Capifony will download/install composer
         set :composer_bin,          false
 
         # Options to pass to composer when installing/updating
-        set :composer_options,      "--no-scripts --verbose"
+        set :composer_options,      "--no-scripts --verbose --prefer-dist"
 
         # Whether to update vendors using the configured dependency manager (composer or bin/vendors)
         set :update_vendors,        false
@@ -116,13 +92,8 @@ set :composer_options,      "--no-scripts --verbose --prefer-dist"
         # Dirs that need to be writable by the HTTP Server (i.e. cache, log dirs)
         set :writable_dirs,         [log_path, cache_path]
 
-<<<<<<< HEAD
-# Model manager: (doctrine|propel)
-set :model_manager,         "doctrine"
-=======
         # Name used by the Web Server (i.e. www-data for Apache)
         set :webserver_user,        "www-data"
->>>>>>> Refactored Symfony2 code
 
         # Method used to set permissions (:chmod, :acl, or :chown)
         set :permission_method,     false
@@ -130,31 +101,23 @@ set :model_manager,         "doctrine"
         # Model manager: (doctrine, propel)
         set :model_manager,         "doctrine"
 
-<<<<<<< HEAD
-def load_database_config(data, env)
-  read_parameters(data)['parameters']
-end
-
-def read_parameters(data)
-  if '.ini' === File.extname(app_config_file) then
-    File.readable?(data) ? IniFile::load(data) : IniFile.new(data)
-  else
-    YAML::load(data)
-  end
-end
-=======
         # Symfony2 version
         set(:symfony_version)       { guess_symfony_version }
 
         # If set to false, it will never ask for confirmations (migrations task for instance)
         # Use it carefully, really!
         set :interactive_mode,      true
->>>>>>> Refactored Symfony2 code
 
         def load_database_config(data, env)
-          parameters = YAML::load(data)
+          read_parameters(data)['parameters']
+        end
 
-          parameters['parameters']
+        def read_parameters(data)
+          if '.ini' === File.extname(app_config_file) then
+            File.readable?(data) ? IniFile::load(data) : IniFile.new(data)
+          else
+            YAML::load(data)
+          end
         end
 
         def guess_symfony_version

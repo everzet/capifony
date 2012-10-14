@@ -3,7 +3,7 @@ namespace :symfony do
     namespace :cache do
       desc "Clears all metadata cache for a entity manager"
       task :clear_metadata, :roles => :app, :except => { :no_release => true } do
-        pretty_print "--> Clearing Doctrine metadata cache"
+        pretty_print_msg "--> Clearing Doctrine metadata cache"
 
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-metadata --env=#{symfony_env_prod}'"
         puts_ok
@@ -11,7 +11,7 @@ namespace :symfony do
 
       desc "Clears all query cache for a entity manager"
       task :clear_query, :roles => :app, :except => { :no_release => true } do
-        pretty_print "--> Clearing Doctrine query cache"
+        pretty_print_msg "--> Clearing Doctrine query cache"
 
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-query --env=#{symfony_env_prod}'"
         puts_ok
@@ -19,7 +19,7 @@ namespace :symfony do
 
       desc "Clears result cache for a entity manager"
       task :clear_result, :roles => :app, :except => { :no_release => true } do
-        pretty_print "--> Clearing Doctrine result cache"
+        pretty_print_msg "--> Clearing Doctrine result cache"
 
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-result --env=#{symfony_env_prod}'"
         puts_ok
@@ -32,9 +32,9 @@ namespace :symfony do
         task action, :roles => :app, :except => { :no_release => true } do
           case action.to_s
           when "create"
-            pretty_print "--> Creating databases"
+            pretty_print_msg "--> Creating databases"
           when "drop"
-            pretty_print "--> Dropping databases"
+            pretty_print_msg "--> Dropping databases"
           end
 
           run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:#{action.to_s} --env=#{symfony_env_prod}'", :once => true
@@ -46,19 +46,19 @@ namespace :symfony do
     namespace :schema do
       desc "Processes the schema and either create it directly on EntityManager Storage Connection or generate the SQL output"
       task :create, :roles => :app, :except => { :no_release => true } do
-        pretty_print "--> Creating schema"
+        pretty_print_msg "--> Creating schema"
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:create --env=#{symfony_env_prod}'", :once => true
       end
 
       desc "Drops the complete database schema of EntityManager Storage Connection or generate the corresponding SQL output"
       task :drop, :roles => :app, :except => { :no_release => true } do
-        pretty_print "--> Droping schema"
+        pretty_print_msg "--> Droping schema"
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:drop --env=#{symfony_env_prod}'", :once => true
       end
 
       desc "Updates database schema of EntityManager Storage Connection"
       task :update, :roles => :app, :except => { :no_release => true } do
-        pretty_print "--> Updating schema"
+        pretty_print_msg "--> Updating schema"
         try_sudo "sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:update --force --env=#{symfony_env_prod}'", :once => true
       end
     end
@@ -103,7 +103,7 @@ namespace :symfony do
         namespace :schema do
           desc "Allows you to #{action.to_s} databases, collections and indexes for your documents"
           task action, :roles => :app, :except => { :no_release => true } do
-            pretty_print "--> Executing MongoDB schema #{action.to_s}"
+            pretty_print_msg "--> Executing MongoDB schema #{action.to_s}"
 
             run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:schema:#{action.to_s} --env=#{symfony_env_prod}'", :once => true
             puts_ok
@@ -114,7 +114,7 @@ namespace :symfony do
           namespace :indexes do
             desc "Allows you to #{action.to_s} indexes *only* for your documents"
             task action, :roles => :app do
-              pretty_print "--> Executing MongoDB indexes #{action.to_s}"
+              pretty_print_msg "--> Executing MongoDB indexes #{action.to_s}"
 
               run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:schema:#{action.to_s} --index --env=#{symfony_env_prod}'", :once => true
               puts_ok
@@ -127,7 +127,7 @@ namespace :symfony do
     namespace :init do
       desc "Mounts ACL tables in the database"
       task :acl, :roles => :app, :except => { :no_release => true } do
-        pretty_print "--> Mounting Doctrine ACL tables"
+        pretty_print_msg "--> Mounting Doctrine ACL tables"
 
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} init:acl --env=#{symfony_env_prod}'", :once => true
         puts_ok

@@ -31,7 +31,7 @@ namespace :deploy do
       }
 
       if methods[permission_method]
-        pretty_print "--> Setting permissions"
+        pretty_print_msg "--> Setting permissions"
 
         if fetch(:use_sudo, false)
           methods[permission_method].each do |cmd|
@@ -61,7 +61,7 @@ namespace :deploy do
   desc "Symlinks static directories and static files that need to remain between deployments"
   task :share_childs, :roles => :app, :except => { :no_release => true } do
     if shared_children
-      pretty_print "--> Creating symlinks for shared directories"
+      pretty_print_msg "--> Creating symlinks for shared directories"
 
       shared_children.each do |link|
         run "#{try_sudo} mkdir -p #{shared_path}/#{link}"
@@ -73,7 +73,7 @@ namespace :deploy do
     end
 
     if shared_files
-      pretty_print "--> Creating symlinks for shared files"
+      pretty_print_msg "--> Creating symlinks for shared files"
 
       shared_files.each do |link|
         link_dir = File.dirname("#{shared_path}/#{link}")
@@ -90,7 +90,7 @@ namespace :deploy do
   task :finalize_update, :roles => :app, :except => { :no_release => true } do
     run "#{try_sudo} chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
 
-    pretty_print "--> Creating cache directory"
+    pretty_print_msg "--> Creating cache directory"
 
     run "#{try_sudo} sh -c 'if [ -d #{latest_release}/#{cache_path} ] ; then rm -rf #{latest_release}/#{cache_path}; fi'"
     run "#{try_sudo} sh -c 'mkdir -p #{latest_release}/#{cache_path} && chmod -R 0777 #{latest_release}/#{cache_path}'"
@@ -107,7 +107,7 @@ namespace :deploy do
       if asset_paths.chomp.empty?
         puts "    No asset paths found, skipped".yellow
       else
-        pretty_print "--> Normalizing asset timestamps"
+        pretty_print_msg "--> Normalizing asset timestamps"
 
         run "#{try_sudo} find #{asset_paths} -exec touch -t #{stamp} {} ';' &> /dev/null || true", :env => { "TZ" => "UTC" }
         puts_ok

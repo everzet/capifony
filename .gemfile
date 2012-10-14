@@ -1,0 +1,6 @@
+source :rubygems
+source "http://rubygems.org"
+
+gem "capistrano", ">= 2.11.0"
+gem "colored", ">= 1.2.0"
+gem "inifile", ">= 2.0.2"

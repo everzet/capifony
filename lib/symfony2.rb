@@ -152,7 +152,8 @@ module Capifony
 
         def capifony_puts_ok
           if logger.level == Capistrano::Logger::IMPORTANT && !$error
-            puts '✔'.green
+            puts 'OK'.green
+            #✔
           end
 
           $error = false
@@ -168,7 +169,8 @@ module Capifony
 
               def write(s)
                 if @@firstLine
-                  s = '✘' << "\n" << s
+                  s = 'KO' << "\n" << s
+                  #✘
                   @@firstLine = false
                 end
 

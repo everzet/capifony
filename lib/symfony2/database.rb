@@ -1,5 +1,5 @@
-require "fileutils"
-require "zlib"
+require 'fileutils'
+require 'zlib'
 
 namespace :database do
   namespace :dump do

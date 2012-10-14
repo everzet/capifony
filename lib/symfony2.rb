@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'capistrano'
 require 'colored'
 require 'fileutils'
@@ -152,8 +153,7 @@ module Capifony
 
         def capifony_puts_ok
           if logger.level == Capistrano::Logger::IMPORTANT && !$error
-            puts 'OK'.green
-            #✔
+            puts '✔'.green
           end
 
           $error = false
@@ -169,8 +169,7 @@ module Capifony
 
               def write(s)
                 if @@firstLine
-                  s = 'KO' << "\n" << s
-                  #✘
+                  s = '✘' << "\n" << s
                   @@firstLine = false
                 end
 

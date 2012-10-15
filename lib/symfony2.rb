@@ -69,6 +69,7 @@ set :assets_relative,       false
 
 # Whether to update `assets_version` in `config.yml`
 set :update_assets_version, false
+set :update_assets_version_in_app_config_file, false
 
 # Need to clear *_dev controllers
 set :clear_controllers,     true

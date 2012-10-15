@@ -125,7 +125,7 @@ namespace :deploy do
   end
 
   desc "Deploys the application and runs the test suite"
-  task :testall, :roles => :app, :except => { :no_release => true } do
+  task :test_all, :roles => :app, :except => { :no_release => true } do
     update_code
     create_symlink
     run "#{try_sudo} sh -c 'cd #{latest_release} && phpunit -c #{app_path} src'"
@@ -142,7 +142,7 @@ namespace :deploy do
     end
   end
 
-  desc "Totaly drops :deploy_to directory"
+  desc "Drops :deploy_to directory"
   task :drop do
     if Capistrano::CLI.ui.ask("Are you sure remove #{deploy_to} (y/n)") == 'y'
       run "#{try_sudo} rm -rf #{deploy_to}"

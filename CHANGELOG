@@ -1,6 +1,30 @@
-== 2.1.17 / ???
+== 2.2.0 / ???
 
-n/a
+* Minor fixes
+* Add tests for propel namespace
+* Add tests for doctrine namespace
+* Fix travis-ci setup
+* Add more tests for the symfony namespace (Symfony2)
+* Fix encoding
+* Trying to fix dependencies
+* Add testing tools to gemfile
+* fix gemfile
+* Add travis/bundler configs, bump version to 2.2.x-dev
+* Introducing a test suite
+* Refactored Symfony2 code
+* Fix conflict with the pp gem
+* cd command not found when composer self-update
+* Fix #240
+* Fixing spelling mistakes an code
+* Fix composer tasks
+* Fixing logic in deep_merge method for symfony1
+* Fix symfony:doctrine:migrations:migrate when using pty by not using try_sudo. Also
+log current database version with level info.
+* Fixed a problem with case-insensitivity. This worked on OS X, but not on Linux, because the file system is case sensitive.
+* Take capistrano/ext/multistage
+parameter deploy_env into account when using different deploy environments.
+* Avoid the unnecessary use of try_sudo to make remote dumps work, as Capifony doesn't seem to check if use_sudo is false.
+* Added patch-5 branch modifications from https://github.com/leek/capifony/tree/patch-5 to enable using parameters.ini config files.
 
 == 2.1.16 / September 25, 2012
 

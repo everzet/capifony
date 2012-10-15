@@ -1,6 +1,8 @@
 Deploying symfony Applications with Capistrano
 ==============================================
 
+[![Build Status](https://secure.travis-ci.org/everzet/capifony.png?branch=master)](http://travis-ci.org/everzet/capifony)
+
 Capistrano is an open source tool for running scripts on multiple servers.
 Its primary use is for easily deploying applications. While it was built
 specifically for deploying Rails apps, it’s pretty simple to customize it
@@ -34,6 +36,19 @@ lot easier.
 ## What's next? ##
 
 Read the [capifony documentation](http://capifony.org/)
+
+## Running the test suite ##
+
+You need a set of dependencies in order to run the capifony's test suite.
+You can use **Bundler** to install these dependencies:
+
+    bundle install --gemfile=.gemfile
+
+Then, run the tests using **Rake**:
+
+    rake spec
+
+For more information, see the `.travis.yml` file.
 
 
 ## Contributors ##

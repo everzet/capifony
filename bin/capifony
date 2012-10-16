@@ -5,12 +5,18 @@ require 'fileutils'
 
 symfony_version  = nil
 symfony_app_path = 'app'
+capifony_version = '2.2.0.dev'
 
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename($0)} [path]"
 
   opts.on("-h", "--help", "Displays this help info") do
     puts opts
+    exit 0
+  end
+
+  opts.on("-v", "--version", "") do
+    puts capifony_version
     exit 0
   end
 
@@ -38,7 +44,7 @@ elsif !File.exists?(ARGV.first)
 elsif !File.directory?(ARGV.first)
   abort "`#{ARGV.first}' is not a directory."
 elsif ARGV.length > 1
-  abort "Too many arguments; please specify only the directory to capify."
+  abort "Too many arguments; please specify only the directory to capifony."
 end
 
 def unindent(string)
@@ -53,8 +59,8 @@ if symfony_version == 2
   files = {
     "Capfile" => unindent(<<-FILE),
       load 'deploy' if respond_to?(:namespace) # cap2 differentiator
-      Dir['vendor/**/Resources/recipes/*.rb'].each { |bundle| load(bundle) }
-      load Gem.find_files('symfony2.rb').first.to_s
+
+      require 'symfony2'
       load '#{symfony_app_path}/config/deploy'
     FILE
 
@@ -86,7 +92,8 @@ else
     "Capfile" => unindent(<<-FILE),
       load 'deploy' if respond_to?(:namespace) # cap2 differentiator
       Dir['plugins/*/lib/recipes/*.rb'].each { |plugin| load(plugin) }
-      load Gem.find_files('symfony1.rb').first.to_s
+
+      require 'capifony_symfony1'
       load 'config/deploy'
     FILE
 

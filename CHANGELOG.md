@@ -1,5 +1,11 @@
 ### 2.2.0 / ???
 
+* Fix #244
+* Correct pretty_print on composer:get based on @simonchrz's patch
+* Enable web tasks
+* Update gemspec file
+* Make version consistent with capistrano
+* Add UPGRADE file
 * Fix command again
 * Fix missing method
 * Fix command

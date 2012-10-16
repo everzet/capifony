@@ -5,6 +5,8 @@ describe "Capifony::Symfony2" do
     @configuration = Capistrano::Configuration.new
     @configuration.extend(Capistrano::Spec::ConfigurationExtension)
 
+    @configuration.set :maintenance_basename, "maintenance"
+
     Capifony::Symfony2.load_into(@configuration)
   end
 

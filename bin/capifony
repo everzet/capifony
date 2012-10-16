@@ -60,7 +60,7 @@ if symfony_version == 2
     "Capfile" => unindent(<<-FILE),
       load 'deploy' if respond_to?(:namespace) # cap2 differentiator
 
-      require 'symfony2'
+      require 'capifony_symfony2'
       load '#{symfony_app_path}/config/deploy'
     FILE
 

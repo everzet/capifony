@@ -144,7 +144,8 @@ module Capifony
           if logger.level == Capistrano::Logger::IMPORTANT
             pretty_errors
 
-            msg << '.' * (55 - msg.size)
+            msg = msg.slice(0, 57)
+            msg << '.' * (60 - msg.size)
             print msg
           else
             puts msg.green

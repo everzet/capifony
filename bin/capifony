@@ -16,7 +16,7 @@ OptionParser.new do |opts|
   end
 
   opts.on("-v", "--version", "") do
-    puts capifony_version
+    puts "capifony v#{capifony_version}"
     exit 0
   end
 

@@ -102,11 +102,13 @@ namespace :symfony do
   namespace :composer do
     desc "Gets composer and installs it"
     task :get, :roles => :app, :except => { :no_release => true } do
-      capifony_pretty_print "--> Downloading Composer"
-
       if !remote_file_exists?("#{latest_release}/composer.phar")
+        capifony_pretty_print "--> Downloading Composer"
+
         run "#{try_sudo} sh -c 'cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}'"
       else
+        capifony_pretty_print "--> Updating Composer"
+
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} composer.phar self-update'"
       end
       capifony_puts_ok

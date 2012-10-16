@@ -6,13 +6,13 @@ namespace :symfony do
         task action, :roles => :app, :except => { :no_release => true } do
           case action.to_s
           when "create"
-            pretty_print_msg "--> Creating databases"
+            capifony_pretty_print "--> Creating databases"
           when "drop"
-            pretty_print_msg "--> Dropping databases"
+            capifony_pretty_print "--> Dropping databases"
           end
 
           run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:database:#{action.to_s} --env=#{symfony_env_prod}'", :once => true
-          puts_ok
+          capifony_puts_ok
         end
       end
     end
@@ -25,10 +25,10 @@ namespace :symfony do
           command = "propel:build-model"
         end
 
-        pretty_print_msg "--> Generating Propel classes"
+        capifony_pretty_print "--> Generating Propel classes"
 
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --env=#{symfony_env_prod}'"
-        puts_ok
+        capifony_puts_ok
       end
 
       desc "Builds SQL statements"
@@ -38,10 +38,10 @@ namespace :symfony do
           command = "propel:build-sql"
         end
 
-        pretty_print_msg "--> Generating Propel SQL"
+        capifony_pretty_print "--> Generating Propel SQL"
 
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --env=#{symfony_env_prod}'"
-        puts_ok
+        capifony_puts_ok
       end
 
       desc "Inserts SQL statements"
@@ -51,18 +51,18 @@ namespace :symfony do
           command = "propel:insert-sql"
         end
 
-        pretty_print_msg "--> Inserting Propel SQL"
+        capifony_pretty_print "--> Inserting Propel SQL"
 
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --force --env=#{symfony_env_prod}'", :once => true
-        puts_ok
+        capifony_puts_ok
       end
 
       desc "Builds the Model classes, SQL statements and insert SQL"
       task :all_and_load, :roles => :app, :except => { :no_release => true } do
-        pretty_print_msg "--> Setting up Propel (classes, SQL)"
+        capifony_pretty_print "--> Setting up Propel (classes, SQL)"
 
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:build --insert-sql --env=#{symfony_env_prod}'"
-        puts_ok
+        capifony_puts_ok
       end
 
       desc "Generates ACLs models"

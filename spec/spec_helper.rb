@@ -13,4 +13,4 @@ RSpec.configure do |config|
   config.include Capistrano::Spec::Helpers
 end
 
-require 'symfony2'
+require 'capifony_symfony2'

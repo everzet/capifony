@@ -188,8 +188,6 @@ module Capifony
             else
               symfony.composer.install
             end
-
-            symfony.composer.dump_autoload
           else
             if update_vendors
               vendors_mode.chomp # To remove trailing whiteline
@@ -205,6 +203,10 @@ module Capifony
 
           if model_manager == "propel"
             symfony.propel.build.model
+          end
+
+          if use_composer
+            symfony.composer.dump_autoload
           end
 
           if assets_install

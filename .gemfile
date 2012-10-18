@@ -1,6 +1,6 @@
-source "http://rubygems.org"
+source 'http://rubygems.org'
 
 gemspec
 
-gem "rspec"
-gem "capistrano-spec", :git => "git://github.com/mydrive/capistrano-spec.git"
+gem 'rspec'
+gem 'capistrano-spec', :git => 'git://github.com/mydrive/capistrano-spec.git'

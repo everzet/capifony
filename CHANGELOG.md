@@ -1,5 +1,11 @@
-### 2.2.0 / ???
+### 2.2.0 / October 22, 2012
 
+* Minor fixes
+* Clean output in tests
+* Fix travis build
+* Dump autoloader generation
+* Refactor specs
+* Update CHANGELOG
 * Fix #244
 * Correct pretty_print on composer:get based on @simonchrz's patch
 * Enable web tasks

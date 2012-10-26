@@ -58,28 +58,22 @@ namespace :symfony do
   end
 
   namespace :vendors do
-    desc "Runs the bin/vendors script to install the vendors (fast if already installed)"
-    task :install, :roles => :app, :except => { :no_release => true } do
-      capifony_pretty_print "--> Installing vendors"
+    [:install, :reinstall, :upgrade].each do |action|
+      desc "Runs the bin/vendors script to #{action.to_s} the vendors"
+      task action, :roles => :app, :except => { :no_release => true } do
+        capifony_pretty_print "--> #{action.to_s.capitalize}ing vendors"
 
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_vendors} install'"
-      capifony_puts_ok
-    end
+        cmd = action.to_s
+        case action
+        when :reinstall
+          cmd = "install --reinstall"
+        when :upgrade
+          cmd = "update"
+        end
 
-    desc "Runs the bin/vendors script to reinstall the vendors"
-    task :reinstall, :roles => :app, :except => { :no_release => true } do
-      capifony_pretty_print "--> Reinstalling vendors"
-
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_vendors} install --reinstall'"
-      capifony_puts_ok
-    end
-
-    desc "Runs the bin/vendors script to upgrade the vendors"
-    task :upgrade, :roles => :app, :except => { :no_release => true } do
-      capifony_pretty_print "--> Upgrading vendors"
-
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_vendors} update'"
-      capifony_puts_ok
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_vendors} #{cmd}'"
+        capifony_puts_ok
+      end
     end
   end
 
@@ -165,22 +159,20 @@ namespace :symfony do
   end
 
   namespace :cache do
-    desc "Clears cache"
-    task :clear, :roles => :app, :except => { :no_release => true } do
-      capifony_pretty_print "--> Clearing cache"
+    [:clear, :warmup].each do |action|
+      desc "Cache #{action.to_s}"
+      task action, :roles => :app, :except => { :no_release => true } do
+        case action
+        when :clear
+          capifony_pretty_print "--> Clearing cache"
+        when :warmup
+          capifony_pretty_print "--> Warming up cache"
+        end
 
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} cache:clear --env=#{symfony_env_prod}'"
-      run "#{try_sudo} chmod -R g+w #{latest_release}/#{cache_path}"
-      capifony_puts_ok
-    end
-
-    desc "Warms up an empty cache"
-    task :warmup, :roles => :app, :except => { :no_release => true } do
-      capifony_pretty_print "--> Warming up cache"
-
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} cache:warmup --env=#{symfony_env_prod}'"
-      run "#{try_sudo} chmod -R g+w #{latest_release}/#{cache_path}"
-      capifony_puts_ok
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} cache:#{action.to_s} --env=#{symfony_env_prod}'"
+        run "#{try_sudo} chmod -R g+w #{latest_release}/#{cache_path}"
+        capifony_puts_ok
+      end
     end
   end
 

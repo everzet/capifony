@@ -227,6 +227,15 @@ describe "Capifony::Symfony2 - symfony" do
     it { should have_run(' chmod -R g+w /var/www/releases/20120927/app/cache') }
   end
 
+  context "when running symfony:cache:warmup" do
+    before do
+      @configuration.find_and_execute_task('symfony:cache:warmup')
+    end
+
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console cache:warmup --env=prod\'') }
+    it { should have_run(' chmod -R g+w /var/www/releases/20120927/app/cache') }
+  end
+
   it "defines symfony:project tasks" do
     @configuration.find_task('symfony:project:clear_controllers').should_not == nil
   end

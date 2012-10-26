@@ -117,7 +117,7 @@ namespace :symfony do
     desc "Updates composer"
     task :self_update, :roles => :app, :except => { :no_release => true } do
       capifony_pretty_print "--> Updating Composer"
-      try_sudo "#{composer_bin} self-update"
+      run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} self-update'"
       capifony_puts_ok
     end
 
@@ -127,7 +127,7 @@ namespace :symfony do
         symfony.composer.self_update
       else
         symfony.composer.get
-        composer_bin = "#{php_bin} composer.phar"
+        set :composer_bin, "#{php_bin} composer.phar"
       end
 
       capifony_pretty_print "--> Installing Composer dependencies"
@@ -141,7 +141,7 @@ namespace :symfony do
         symfony.composer.self_update
       else
         symfony.composer.get
-        composer_bin = "#{php_bin} composer.phar"
+        set :composer_bin, "#{php_bin} composer.phar"
       end
 
       capifony_pretty_print "--> Updating Composer dependencies"
@@ -155,7 +155,7 @@ namespace :symfony do
         symfony.composer.self_update
       else
         symfony.composer.get
-        composer_bin = "#{php_bin} composer.phar"
+        set :composer_bin, "#{php_bin} composer.phar"
       end
 
       capifony_pretty_print "--> Dumping an optimized autoloader"

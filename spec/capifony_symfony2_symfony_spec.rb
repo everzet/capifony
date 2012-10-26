@@ -153,6 +153,66 @@ describe "Capifony::Symfony2 - symfony" do
     @configuration.find_task('symfony:composer:dump_autoload').should_not == nil
   end
 
+  context "when running symfony:composer:update" do
+    before do
+      @configuration.find_and_execute_task('symfony:composer:update')
+    end
+
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar update --no-scripts --verbose --prefer-dist\'') }
+  end
+
+  context "when running symfony:composer:update with a given composer_bin" do
+    before do
+      @configuration.set :composer_bin, "my_composer"
+      @configuration.find_and_execute_task('symfony:composer:update')
+    end
+
+    it { should_not have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer self-update\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer update --no-scripts --verbose --prefer-dist\'') }
+  end
+
+  context "when running symfony:composer:install" do
+    before do
+      @configuration.find_and_execute_task('symfony:composer:install')
+    end
+
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar install --no-scripts --verbose --prefer-dist\'') }
+  end
+
+  context "when running symfony:composer:install with a given composer_bin" do
+    before do
+      @configuration.set :composer_bin, "my_composer"
+      @configuration.find_and_execute_task('symfony:composer:install')
+    end
+
+    it { should_not have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer self-update\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer install --no-scripts --verbose --prefer-dist\'') }
+  end
+
+  context "when running symfony:composer:dump_autoload" do
+    before do
+      @configuration.find_and_execute_task('symfony:composer:dump_autoload')
+    end
+
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar dump-autoload --optimize\'') }
+  end
+
+  context "when running symfony:composer:dump_autoload with a given composer_bin" do
+    before do
+      @configuration.set :composer_bin, "my_composer"
+      @configuration.find_and_execute_task('symfony:composer:dump_autoload')
+    end
+
+    it { should_not have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer self-update\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer dump-autoload --optimize\'') }
+  end
+
   it "defines symfony:cache tasks" do
     @configuration.find_task('symfony:cache:clear').should_not == nil
     @configuration.find_task('symfony:cache:warmup').should_not == nil

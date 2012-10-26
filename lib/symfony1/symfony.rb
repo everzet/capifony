@@ -103,7 +103,7 @@ namespace :symfony do
           cmd << "cp #{release_path}/web/#{app}_#{env}.php #{release_path}/web/#{app}.php"
         end
 
-        run "#{try_sudo} -s #{cmd.join(';')}" if cmd.join(';')
+        run "#{try_sudo} sh -c '#{cmd.join(';')}'" if cmd.join(';')
       end
     end
   end

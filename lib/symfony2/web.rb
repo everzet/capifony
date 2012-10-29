@@ -63,7 +63,7 @@ namespace :deploy do
       web-accessible again.
     DESC
     task :enable, :roles => :web, :except => { :no_release => true } do
-      run "#{try_sudo} rm #{latest_release}/#{web_path}/#{maintenance_basename}.html"
+      run "#{try_sudo} rm -f #{latest_release}/#{web_path}/#{maintenance_basename}.html"
     end
   end
 end

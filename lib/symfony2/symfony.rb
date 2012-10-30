@@ -101,6 +101,7 @@ namespace :symfony do
         run "#{try_sudo} sh -c 'cp #{previous_release}/composer.phar #{latest_release}/'"
         capifony_puts_ok
       end
+
       if !remote_file_exists?("#{latest_release}/composer.phar")
         capifony_pretty_print "--> Downloading Composer"
 

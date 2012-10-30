@@ -176,14 +176,26 @@ describe "Capifony::Symfony2 - symfony" do
 
   context "when running symfony:composer:install with an existing composer.phar in the previous release" do
     before do
+      @configuration.stub(:remote_file_exists?).and_return(true)
       @configuration.find_and_execute_task('symfony:composer:install')
     end
 
-    # TODO: Fix remote_file_exists
-    #it { should have_run(' sh -c \'cp /var/www/releases/20120920/composer.phar /var/www/releases/20120927/\'') }
-    #it { should_not have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
-    #it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar self-update\'') }
-    #it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar install --no-scripts --verbose --prefer-dist\'') }
+    it { should have_run(' sh -c \'cp /var/www/releases/20120920/composer.phar /var/www/releases/20120927/\'') }
+    it { should_not have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar self-update\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar install --no-scripts --verbose --prefer-dist\'') }
+  end
+
+  context "when running symfony:composer:install without any existing composer.phar in the previous release" do
+    before do
+      @configuration.stub(:remote_file_exists?).and_return(false)
+      @configuration.find_and_execute_task('symfony:composer:install')
+    end
+
+    it { should_not have_run(' sh -c \'cp /var/www/releases/20120920/composer.phar /var/www/releases/20120927/\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
+    it { should_not have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar self-update\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar install --no-scripts --verbose --prefer-dist\'') }
   end
 
   context "when running symfony:composer:install" do

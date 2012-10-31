@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'capistrano'
+require 'capistrano/maintenance'
 require 'colored'
 require 'fileutils'
 require 'inifile'

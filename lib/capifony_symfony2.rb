@@ -22,93 +22,99 @@ module Capifony
         load 'symfony2/web'
 
         # Symfony application path
-        set :app_path,              "app"
+        set :app_path,                   "app"
 
         # Symfony web path
-        set :web_path,              "web"
+        set :web_path,                   "web"
 
         # Symfony console bin
-        set :symfony_console,       app_path + "/console"
+        set :symfony_console,            app_path + "/console"
 
         # Symfony log path
-        set :log_path,              app_path + "/logs"
+        set :log_path,                   app_path + "/logs"
 
         # Symfony cache path
-        set :cache_path,            app_path + "/cache"
+        set :cache_path,                 app_path + "/cache"
 
         # Symfony config file path
-        set :app_config_path,       app_path + "/config"
+        set :app_config_path,            app_path + "/config"
 
         # Symfony config file (parameters.(ini|yml|etc...)
-        set :app_config_file,       "parameters.yml"
+        set :app_config_file,            "parameters.yml"
 
         # Symfony bin vendors
-        set :symfony_vendors,       "bin/vendors"
+        set :symfony_vendors,            "bin/vendors"
 
         # Symfony build_bootstrap script
-        set :build_bootstrap,       "bin/build_bootstrap"
+        set :build_bootstrap,            "bin/build_bootstrap"
 
         # Whether to use composer to install vendors.
         # If set to false, it will use the bin/vendors script
-        set :use_composer,          false
+        set :use_composer,               false
 
         # Path to composer binary
         # If set to false, Capifony will download/install composer
-        set :composer_bin,          false
+        set :composer_bin,               false
 
         # Options to pass to composer when installing/updating
-        set :composer_options,      "--no-scripts --verbose --prefer-dist"
+        set :composer_options,           "--no-scripts --verbose --prefer-dist"
 
         # Whether to update vendors using the configured dependency manager (composer or bin/vendors)
-        set :update_vendors,        false
+        set :update_vendors,             false
 
         # run bin/vendors script in mode (upgrade, install (faster if shared /vendor folder) or reinstall)
-        set :vendors_mode,          "reinstall"
+        set :vendors_mode,               "reinstall"
 
         # Whether to run cache warmup
-        set :cache_warmup,          true
+        set :cache_warmup,               true
 
         # Use AsseticBundle
-        set :dump_assetic_assets,   false
+        set :dump_assetic_assets,        false
 
         # Assets install
-        set :assets_install,        true
-        set :assets_symlinks,       false
-        set :assets_relative,       false
+        set :assets_install,             true
+        set :assets_symlinks,            false
+        set :assets_relative,            false
 
         # Whether to update `assets_version` in `config.yml`
-        set :update_assets_version, false
+        set :update_assets_version,      false
 
         # Need to clear *_dev controllers
-        set :clear_controllers,     true
+        set :clear_controllers,          true
 
         # Files that need to remain the same between deploys
-        set :shared_files,          false
+        set :shared_files,               false
 
         # Dirs that need to remain the same between deploys (shared dirs)
-        set :shared_children,       [log_path, web_path + "/uploads"]
+        set :shared_children,            [log_path, web_path + "/uploads"]
 
         # Asset folders (that need to be timestamped)
-        set :asset_children,        [web_path + "/css", web_path + "/images", web_path + "/js"]
+        set :asset_children,             [web_path + "/css", web_path + "/images", web_path + "/js"]
 
         # Dirs that need to be writable by the HTTP Server (i.e. cache, log dirs)
-        set :writable_dirs,         [log_path, cache_path]
+        set :writable_dirs,              [log_path, cache_path]
 
         # Name used by the Web Server (i.e. www-data for Apache)
-        set :webserver_user,        "www-data"
+        set :webserver_user,             "www-data"
 
         # Method used to set permissions (:chmod, :acl, or :chown)
-        set :permission_method,     false
+        set :permission_method,          false
 
         # Model manager: (doctrine, propel)
-        set :model_manager,         "doctrine"
+        set :model_manager,              "doctrine"
 
         # Symfony2 version
-        set(:symfony_version)       { guess_symfony_version }
+        set(:symfony_version)            { guess_symfony_version }
 
         # If set to false, it will never ask for confirmations (migrations task for instance)
         # Use it carefully, really!
-        set :interactive_mode,      true
+        set :interactive_mode,           true
+
+        # Maintenance file basename
+        set :maintenance_basename,       "maintenance"
+
+        # Path to maintenance template file
+        set (:maintenance_template_path) { File.join(File.dirname(__FILE__), "templates", "maintenance.html.erb") }
 
         def load_database_config(data, env)
           read_parameters(data)['parameters']

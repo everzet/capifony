@@ -1,3 +1,7 @@
+### 2.2.2 / ???
+
+n/a
+
 ### 2.2.1 / November 2, 2012
 
 * Move warn message to the description. Fix #201

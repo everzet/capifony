@@ -1,6 +1,19 @@
-### 2.2.1 / ???
+### 2.2.1 / November 2, 2012
 
-n/a
+* Move warn message to the description. Fix #201
+* Update README (tests)
+* Updated capistrano-maintenance version
+* IMPORTANT: Fix maintenance tasks by adding a new dependency (capistrano-maintenance)
+* Fix test, add more tests for the composer copy feature
+* fix tests
+* Update spec/capifony_symfony2_symfony_spec.rb
+* Update lib/symfony2/symfony.rb
+* Update lib/symfony2/symfony.rb
+* Ignore "No such file or directory" on deploy:web:enable
+* Added doctrine:fixtures:load
+* [symfony1] Fix bad command with use_sudo = false
+* Refactor symfony:vendors and symfony:cache tasks based on @leek work
+* Fix composer tasks
 
 ### 2.2.0 / October 22, 2012
 

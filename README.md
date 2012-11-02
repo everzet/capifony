@@ -42,11 +42,11 @@ Read the [capifony documentation](http://capifony.org/)
 You need a set of dependencies in order to run the capifony's test suite.
 You can use **Bundler** to install these dependencies:
 
-    bundle install --gemfile=.gemfile
+    BUNDLE_GEMFILE=.gemfile bundle install
 
 Then, run the tests using **Rake**:
 
-    rake spec
+    BUNDLE_GEMFILE=.gemfile bundle exec rake spec
 
 For more information, see the `.travis.yml` file.
 

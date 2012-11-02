@@ -19,15 +19,9 @@ namespace :deploy do
       should either be a plaintext or an erb file.
 
       Further customization will require that you write your own task.
-    DESC
-    task :disable, :roles => :web, :except => { :no_release => true } do
-      require 'erb'
-      on_rollback { run "rm #{latest_release}/#{web_path}/#{maintenance_basename}.html" }
 
-      warn <<-EOHTACCESS
-
-        # Please add something like this to your site's Apache htaccess to redirect users to the maintenance page.
-        # More Info: http://www.shiftcommathree.com/articles/make-your-rails-maintenance-page-respond-with-a-503
+      Add something like this to your site's Apache htaccess to redirect users to the maintenance page.
+      More Info: http://www.shiftcommathree.com/articles/make-your-rails-maintenance-page-respond-with-a-503
 
         ErrorDocument 503 /#{maintenance_basename}.html
         RewriteEngine On
@@ -36,7 +30,7 @@ namespace :deploy do
         RewriteCond %{SCRIPT_FILENAME} !#{maintenance_basename}.html
         RewriteRule ^.*$  -  [redirect=503,last]
 
-        # Or if you are using Nginx add this to your server config:
+      Or if you are using Nginx add this to your server config:
 
         if (-f $document_root/maintenance.html) {
           return 503;
@@ -46,7 +40,10 @@ namespace :deploy do
           rewrite  ^(.*)$  /maintenance.html last;
           break;
         }
-      EOHTACCESS
+    DESC
+    task :disable, :roles => :web, :except => { :no_release => true } do
+      require 'erb'
+      on_rollback { run "rm #{latest_release}/#{web_path}/#{maintenance_basename}.html" }
 
       reason   = ENV['REASON']
       deadline = ENV['UNTIL']

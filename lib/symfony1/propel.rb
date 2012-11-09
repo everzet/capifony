@@ -21,9 +21,9 @@ namespace :symfony do
 
     desc "Generate model lib form and filters classes based on your schema"
     task :build_classes do
-      run "#{try_sudo} php #{latest_release}/symfony propel:build --model --env=#{symfony_env_prod}"
-      run "#{try_sudo} php #{latest_release}/symfony propel:build --forms --env=#{symfony_env_prod}"
-      run "#{try_sudo} php #{latest_release}/symfony propel:build --filters --env=#{symfony_env_prod}"
+      run "#{try_sudo} #{php_bin} #{latest_release}/symfony propel:build --model --env=#{symfony_env_prod}"
+      run "#{try_sudo} #{php_bin} #{latest_release}/symfony propel:build --forms --env=#{symfony_env_prod}"
+      run "#{try_sudo} #{php_bin} #{latest_release}/symfony propel:build --filters --env=#{symfony_env_prod}"
     end
 
     desc "Generate code & database based on your schema"

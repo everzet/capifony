@@ -162,6 +162,13 @@ namespace :symfony do
       run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} dump-autoload --optimize'"
       capifony_puts_ok
     end
+
+    task :copy_vendors, :except => { :no_release => true } do
+      capifony_pretty_print "--> Copying vendors from previous release"
+
+      run "vendorDir=#{current_path}/vendor; if [ -d $vendorDir ] || [ -h $vendorDir ]; then cp -a $vendorDir #{latest_release}/vendor; fi;"
+      capifony_puts_ok
+    end
   end
 
   namespace :cache do

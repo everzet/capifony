@@ -65,6 +65,9 @@ module Capifony
         # run bin/vendors script in mode (upgrade, install (faster if shared /vendor folder) or reinstall)
         set :vendors_mode,          "reinstall"
 
+        # Copy vendors from previous release
+        set :copy_vendors,          false
+
         # Whether to run cache warmup
         set :cache_warmup,          true
 
@@ -178,6 +181,14 @@ module Capifony
                 _write(s.red)
                 $error = true
               end
+            end
+          end
+        end
+
+        ["symfony:composer:install", "symfony:composer:update"].each do |action|
+          before action do
+            if copy_vendors
+              symfony.composer.copy_vendors
             end
           end
         end

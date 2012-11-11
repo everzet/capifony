@@ -1,6 +1,8 @@
 ### 2.2.2 / ???
 
-n/a
+* test when running symfony:composer:{install,update} with enabled copy_vendors
+* Fix missing #{php_bin} variables
+* Added optional symfony:composer:copy_vendors
 
 ### 2.2.1 / November 2, 2012
 

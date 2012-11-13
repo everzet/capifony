@@ -1,3 +1,7 @@
+### 2.2.3 / ???
+
+n/a
+
 ### 2.2.2 / November 13, 2012
 
 * test when running symfony:composer:{install,update} with enabled copy_vendors

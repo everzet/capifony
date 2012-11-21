@@ -43,4 +43,7 @@ set :permission_method, :acl
 > NOTE : For multistage usage you just have to override these variables on
 > stage specific files if ever needed.
 
+> NOTE : To execute this task is necessary to add the order in the deploy file.
+> Example: before "symfony:bootstrap:build", "deploy:set_permissions"
+
 

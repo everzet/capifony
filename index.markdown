@@ -291,6 +291,8 @@ extension](cookbook/using-the-multistage-extension.html)
 
 [Working with databases](cookbook/working-with-databases.html)
 
+[Deployment in clustered machines](cookbook/deployment-in-clustered-machines.html)
+
 <hr />
 
 ## Known Issues

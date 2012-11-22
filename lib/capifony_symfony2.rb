@@ -103,6 +103,9 @@ module Capifony
         # Method used to set permissions (:chmod, :acl, or :chown)
         set :permission_method,     false
 
+        # Execute set permissions
+        set :use_set_permissions,   false
+
         # Model manager: (doctrine, propel)
         set :model_manager,         "doctrine"
 
@@ -212,6 +215,10 @@ module Capifony
           end
 
           symfony.bootstrap.build
+
+          if use_set_permissions
+            symfony.deploy.set_permissions
+          end
 
           if model_manager == "propel"
             symfony.propel.build.model

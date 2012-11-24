@@ -12,7 +12,11 @@ namespace :database do
       end
 
       sql_dump_cmd = generate_sql_command('dump', config)
+      logger.debug sql_dump_cmd.gsub(/(--password=)([^ ]+)/, '\1\'********\'')    # Log the command with a masked password
+      saved_log_level = logger.level
+      logger.level = Capistrano::Logger::IMPORTANT    # Change log level so that the real command (containing a plaintext password) is not displayed
       try_sudo "#{sql_dump_cmd} | gzip -c > #{file}"
+      logger.level = saved_log_level
 
       require "fileutils"
       FileUtils.mkdir_p("backups")

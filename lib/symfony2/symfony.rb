@@ -194,7 +194,10 @@ namespace :symfony do
     task :clear_controllers do
       capifony_pretty_print "--> Clear controllers"
 
-      run "#{try_sudo} sh -c 'cd #{latest_release} && rm -f #{web_path}/app_*.php'"
+      controllers_to_clear.each do |link|
+        run "#{try_sudo} sh -c 'cd #{latest_release} && rm -f #{web_path}/"+ link +"'"
+      end
+
       capifony_puts_ok
     end
   end

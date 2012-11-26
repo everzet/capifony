@@ -23,6 +23,8 @@ There are 3 variables to care about when using this task:
   many Apache distributions)
 - `:permission_method`: The method to use for setting permissions (supported
   values are `:acl`, `:chmod` and `:chown`)
+- `:use_set_permissions`: This parameter defines whether to run the `set_permissions`
+  task. This param is `false` by default (supported values `true`, `false`)
 
 > NOTE : `:acl` method rely on the `setfacl` command which may not be available by
 > default on your system (i.e. Debian) you may then [enable ACL support](
@@ -38,12 +40,8 @@ Here is a basic exemple of what your `deploy.rb` may look like:
 set :writable_dirs,     ["app/cache", "app/logs"]
 set :webserver_user,    "www-data"
 set :permission_method, :acl
+set :use_set_permissions, true
 {% endhighlight %}
 
 > NOTE : For multistage usage you just have to override these variables on
 > stage specific files if ever needed.
-
-> NOTE : To execute this task is necessary to add the order in the deploy file.
-> Example: before "symfony:bootstrap:build", "deploy:set_permissions"
-
-

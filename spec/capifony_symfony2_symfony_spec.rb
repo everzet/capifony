@@ -288,6 +288,24 @@ describe "Capifony::Symfony2 - symfony" do
   end
 
   it "defines symfony:project tasks" do
+    @configuration.fetch(:controllers_to_clear).should == ['app_*.php']
     @configuration.find_task('symfony:project:clear_controllers').should_not == nil
   end
+
+  context "when running symfony:project:clear_controllers" do
+    before do
+      @configuration.find_and_execute_task('symfony:project:clear_controllers')
+    end
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && rm -f web/app_*.php\'') }
+  end
+
+  context "when running symfony:project:clear_controllers with a given controllers_to_clear" do
+    before do
+      @configuration.set :controllers_to_clear,  ['config.php', 'app_dev.php', 'app_test.php']
+      @configuration.find_and_execute_task('symfony:project:clear_controllers')
+    end
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && rm -f web/config.php web/app_dev.php web/app_test.php\'') }
+  end
+
+
 end

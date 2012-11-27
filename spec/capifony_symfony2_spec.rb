@@ -27,5 +27,7 @@ describe "Capifony::Symfony2" do
     @configuration.fetch(:shared_children).should == ['app/logs', 'web/uploads']
     @configuration.fetch(:asset_children).should == ['web/css', 'web/images', 'web/js']
     @configuration.fetch(:writable_dirs).should == ['app/logs', 'app/cache']
+    @configuration.fetch(:controllers_to_clear).should == ['app_*.php']
   end
+
 end

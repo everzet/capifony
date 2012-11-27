@@ -193,8 +193,13 @@ namespace :symfony do
     desc "Clears all non production environment controllers"
     task :clear_controllers do
       capifony_pretty_print "--> Clear controllers"
+      
+      command = "#{try_sudo} sh -c 'cd #{latest_release} && rm -f"
+      controllers_to_clear.each do |link|
+        command += " #{web_path}/" + link
+      end
+      run command + "'"
 
-      run "#{try_sudo} sh -c 'cd #{latest_release} && rm -f #{web_path}/app_*.php'"
       capifony_puts_ok
     end
   end

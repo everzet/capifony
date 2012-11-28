@@ -1,6 +1,9 @@
-### 2.2.3 / ???
+### 2.2.3 / November 28, 2012
 
-n/a
+* #273. Create only one run call in the task and Tests
+* #273. Make mor flexible clear_controllers
+* Ensure the remote database password is not logged in plaintext
+* Create a new variable to allow execute set_permissions automatically
 
 ### 2.2.2 / November 13, 2012
 

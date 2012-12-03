@@ -3,7 +3,12 @@ language: ruby
 rvm:
   - 1.9.3
 
+before_script:
+  - wget --no-check-certificate -O tests/roundup https://raw.github.com/bmizerany/roundup/a8a175a7fba9bbfb14d1025951c4b46a65e875a6/roundup.sh
+  - chmod +x tests/roundup
+
 script:
-  - "rake spec"
+  - rake spec
+  - cd tests && ./roundup capifony-symfony2-test.sh
 
 gemfile: .gemfile

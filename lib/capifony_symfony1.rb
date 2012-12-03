@@ -58,14 +58,14 @@ def deep_merge(hash1, hash2)
     if(hash1 == nil && hash2 == nil)
       return nil
     end
-  
+
     #the config.yml may not have 'all' key but instead 'dev' 'prod' and so on
     if(hash1 == nil && hash2 != nil)
       return hash2 # no need to merge
     end
 
-    #if only the 'all' key is specified 
-    #There might not be a second has to cascade to 
+    #if only the 'all' key is specified
+    #There might not be a second has to cascade to
     if(hash2 == nil && hash1 != nil)
       return hash1;
     end

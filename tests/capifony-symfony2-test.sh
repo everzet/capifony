@@ -34,7 +34,8 @@ framework:
     session:         ~
     templating:
         assets_version:       d7cedcc
-EOF)
+EOF
+)
 
     sed -i -e 's/\(assets_version:[ ]*\)\([a-zA-Z0-9_]*\)\(.*\)$/\1d7cedcc\3/g' "$TESTS_DIR/test"
 
@@ -60,7 +61,8 @@ framework:
     session:         ~
     templating:
         assets_version:       foobar
-EOF)
+EOF
+)
 
     sed -i -e 's/\(assets_version:[ ]*\)\([a-zA-Z0-9_]*\)\(.*\)$/\1d7cedcc\3/g' "$TESTS_DIR/test"
     sed -i -e 's/\(assets_version:[ ]*\)\([a-zA-Z0-9_]*\)\(.*\)$/\1foobar\3/g' "$TESTS_DIR/test"

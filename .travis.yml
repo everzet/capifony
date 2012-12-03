@@ -9,6 +9,6 @@ before_script:
 
 script:
   - rake spec
-  - cd tests && ./roundup capifony-symfony2-test.sh
+  - cd tests && ./roundup
 
 gemfile: .gemfile

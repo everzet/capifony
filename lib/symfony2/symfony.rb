@@ -25,7 +25,7 @@ namespace :symfony do
   namespace :assets do
     desc "Updates assets version (in config.yml)"
     task :update_version, :roles => :app, :except => { :no_release => true } do
-      run "#{try_sudo} sed -i 's/\\(assets_version: \\)\\([a-zA-Z0-9_]*\\)\\(.*\\)$/\\1 \"#{real_revision[0,7]}\"\\3/g' #{latest_release}/#{app_path}/config/config.yml"
+      run "#{try_sudo} sed -i 's/\\(assets_version: \\)\\([a-zA-Z0-9_]*\\)\\(.*\\)$/\\1 \"#{real_revision[0,7]}\"\\3/g' #{latest_release}/#{app_config_path}/config.yml"
     end
 
     desc "Installs bundle's assets"
@@ -193,7 +193,7 @@ namespace :symfony do
     desc "Clears all non production environment controllers"
     task :clear_controllers do
       capifony_pretty_print "--> Clear controllers"
-      
+
       command = "#{try_sudo} sh -c 'cd #{latest_release} && rm -f"
       controllers_to_clear.each do |link|
         command += " #{web_path}/" + link

@@ -84,7 +84,7 @@ module Capifony
 
         # Need to clear *_dev controllers
         set :clear_controllers,     true
-        
+
         # Controllers to clear
         set :controllers_to_clear, ['app_*.php']
 
@@ -246,7 +246,7 @@ module Capifony
           if dump_assetic_assets
             symfony.assetic.dump            # Dump assetic assets
           end
-  
+
           if clear_controllers
             # If clear_controllers is an array set controllers_to_clear,
             # else use the default value 'app_*.php'

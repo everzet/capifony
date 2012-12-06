@@ -23,7 +23,7 @@ namespace :database do
       get file, "backups/#{filename}"
       begin
         FileUtils.ln_sf(filename, "backups/#{application}.remote_dump.latest.sql.gz")
-      rescue NotImplementedError # hack for windows which doesnt support symlinks
+      rescue Exception # fallback for file systems that don't support symlinks
         FileUtils.cp_r("backups/#{filename}", "backups/#{application}.remote_dump.latest.sql.gz")
       end
       run "#{try_sudo} rm #{file}"
@@ -54,7 +54,7 @@ namespace :database do
 
       begin
         FileUtils.ln_sf(filename, "backups/#{application}.local_dump.latest.sql.gz")
-      rescue NotImplementedError # hack for windows which doesnt support symlinks
+      rescue Exception # fallback for file systems that don't support symlinks
         FileUtils.cp_r("backups/#{filename}", "backups/#{application}.local_dump.latest.sql.gz")
       end
       FileUtils.rm(tmpfile)
@@ -69,7 +69,7 @@ namespace :database do
 
       begin
         zipped_file_path  = `readlink -f backups/#{application}.remote_dump.latest.sql.gz`.chop  # gunzip does not work with a symlink
-      rescue NotImplementedError # hack for windows which doesnt support symlinks
+      rescue Exception # fallback for file systems that don't support symlinks
         zipped_file_path  = "backups/#{application}.remote_dump.latest.sql.gz"
       end
       unzipped_file_path   = "backups/#{application}_dump.sql"

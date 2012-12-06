@@ -30,7 +30,7 @@ namespace :database do
       get file, "backups/#{filename}"
       begin
         FileUtils.ln_sf(filename, "backups/#{application}.#{env}_dump.latest.sql.gz")
-      rescue NotImplementedError # hack for windows which doesnt support symlinks
+      rescue Exception # fallback for file systems that don't support symlinks
         FileUtils.cp_r("backups/#{filename}", "backups/#{application}.#{env}_dump.latest.sql.gz")
       end
       run "#{try_sudo} rm #{file}"
@@ -63,7 +63,7 @@ namespace :database do
 
       begin
         FileUtils.ln_sf(filename, "backups/#{application}.local_dump.latest.sql.gz")
-      rescue NotImplementedError # hack for windows which doesnt support symlinks
+      rescue Exception # fallback for file systems that don't support symlinks
         FileUtils.cp_r("backups/#{filename}", "backups/#{application}.local_dump.latest.sql.gz")
       end
       FileUtils.rm(tmpfile)

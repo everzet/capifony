@@ -20,7 +20,7 @@ OptionParser.new do |opts|
     exit 0
   end
 
-  opts.on("-s", "--symfony VERSION", "Capify specific symfony verion (1|2)") do |version|
+  opts.on("-s", "--symfony VERSION", "Capify specific symfony version (1|2)") do |version|
     symfony_version = version.to_i
   end
 

@@ -66,7 +66,7 @@ In this case, on every `cap deploy`, capifony will:
 * copy the source code, pulled from git, into the release path
 * run deployment hooks (`cache:warmup`, `cc`, etc.)
 
-> NOTE : By default capifony don't clean the releases. For execute the clean realeses
+> NOTE : By default capifony don't clean the releases. For execute the clean releases
 > task is necessary to set the `keep_releases` param and add to the deploy.rb file 
 > the task after end the deploy,  like this: `after "deploy", "deploy:cleanup"`
 

@@ -1,6 +1,14 @@
-### 2.2.4 / ???
+### 2.2.4 / December 13, 2012
 
-n/a
+* Fixed a typo
+* Fix #294
+* extended fallback code when using
+* symlinks for file systems that don't support them
+* Fix travis config
+* Fix symfony:assets:update_version, add sh tests. Fixes #282
+* Fix whitespaces
+* Use config_path var instead of hardcoded value
+* deploy:migrate primary restriction is not cascaded
 
 ### 2.2.3 / November 28, 2012
 

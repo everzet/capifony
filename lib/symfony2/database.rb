@@ -17,7 +17,7 @@ namespace :database do
 
       case config['database_driver']
       when "pdo_mysql", "mysql"
-        run "#{try_sudo} mysqldump -u#{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} | gzip -c > #{file}" do |ch, stream, data|
+        run "#{try_sudo} mysqldump -u#{config['database_user']} --host='#{config['database_host']}' --password='#{config['database_password']}' #{config['database_name']} | gzip -c > #{file}" do |ch, stream, data|
           puts data
         end
       when "pdo_pgsql", "pgsql"
@@ -112,7 +112,7 @@ namespace :database do
 
       case config['database_driver']
       when "pdo_mysql", "mysql"
-        run "#{try_sudo} mysql -u#{config['database_user']} --password='#{config['database_password']}' #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}" do |ch, stream, data|
+        run "#{try_sudo} mysql -u#{config['database_user']} --host='#{config['database_host']}' --password='#{config['database_password']}' #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}" do |ch, stream, data|
           puts data
         end
       when "pdo_pgsql", "pgsql"

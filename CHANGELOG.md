@@ -1,3 +1,7 @@
+### 2.2.6 / ???
+
+n/a
+
 ### 2.2.5 / December 29, 2012
 
 * host specification in mysql remote operations

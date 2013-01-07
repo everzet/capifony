@@ -3,8 +3,9 @@ namespace :symfony do
   task :default, :roles => :app, :except => { :no_release => true } do
     prompt_with_default(:task_arguments, "cache:clear")
 
-    stream "cd #{latest_release} && #{php_bin} #{symfony_console} #{task_arguments} --env=#{symfony_env_prod}"
+    stream "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{task_arguments} --env=#{symfony_env_prod}'"
   end
+    
 
   namespace :logs do
     [:tail, :tail_dev].each do |action|

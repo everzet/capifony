@@ -287,6 +287,8 @@ extension](cookbook/using-the-multistage-extension.html)
 
 [Specifying Deployment Dependencies](cookbook/specifying-deployment-dependencies.html)
 
+[Managing External Vendors with Composer](cookbook/composer-vendors.html)
+
 [Setup an automatic upload of parameters file](cookbook/upload-parameters-file.html)
 
 [Setup proper permissions](cookbook/set-permissions.html)

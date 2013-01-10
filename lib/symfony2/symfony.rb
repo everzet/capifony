@@ -5,7 +5,7 @@ namespace :symfony do
 
     stream "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{task_arguments} --env=#{symfony_env_prod}'"
   end
-    
+
 
   namespace :logs do
     [:tail, :tail_dev].each do |action|
@@ -116,17 +116,10 @@ namespace :symfony do
     end
 
     desc "Updates composer"
-    task :self_update, :roles => :app, :except => { :no_release => true } do
-      capifony_pretty_print "--> Updating Composer"
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} self-update'"
-      capifony_puts_ok
-    end
 
     desc "Runs composer to install vendors from composer.lock file"
     task :install, :roles => :app, :except => { :no_release => true } do
-      if composer_bin
-        symfony.composer.self_update
-      else
+      if !composer_bin
         symfony.composer.get
         set :composer_bin, "#{php_bin} composer.phar"
       end
@@ -138,9 +131,7 @@ namespace :symfony do
 
     desc "Runs composer to update vendors, and composer.lock file"
     task :update, :roles => :app, :except => { :no_release => true } do
-      if composer_bin
-        symfony.composer.self_update
-      else
+      if !composer_bin
         symfony.composer.get
         set :composer_bin, "#{php_bin} composer.phar"
       end
@@ -152,9 +143,7 @@ namespace :symfony do
 
     desc "Dumps an optimized autoloader"
     task :dump_autoload, :roles => :app, :except => { :no_release => true } do
-      if composer_bin
-        symfony.composer.self_update
-      else
+      if !composer_bin
         symfony.composer.get
         set :composer_bin, "#{php_bin} composer.phar"
       end

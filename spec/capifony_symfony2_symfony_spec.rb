@@ -149,7 +149,6 @@ describe "Capifony::Symfony2 - symfony" do
   end
 
   it "defines symfony:composer tasks" do
-    @configuration.find_task('symfony:composer:self_update').should_not == nil
     @configuration.find_task('symfony:composer:install').should_not == nil
     @configuration.find_task('symfony:composer:update').should_not == nil
     @configuration.find_task('symfony:composer:dump_autoload').should_not == nil
@@ -174,7 +173,6 @@ describe "Capifony::Symfony2 - symfony" do
 
     it { should_not have_run('vendorDir=/var/www/current/vendor; if [ -d $vendorDir ] || [ -h $vendorDir ]; then cp -a $vendorDir /var/www/releases/20120927/vendor; fi;') }
     it { should_not have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer self-update\'') }
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer update --no-scripts --verbose --prefer-dist\'') }
   end
 
@@ -231,7 +229,6 @@ describe "Capifony::Symfony2 - symfony" do
 
     it { should_not have_run('vendorDir=/var/www/current/vendor; if [ -d $vendorDir ] || [ -h $vendorDir ]; then cp -a $vendorDir /var/www/releases/20120927/vendor; fi;') }
     it { should_not have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer self-update\'') }
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer install --no-scripts --verbose --prefer-dist\'') }
   end
 
@@ -260,7 +257,6 @@ describe "Capifony::Symfony2 - symfony" do
     end
 
     it { should_not have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer self-update\'') }
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer dump-autoload --optimize\'') }
   end
 

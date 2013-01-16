@@ -1,3 +1,7 @@
+### 2.2.7 / ???
+
+n/a
+
 ### 2.2.6 / January 17, 2013
 
 * Clear controllers should only run on the app role

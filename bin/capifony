@@ -5,7 +5,7 @@ require 'fileutils'
 
 symfony_version  = nil
 symfony_app_path = 'app'
-capifony_version = '2.2.6.dev'
+capifony_version = '2.2.6'
 
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename($0)} [path]"

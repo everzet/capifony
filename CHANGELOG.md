@@ -1,6 +1,8 @@
-### 2.2.6 / ???
+### 2.2.6 / January 17, 2013
 
-n/a
+* Clear controllers should only run on the app role
+* Do not update composer [Closes #309]
+* Use trysudo when running a custom symfony command
 
 ### 2.2.5 / December 29, 2012
 

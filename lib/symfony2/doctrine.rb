@@ -56,7 +56,7 @@ namespace :symfony do
       task :drop, :roles => :app, :except => { :no_release => true } do
         capifony_pretty_print "--> Droping schema"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:drop --env=#{symfony_env_prod}'", :once => true
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:drop --force --env=#{symfony_env_prod}'", :once => true
         capifony_puts_ok
       end
 

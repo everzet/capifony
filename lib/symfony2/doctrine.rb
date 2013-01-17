@@ -69,11 +69,9 @@ namespace :symfony do
       end
     end
 
-    namespace :fixtures do
-      desc "Load data fixtures"
-      task :load, :roles => :app, :except => { :no_release => true } do
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:fixtures:load --env=#{symfony_env_prod}'", :once => true
-      end
+    desc "Load data fixtures"
+    task :load_fixtures, :roles => :app, :except => { :no_release => true } do
+      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:fixtures:load --env=#{symfony_env_prod}'", :once => true
     end
 
     namespace :migrations do

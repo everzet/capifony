@@ -12,6 +12,8 @@ describe "Capifony::Symfony2 - doctrine" do
     @configuration.set :try_sudo,             ''
 
     Capifony::Symfony2.load_into(@configuration)
+
+    @configuration.set :interactive_mode,     false
   end
 
   subject { @configuration }
@@ -64,7 +66,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:database:drop')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:database:drop --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:database:drop --force --env=prod\'') }
   end
 
   it "defines symfony:doctrine:schema tasks" do
@@ -86,7 +88,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:schema:drop')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:drop --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:drop --force --env=prod\'') }
   end
 
   context "when running symfony:doctrine:schema:update" do

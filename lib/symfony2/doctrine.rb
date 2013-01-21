@@ -27,19 +27,22 @@ namespace :symfony do
     end
 
     namespace :database do
-      [:create, :drop].each do |action|
-        desc "#{action.to_s.capitalize}s the configured databases"
-        task action, :roles => :app, :except => { :no_release => true } do
-          case action.to_s
-          when "create"
-            capifony_pretty_print "--> Creating databases"
-          when "drop"
-            capifony_pretty_print "--> Dropping databases"
-          end
+      desc "Drops the configured databases"
+      task :drop, :roles => :app, :except => { :no_release => true } do
+        capifony_pretty_print "--> Dropping databases"
 
-          run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:#{action.to_s} --env=#{symfony_env_prod}'", :once => true
-          capifony_puts_ok
+        if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to drop #{symfony_env_prod}'s database? (y/N)")
+          run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:drop --force --env=#{symfony_env_prod}'", :once => true
         end
+        capifony_puts_ok
+      end
+      
+      desc "Creates the configured databases"
+      task :create, :roles => :app, :except => { :no_release => true } do
+        capifony_pretty_print "--> Creating databases"
+
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:create --env=#{symfony_env_prod}'", :once => true
+        capifony_puts_ok
       end
     end
 
@@ -56,7 +59,9 @@ namespace :symfony do
       task :drop, :roles => :app, :except => { :no_release => true } do
         capifony_pretty_print "--> Droping schema"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:drop --env=#{symfony_env_prod}'", :once => true
+        if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to drop #{symfony_env_prod}'s database schema? (y/N)")
+          run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:drop --force --env=#{symfony_env_prod}'", :once => true
+        end
         capifony_puts_ok
       end
 

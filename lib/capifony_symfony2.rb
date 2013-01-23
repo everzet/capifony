@@ -112,6 +112,9 @@ module Capifony
         # Model manager: (doctrine, propel)
         set :model_manager,         "doctrine"
 
+        # Doctrine custom entity manager
+        set :doctrine_em,           false
+
         # Symfony2 version
         set(:symfony_version)       { guess_symfony_version }
 
@@ -188,6 +191,22 @@ module Capifony
                 $error = true
               end
             end
+          end
+        end
+
+        [
+          "symfony:doctrine:cache:clear_metadata",
+          "symfony:doctrine:cache:clear_query",
+          "symfony:doctrine:cache:clear_result",
+          "symfony:doctrine:schema:create",
+          "symfony:doctrine:schema:drop",
+          "symfony:doctrine:schema:update",
+          "symfony:doctrine:load_fixtures",
+          "symfony:doctrine:migrations:migrate",
+          "symfony:doctrine:migrations:status",
+        ].each do |action|
+          before action do
+            set :doctrine_em_flag, doctrine_em ? " --em=#{doctrine_em}" : ""
           end
         end
 

@@ -99,6 +99,18 @@ describe "Capifony::Symfony2 - doctrine" do
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:update --force --env=prod\'') }
   end
 
+  it "defines symfony:doctrine:load_fixtures task" do
+    @configuration.find_task('symfony:doctrine:load_fixtures').should_not == nil
+  end
+
+  context "when running symfony:doctrine:load_fixtures" do
+    before do
+      @configuration.find_and_execute_task('symfony:doctrine:load_fixtures')
+    end
+
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:fixtures:load --env=prod\'') }
+  end
+
   it "defines symfony:doctrine:migrations tasks" do
     @configuration.find_task('symfony:doctrine:migrations:migrate').should_not == nil
     @configuration.find_task('symfony:doctrine:migrations:status').should_not == nil
@@ -171,4 +183,29 @@ describe "Capifony::Symfony2 - doctrine" do
 
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console init:acl --env=prod\'') }
   end
+
+  context "when running symfony:doctrine:* with custom entity manager" do
+    before do
+      @configuration.set :doctrine_em, 'custom_em'
+
+      @configuration.find_and_execute_task('symfony:doctrine:cache:clear_metadata')
+      @configuration.find_and_execute_task('symfony:doctrine:cache:clear_query')
+      @configuration.find_and_execute_task('symfony:doctrine:cache:clear_result')
+      @configuration.find_and_execute_task('symfony:doctrine:schema:create')
+      @configuration.find_and_execute_task('symfony:doctrine:schema:drop')
+      @configuration.find_and_execute_task('symfony:doctrine:schema:update')
+      @configuration.find_and_execute_task('symfony:doctrine:load_fixtures')
+      @configuration.find_and_execute_task('symfony:doctrine:migrations:status')
+    end
+
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-metadata --env=prod --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-query --env=prod --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-result --env=prod --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:create --env=prod --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:drop --force --env=prod --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:update --force --env=prod --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:fixtures:load --env=prod --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:migrations:status --env=prod --em=custom_em\'') }
+  end
+
 end

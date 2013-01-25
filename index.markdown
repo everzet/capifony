@@ -240,7 +240,7 @@ way to do this is to create this file in shared folder on server manually:
 
 Once your `parameters.yml` file is correctly configured, you should be able to
 test your deployed application. On every subsequent deploy, that same
-`app/config/parameters.yml` file will by symlinked into your application,
+`app/config/parameters.yml` file will be symlinked into your application,
 meaning you only need to configure after the initial deploy.
 
 <hr />

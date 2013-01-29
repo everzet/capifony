@@ -1,6 +1,17 @@
 ### 2.2.7 / ???
 
-n/a
+* Implemented :doctrine_em configuration option (#321)
+* Added :doctrine_em symbol with default value of `false`
+* Added `before` hooks for relevant symfony:doctrine commands to assemble --em flag
+* Added flag variable to commands being run
+* Added tests for --em flag in spec file
+* Updated specs for doctrine drop tasks
+* Added confirmation to doctrine drops tasks
+* Fixed symfony:doctrine:database:drop (missed --force argument too).
+* Added confirmation for symfony:doctrine:database:drop and symfony:doctrine:schema:drop.
+* Compatibility to Capistrano 2.14.1
+* Fixed symfony:doctrine:schema:drop - added --force
+* Task symfony:doctrine:schema:drop never actually droped schema because of missing --force parameter.
 
 ### 2.2.6 / January 17, 2013
 

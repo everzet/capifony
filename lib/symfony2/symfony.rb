@@ -96,6 +96,7 @@ namespace :symfony do
 
   namespace :composer do
     desc "Gets composer and installs it"
+    set :composer_php_bin, "#{php_bin} -d detect_unicode=Off -d allow_url_fopen=On"
     task :get, :roles => :app, :except => { :no_release => true } do
       if remote_file_exists?("#{previous_release}/composer.phar")
         capifony_pretty_print "--> Copying Composer from previous release"
@@ -106,11 +107,11 @@ namespace :symfony do
       if !remote_file_exists?("#{latest_release}/composer.phar")
         capifony_pretty_print "--> Downloading Composer"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release} && curl -s http://getcomposer.org/installer | #{composer_php_bin}'"
       else
         capifony_pretty_print "--> Updating Composer"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} composer.phar self-update'"
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_php_bin} composer.phar self-update'"
       end
       capifony_puts_ok
     end
@@ -121,7 +122,7 @@ namespace :symfony do
     task :install, :roles => :app, :except => { :no_release => true } do
       if !composer_bin
         symfony.composer.get
-        set :composer_bin, "#{php_bin} composer.phar"
+        set :composer_bin, "#{composer_php_bin} composer.phar"
       end
 
       capifony_pretty_print "--> Installing Composer dependencies"
@@ -133,7 +134,7 @@ namespace :symfony do
     task :update, :roles => :app, :except => { :no_release => true } do
       if !composer_bin
         symfony.composer.get
-        set :composer_bin, "#{php_bin} composer.phar"
+        set :composer_bin, "#{composer_php_bin} composer.phar"
       end
 
       capifony_pretty_print "--> Updating Composer dependencies"
@@ -145,7 +146,7 @@ namespace :symfony do
     task :dump_autoload, :roles => :app, :except => { :no_release => true } do
       if !composer_bin
         symfony.composer.get
-        set :composer_bin, "#{php_bin} composer.phar"
+        set :composer_bin, "#{composer_php_bin} composer.phar"
       end
 
       capifony_pretty_print "--> Dumping an optimized autoloader"

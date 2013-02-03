@@ -1,3 +1,7 @@
+### 2.2.8 / ???
+
+n/a
+
 ### 2.2.7 / February 3, 2013
 
 * Implemented :doctrine_em configuration option (#321)

@@ -1,4 +1,4 @@
-### 2.2.7 / ???
+### 2.2.7 / February 3, 2013
 
 * Implemented :doctrine_em configuration option (#321)
 * Added :doctrine_em symbol with default value of `false`

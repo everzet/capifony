@@ -97,9 +97,9 @@ namespace :symfony do
   namespace :composer do
     desc "Gets composer and installs it"
     task :get, :roles => :app, :except => { :no_release => true } do
-      if remote_file_exists?("#{previous_release}/composer.phar")
+      if remote_file_exists?("#{current_path}/composer.phar")
         capifony_pretty_print "--> Copying Composer from previous release"
-        run "#{try_sudo} sh -c 'cp #{previous_release}/composer.phar #{latest_release}/'"
+        run "#{try_sudo} sh -c 'cp #{current_path}/composer.phar #{latest_release}/'"
         capifony_puts_ok
       end
 

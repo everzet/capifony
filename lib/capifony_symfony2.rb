@@ -52,6 +52,8 @@ module Capifony
         # If set to false, it will use the bin/vendors script
         set :use_composer,          false
 
+		set :keep_latest_composer_bin, false
+
         # Path to composer binary
         # If set to false, Capifony will download/install composer
         set :composer_bin,          false

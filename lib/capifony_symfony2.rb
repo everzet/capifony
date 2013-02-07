@@ -52,7 +52,11 @@ module Capifony
         # If set to false, it will use the bin/vendors script
         set :use_composer,          false
 
-		set :keep_latest_composer_bin, false
+		# Define if the composer binary must be copied from the previous release
+		set :keep_previous_composer_bin, false
+
+		# Define if the composer binary must be updated
+		set :composer_selfupdate,	true
 
         # Path to composer binary
         # If set to false, Capifony will download/install composer

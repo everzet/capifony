@@ -29,8 +29,8 @@ There are 4 parameters to care about when using this task:
 > default on your system (i.e. Debian).  You'll need to [enable ACL support](
 > https://help.ubuntu.com/community/FilePermissionsACLs) before using it.
 
-> NOTE : The `:chmod` used `+a` mode which may not be available on your system (i.e. Debian).
-> You'll need to choose rather `:acl` or `:chown`, first one is preferred.
+> NOTE : The `:chmod` method uses `+a` mode which may not be available on your system
+> (i.e. Debian). You'll need to choose rather `:acl` or `:chown`, first one is preferred.
 
 > NOTE : The `:chown` method must only be used if neither `:acl` nor `:chmod` can
 > be used on your system. Please note that to use this method you have to set

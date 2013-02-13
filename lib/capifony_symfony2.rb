@@ -250,12 +250,12 @@ module Capifony
             symfony.composer.dump_autoload
           end
 
-          if assets_install
-            symfony.assets.install          # Publish bundle assets
-          end
-
           if update_assets_version
             symfony.assets.update_version   # Update `assets_version`
+          end
+
+          if assets_install
+            symfony.assets.install          # Publish bundle assets
           end
 
           if cache_warmup

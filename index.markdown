@@ -86,6 +86,12 @@ The second strategy involves deployment to a production server right from your
 deployment machine via a copy.
 In this case, the deployment server (which may just be your local computer) **must**
 have access to the git repository (remote or not), and be able to pull from it.
+
+As vendors are still installed on the production server it is worth noting that 
+if any of your vendors are remote private repositories you will need pull access
+for any of these repositories on your production server otherwise install via composer
+or `bin/vendors` will fail.
+
 The deployment server **must** also have ssh access to the production server:
 
 ![](/images/strategy_b.png)

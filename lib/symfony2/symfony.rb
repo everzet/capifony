@@ -29,7 +29,6 @@ namespace :symfony do
       capifony_pretty_print "--> Updating assets version (in config.yml)"
 
       run "#{try_sudo} sed -i 's/\\(assets_version:[ ]*\\)\\([a-zA-Z0-9_]*\\)\\(.*\\)$/\\1#{real_revision[0,7]}\\3/g' #{latest_release}/#{app_config_path}/config.yml"
-      
       capifony_puts_ok
     end
 
@@ -101,12 +100,6 @@ namespace :symfony do
   namespace :composer do
     desc "Gets composer and installs it"
     task :get, :roles => :app, :except => { :no_release => true } do
-      if remote_file_exists?("#{previous_release}/composer.phar")
-        capifony_pretty_print "--> Copying Composer from previous release"
-        run "#{try_sudo} sh -c 'cp #{previous_release}/composer.phar #{latest_release}/'"
-        capifony_puts_ok
-      end
-
       if !remote_file_exists?("#{latest_release}/composer.phar")
         capifony_pretty_print "--> Downloading Composer"
 

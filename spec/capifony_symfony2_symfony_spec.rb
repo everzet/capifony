@@ -192,7 +192,7 @@ describe "Capifony::Symfony2 - symfony" do
     end
 
     it { should_not have_run('vendorDir=/var/www/current/vendor; if [ -d $vendorDir ] || [ -h $vendorDir ]; then cp -a $vendorDir /var/www/releases/20120927/vendor; fi;') }
-    it { should have_run(' sh -c \'cp /var/www/releases/20120920/composer.phar /var/www/releases/20120927/\'') }
+    it { should_not have_run(' sh -c \'cp /var/www/releases/20120920/composer.phar /var/www/releases/20120927/\'') }
     it { should_not have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar self-update\'') }
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar install --no-scripts --verbose --prefer-dist --optimize-autoloader\'') }

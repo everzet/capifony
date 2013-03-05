@@ -1,6 +1,12 @@
-### 2.2.8 / ???
+### 2.2.8 / March 5, 2013
 
-n/a
+* Remove the ability to copy of Composer
+* Use composer optimize autoloader
+* BugFix running cap deploy with user_sudo = true
+* replace run block for data capturing with capture method + make try_sudo work
+* Update assets_version before installing assets
+* Add pretty printing to symfony:assets:update_version
+* Update capifony.gemspec
 
 ### 2.2.7 / February 3, 2013
 

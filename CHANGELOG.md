@@ -1,3 +1,7 @@
+### 2.2.9 / ???
+
+n/a
+
 ### 2.2.8 / March 5, 2013
 
 * Remove the ability to copy of Composer

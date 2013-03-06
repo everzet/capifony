@@ -37,6 +37,7 @@ namespace :database do
 
     desc "Dumps local database"
     task :local do
+      application_name = application.gsub(/\s+/, "_") # make application name safe
       filename         = "#{application_name}.local_dump.#{Time.now.to_i}.sql.gz"
       latest_filepath  = "backups/#{application_name}.local_dump.latest.sql.gz"
       backup_filepath  = "backups/#{filename}"
@@ -73,53 +74,58 @@ namespace :database do
   namespace :move do
     desc "Dumps remote database, downloads it to local, and populates here"
     task :to_local, :roles => :db, :only => { :primary => true } do
-      env       = fetch(:deploy_env, "remote")
-      filename  = "#{application_name}.#{env}_dump.latest.sql.gz"
-      config    = load_database_config IO.read("#{app_config_path}/#{app_config_file}"), symfony_env_local
-      sqlfile   = "#{application_name}_dump.sql"
+      application_name = application.gsub(/\s+/, "_") # make application name safe
+      env              = fetch(:deploy_env, "remote")
+      filename         = "#{application_name}.#{env}_dump.latest.sql.gz"
+      config           = load_database_config IO.read("#{app_config_path}/#{app_config_file}"), symfony_env_local
+      sqlfile          = "#{application_name}_dump.sql"
+      temp_filepath    = "backups/#{sqlfile}"
 
       database.dump.remote
 
-      f = File.new("backups/#{sqlfile}", "a+")
+      f = File.new(temp_filepath, "a+")
       gz = Zlib::GzipReader.new(File.open("backups/#{filename}", "r"))
       f << gz.read
       f.close
 
       case config['database_driver']
       when "pdo_mysql", "mysql"
-        `mysql -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} < backups/#{sqlfile}`
+        `mysql -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} < #{temp_filepath}`
       when "pdo_pgsql", "pgsql"
-        `psql -U #{config['database_user']} #{config['database_name']} < backups/#{sqlfile}`
+        `psql -U #{config['database_user']} #{config['database_name']} < #{temp_filepath}`
       end
-      FileUtils.rm("backups/#{sqlfile}")
+      FileUtils.rm(temp_filepath)
     end
 
     desc "Dumps local database, loads it to remote, and populates there"
     task :to_remote, :roles => :db, :only => { :primary => true } do
-      filename  = "#{application_name}.local_dump.latest.sql.gz"
-      file      = "backups/#{filename}"
-      sqlfile   = "#{application_name}_dump.sql"
-      config    = ""
+      application_name = application.gsub(/\s+/, "_") # make application name safe
+      filename         = "#{application_name}.local_dump.latest.sql.gz"
+      file             = "backups/#{filename}"
+      sqlfile          = "#{application_name}_dump.sql"
+      remote_archive   = "#{remote_tmp_dir}/#{filename}"
+      remote_sqlfile   = "#{remote_tmp_dir}/#{sqlfile}"
+      config           = ""
 
       database.dump.local
 
-      upload(file, "#{remote_tmp_dir}/#{filename}", :via => :scp)
-      run "#{try_sudo} gunzip -c #{remote_tmp_dir}/#{filename} > #{remote_tmp_dir}/#{sqlfile}"
+      upload(file, remote_archive, :via => :scp)
+      run "#{try_sudo} gunzip -c #{remote_archive} > #{remote_sqlfile}"
 
       data = capture("#{try_sudo} cat #{current_path}/#{app_config_path}/#{app_config_file}")
       config = load_database_config data, symfony_env_prod
 
       case config['database_driver']
       when "pdo_mysql", "mysql"
-        data = capture("#{try_sudo} mysql -u#{config['database_user']} --host='#{config['database_host']}' --password='#{config['database_password']}' #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}")
+        data = capture("#{try_sudo} mysql -u#{config['database_user']} --host='#{config['database_host']}' --password='#{config['database_password']}' #{config['database_name']} < #{remote_sqlfile}")
         puts data
       when "pdo_pgsql", "pgsql"
-        data = capture("#{try_sudo} psql -U #{config['database_user']} #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}")
+        data = capture("#{try_sudo} psql -U #{config['database_user']} #{config['database_name']} < #{remote_sqlfile}")
         puts data
       end
 
-      run "#{try_sudo} rm -f #{remote_tmp_dir}/#{filename}"
-      run "#{try_sudo} rm -f #{remote_tmp_dir}/#{sqlfile}"
+      run "#{try_sudo} rm -f #{remote_archive}"
+      run "#{try_sudo} rm -f #{remote_sqlfile}"
     end
   end
 end

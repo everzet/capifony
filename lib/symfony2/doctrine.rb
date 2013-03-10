@@ -5,7 +5,7 @@ namespace :symfony do
       task :clear_metadata, :roles => :app, :except => { :no_release => true } do
         capifony_pretty_print "--> Clearing Doctrine metadata cache"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-metadata --env=#{symfony_env_prod}#{doctrine_em_flag}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-metadata --env=#{symfony_env_prod}#{doctrine_em_flag}"+ if doctrine_clear_use_flush_option then " --flush" else "" end +"'"
         capifony_puts_ok
       end
 
@@ -13,7 +13,7 @@ namespace :symfony do
       task :clear_query, :roles => :app, :except => { :no_release => true } do
         capifony_pretty_print "--> Clearing Doctrine query cache"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-query --env=#{symfony_env_prod}#{doctrine_em_flag}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-query --env=#{symfony_env_prod}#{doctrine_em_flag}"+ if doctrine_clear_use_flush_option then " --flush" else "" end +"'"
         capifony_puts_ok
       end
 
@@ -21,7 +21,7 @@ namespace :symfony do
       task :clear_result, :roles => :app, :except => { :no_release => true } do
         capifony_pretty_print "--> Clearing Doctrine result cache"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-result --env=#{symfony_env_prod}#{doctrine_em_flag}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-result --env=#{symfony_env_prod}#{doctrine_em_flag}"+ if doctrine_clear_use_flush_option then " --flush" else "" end +"'"
         capifony_puts_ok
       end
     end

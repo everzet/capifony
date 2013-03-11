@@ -114,6 +114,9 @@ module Capifony
 
         # Doctrine custom entity manager
         set :doctrine_em,           false
+        
+        # Use --flush option in doctrine:clear_* task 
+        set :doctrine_clear_use_flush_option, false
 
         # Symfony2 version
         set(:symfony_version)       { guess_symfony_version }

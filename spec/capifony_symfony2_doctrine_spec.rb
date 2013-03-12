@@ -207,5 +207,19 @@ describe "Capifony::Symfony2 - doctrine" do
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:fixtures:load --env=prod --em=custom_em\'') }
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:migrations:status --env=prod --em=custom_em\'') }
   end
+  
+  context "when running symfony:doctrine:clear_* with flush option" do
+    before do
+      @configuration.set :doctrine_clear_use_flush_option, true
+
+      @configuration.find_and_execute_task('symfony:doctrine:cache:clear_metadata')
+      @configuration.find_and_execute_task('symfony:doctrine:cache:clear_query')
+      @configuration.find_and_execute_task('symfony:doctrine:cache:clear_result')
+    end
+
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-metadata --env=prod --flush\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-query --env=prod --flush\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-result --env=prod --flush\'') }
+  end
 
 end

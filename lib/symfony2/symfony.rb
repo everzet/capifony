@@ -56,7 +56,7 @@ namespace :symfony do
     task :dump, :roles => :app,  :except => { :no_release => true } do
       capifony_pretty_print "--> Dumping all assets to the filesystem"
 
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump --env=#{symfony_env_prod} --no-debug'"
+      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump --env=#{symfony_env_prod} --no-debug #{latest_release}/#{web_path}'"
       capifony_puts_ok
     end
   end

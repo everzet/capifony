@@ -46,7 +46,7 @@ namespace :symfony do
         install_options += " --relative"
       end
 
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{web_path}#{install_options} --env=#{symfony_env_prod}'"
+      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{assets_install_path}#{install_options} --env=#{symfony_env_prod}'"
       capifony_puts_ok
     end
   end

@@ -78,6 +78,7 @@ module Capifony
         set :assets_install,        true
         set :assets_symlinks,       false
         set :assets_relative,       false
+        set :assets_install_path,   web_path
 
         # Whether to update `assets_version` in `config.yml`
         set :update_assets_version, false

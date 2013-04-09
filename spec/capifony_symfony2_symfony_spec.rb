@@ -93,6 +93,15 @@ describe "Capifony::Symfony2 - symfony" do
     it { should have_run('sudo sh -c \'cd /var/www/releases/20120927 && php app/console assets:install web --env=prod\'') }
   end
 
+  context "when running symfony:assets:install with a custom assets_install_path" do
+    before do
+      @configuration.set :assets_install_path, 'some/where'
+      @configuration.find_and_execute_task('symfony:assets:install')
+    end
+
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console assets:install some/where --env=prod\'') }
+  end
+
   it "defines symfony:assetic tasks" do
     @configuration.find_task('symfony:assetic:dump').should_not == nil
   end

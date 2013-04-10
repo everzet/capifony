@@ -29,7 +29,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:cache:clear_metadata')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-metadata --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-metadata --env=prod --no-debug\'') }
   end
 
   context "when running symfony:doctrine:cache:clear_query" do
@@ -37,7 +37,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:cache:clear_query')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-query --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-query --env=prod --no-debug\'') }
   end
 
   context "when running symfony:doctrine:cache:clear_result" do
@@ -45,7 +45,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:cache:clear_result')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-result --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-result --env=prod --no-debug\'') }
   end
 
   it "defines symfony:doctrine:database tasks" do
@@ -58,7 +58,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:database:create')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:database:create --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:database:create --env=prod --no-debug\'') }
   end
 
   context "when running symfony:doctrine:database:drop" do
@@ -66,7 +66,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:database:drop')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:database:drop --force --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:database:drop --force --env=prod --no-debug\'') }
   end
 
   it "defines symfony:doctrine:schema tasks" do
@@ -80,7 +80,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:schema:create')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:create --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:create --env=prod --no-debug\'') }
   end
 
   context "when running symfony:doctrine:schema:drop" do
@@ -88,7 +88,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:schema:drop')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:drop --force --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:drop --force --env=prod --no-debug\'') }
   end
 
   context "when running symfony:doctrine:schema:update" do
@@ -96,7 +96,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:schema:update')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:update --force --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:update --force --env=prod --no-debug\'') }
   end
 
   it "defines symfony:doctrine:load_fixtures task" do
@@ -108,7 +108,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:load_fixtures')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:fixtures:load --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:fixtures:load --env=prod --no-debug\'') }
   end
 
   it "defines symfony:doctrine:migrations tasks" do
@@ -121,7 +121,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:migrations:status')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:migrations:status --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:migrations:status --env=prod --no-debug\'') }
   end
 
   it "defines symfony:doctrine:mongodb tasks" do
@@ -137,7 +137,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:mongodb:schema:create')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:mongodb:schema:create --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:mongodb:schema:create --env=prod --no-debug\'') }
   end
 
   context "when running symfony:doctrine:mongodb:schema:update" do
@@ -145,7 +145,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:mongodb:schema:update')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:mongodb:schema:update --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:mongodb:schema:update --env=prod --no-debug\'') }
   end
 
   context "when running symfony:doctrine:mongodb:schema:drop" do
@@ -153,7 +153,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:mongodb:schema:drop')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:mongodb:schema:drop --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:mongodb:schema:drop --env=prod --no-debug\'') }
   end
 
   context "when running symfony:doctrine:mongodb:indexes:create" do
@@ -161,7 +161,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:mongodb:indexes:create')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:mongodb:schema:create --index --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:mongodb:schema:create --index --env=prod --no-debug\'') }
   end
 
   context "when running symfony:doctrine:mongodb:indexes:drop" do
@@ -169,7 +169,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:mongodb:indexes:drop')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:mongodb:schema:drop --index --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:mongodb:schema:drop --index --env=prod --no-debug\'') }
   end
 
   it "defines symfony:doctrine:init tasks" do
@@ -181,7 +181,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:init:acl')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console init:acl --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console init:acl --env=prod --no-debug\'') }
   end
 
   context "when running symfony:doctrine:* with custom entity manager" do
@@ -198,14 +198,14 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:migrations:status')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-metadata --env=prod --em=custom_em\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-query --env=prod --em=custom_em\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-result --env=prod --em=custom_em\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:create --env=prod --em=custom_em\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:drop --force --env=prod --em=custom_em\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:update --force --env=prod --em=custom_em\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:fixtures:load --env=prod --em=custom_em\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:migrations:status --env=prod --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-metadata --env=prod --no-debug --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-query --env=prod --no-debug --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-result --env=prod --no-debug --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:create --env=prod --no-debug --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:drop --force --env=prod --no-debug --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:update --force --env=prod --no-debug --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:fixtures:load --env=prod --no-debug --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:migrations:status --env=prod --no-debug --em=custom_em\'') }
   end
   
   context "when running symfony:doctrine:clear_* with flush option" do
@@ -217,9 +217,9 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:cache:clear_result')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-metadata --env=prod --flush\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-query --env=prod --flush\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-result --env=prod --flush\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-metadata --env=prod --no-debug --flush\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-query --env=prod --no-debug --flush\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:cache:clear-result --env=prod --no-debug --flush\'') }
   end
 
 end

@@ -29,6 +29,9 @@ module Capifony
 
         # Symfony console bin
         set :symfony_console,       app_path + "/console"
+        
+        # Symfony debug flag for console commands
+        set :symfony_debug,         false
 
         # Symfony log path
         set :log_path,              app_path + "/logs"
@@ -148,6 +151,16 @@ module Capifony
 
         def remote_command_exists?(command)
           'true' == capture("if [ -x \"$(which #{command})\" ]; then echo 'true'; fi").strip
+        end
+        
+        def console_options
+          console_options = "--env=#{symfony_env_prod}"
+          
+          if !symfony_debug
+             console_options += " --no-debug"
+          end
+          
+          return console_options
         end
 
         STDOUT.sync

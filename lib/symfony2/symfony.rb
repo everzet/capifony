@@ -3,7 +3,7 @@ namespace :symfony do
   task :default, :roles => :app, :except => { :no_release => true } do
     prompt_with_default(:task_arguments, "cache:clear")
 
-    stream "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{task_arguments} --env=#{symfony_env_prod}'"
+    stream "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{task_arguments} #{console_options}'"
   end
 
 
@@ -46,7 +46,7 @@ namespace :symfony do
         install_options += " --relative"
       end
 
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{assets_install_path}#{install_options} --env=#{symfony_env_prod}'"
+      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} assets:install #{assets_install_path}#{install_options} #{console_options}'"
       capifony_puts_ok
     end
   end
@@ -56,7 +56,7 @@ namespace :symfony do
     task :dump, :roles => :app,  :except => { :no_release => true } do
       capifony_pretty_print "--> Dumping all assets to the filesystem"
 
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump --env=#{symfony_env_prod} --no-debug #{latest_release}/#{web_path}'"
+      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump #{console_options} #{latest_release}/#{web_path}'"
       capifony_puts_ok
     end
   end
@@ -169,7 +169,7 @@ namespace :symfony do
           capifony_pretty_print "--> Warming up cache"
         end
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} cache:#{action.to_s} --env=#{symfony_env_prod}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} cache:#{action.to_s} #{console_options}'"
         run "#{try_sudo} chmod -R g+w #{latest_release}/#{cache_path}"
         capifony_puts_ok
       end

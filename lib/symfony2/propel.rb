@@ -11,7 +11,7 @@ namespace :symfony do
             capifony_pretty_print "--> Dropping databases"
           end
 
-          run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:database:#{action.to_s} --env=#{symfony_env_prod}'", :once => true
+          run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:database:#{action.to_s} #{console_options}'", :once => true
           capifony_puts_ok
         end
       end
@@ -27,7 +27,7 @@ namespace :symfony do
 
         capifony_pretty_print "--> Generating Propel classes"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --env=#{symfony_env_prod}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} #{console_options}'"
         capifony_puts_ok
       end
 
@@ -40,7 +40,7 @@ namespace :symfony do
 
         capifony_pretty_print "--> Generating Propel SQL"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --env=#{symfony_env_prod}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} #{console_options}'"
         capifony_puts_ok
       end
 
@@ -53,7 +53,7 @@ namespace :symfony do
 
         capifony_pretty_print "--> Inserting Propel SQL"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --force --env=#{symfony_env_prod}'", :once => true
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} #{command} --force #{console_options}'", :once => true
         capifony_puts_ok
       end
 
@@ -61,18 +61,18 @@ namespace :symfony do
       task :all_and_load, :roles => :app, :except => { :no_release => true } do
         capifony_pretty_print "--> Setting up Propel (classes, SQL)"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:build --insert-sql --env=#{symfony_env_prod}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:build --insert-sql #{console_options}'"
         capifony_puts_ok
       end
 
       desc "Generates ACLs models"
       task :acl, :roles => :app, :except => { :no_release => true } do
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:acl:init --env=#{symfony_env_prod}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:acl:init #{console_options}'"
       end
 
       desc "Inserts propel ACL tables"
       task :acl_load, :roles => :app, :except => { :no_release => true } do
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:acl:init --env=#{symfony_env_prod} --force'", :once => true
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} propel:acl:init #{console_options} --force'", :once => true
       end
     end
   end

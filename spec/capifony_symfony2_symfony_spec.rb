@@ -53,7 +53,7 @@ describe "Capifony::Symfony2 - symfony" do
       @configuration.find_and_execute_task('symfony:assets:install')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console assets:install web --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console assets:install web --env=prod --no-debug\'') }
   end
 
   context "when running symfony:assets:install" do
@@ -62,7 +62,7 @@ describe "Capifony::Symfony2 - symfony" do
       @configuration.find_and_execute_task('symfony:assets:install')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console assets:install web --symlink --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console assets:install web --symlink --env=prod --no-debug\'') }
   end
 
   context "when running symfony:assets:install" do
@@ -71,7 +71,7 @@ describe "Capifony::Symfony2 - symfony" do
       @configuration.find_and_execute_task('symfony:assets:install')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console assets:install web --relative --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console assets:install web --relative --env=prod --no-debug\'') }
   end
 
   context "when running symfony:assets:install" do
@@ -81,7 +81,7 @@ describe "Capifony::Symfony2 - symfony" do
       @configuration.find_and_execute_task('symfony:assets:install')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console assets:install web --symlink --relative --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console assets:install web --symlink --relative --env=prod --no-debug\'') }
   end
 
   context "when running symfony:assets:install with sudo" do
@@ -90,7 +90,7 @@ describe "Capifony::Symfony2 - symfony" do
       @configuration.find_and_execute_task('symfony:assets:install')
     end
 
-    it { should have_run('sudo sh -c \'cd /var/www/releases/20120927 && php app/console assets:install web --env=prod\'') }
+    it { should have_run('sudo sh -c \'cd /var/www/releases/20120927 && php app/console assets:install web --env=prod --no-debug\'') }
   end
 
   context "when running symfony:assets:install with a custom assets_install_path" do
@@ -99,7 +99,7 @@ describe "Capifony::Symfony2 - symfony" do
       @configuration.find_and_execute_task('symfony:assets:install')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console assets:install some/where --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console assets:install some/where --env=prod --no-debug\'') }
   end
 
   it "defines symfony:assetic tasks" do
@@ -279,7 +279,7 @@ describe "Capifony::Symfony2 - symfony" do
       @configuration.find_and_execute_task('symfony:cache:clear')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console cache:clear --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console cache:clear --env=prod --no-debug\'') }
     it { should have_run(' chmod -R g+w /var/www/releases/20120927/app/cache') }
   end
 
@@ -288,7 +288,7 @@ describe "Capifony::Symfony2 - symfony" do
       @configuration.find_and_execute_task('symfony:cache:warmup')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console cache:warmup --env=prod\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console cache:warmup --env=prod --no-debug\'') }
     it { should have_run(' chmod -R g+w /var/www/releases/20120927/app/cache') }
   end
 

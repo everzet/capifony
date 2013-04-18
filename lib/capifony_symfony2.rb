@@ -241,6 +241,8 @@ module Capifony
         after "deploy:finalize_update" do
           # Backwards compatibilty
           if use_composer then
+            # Deprecation warning
+            puts 'You are using the deprecated use_composer option. Please remove it and use vendors_method="composer" instead'.orange
             vendors_method = "composer"
             if update_vendors
               vendors_mode = "upgrade"

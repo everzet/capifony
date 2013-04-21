@@ -51,8 +51,7 @@ set   :scm,           :git
 set   :repository,    "ssh-gitrepo-domain.com:/path/to/repo.git"
 
 role  :web,           domain
-role  :app,           domain
-role  :db,            domain, :primary => true
+role  :app,           domain, :primary => true
 
 set   :use_sudo,      false
 set   :keep_releases, 3
@@ -108,8 +107,7 @@ set   :repository,    "file:///Users/deployer/sites/my-app"
 set   :deploy_via,    :copy
 
 role  :web,           domain
-role  :app,           domain
-role  :db,            domain, :primary => true
+role  :app,           domain, :primary => true
 
 set   :use_sudo,      false
 set   :keep_releases, 3

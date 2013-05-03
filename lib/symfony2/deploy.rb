@@ -24,7 +24,7 @@ namespace :deploy do
           "chmod +a \"#{webserver_user} allow delete,write,append,file_inherit,directory_inherit\" %s"
         ],
         :acl   => [
-          "setfacl -R -m u:#{user}:rwx -m u:#{webserver_user}:rwx %s",
+          "setfacl -R -m u:#{user}:rwX -m u:#{webserver_user}:rwX %s",
           "setfacl -dR -m u:#{user}:rwx -m u:#{webserver_user}:rwx %s"
         ],
         :chown => ["chown #{webserver_user} %s"]

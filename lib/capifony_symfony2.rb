@@ -29,7 +29,7 @@ module Capifony
 
         # Symfony console bin
         set :symfony_console,       app_path + "/console"
-        
+
         # Symfony debug flag for console commands
         set :symfony_debug,         false
 
@@ -60,7 +60,7 @@ module Capifony
         set :composer_bin,          false
 
         # Options to pass to composer when installing/updating
-        set :composer_options,      "--no-scripts --verbose --prefer-dist --optimize-autoloader"
+        set :composer_options,      "--no-scripts --no-dev --verbose --prefer-dist --optimize-autoloader"
 
         # Whether to update vendors using the configured dependency manager (composer or bin/vendors)
         set :update_vendors,        false
@@ -118,8 +118,8 @@ module Capifony
 
         # Doctrine custom entity manager
         set :doctrine_em,           false
-        
-        # Use --flush option in doctrine:clear_* task 
+
+        # Use --flush option in doctrine:clear_* task
         set :doctrine_clear_use_flush_option, false
 
         # Symfony2 version
@@ -152,14 +152,14 @@ module Capifony
         def remote_command_exists?(command)
           'true' == capture("if [ -x \"$(which #{command})\" ]; then echo 'true'; fi").strip
         end
-        
+
         def console_options
           console_options = "--env=#{symfony_env_prod}"
-          
+
           if !symfony_debug
              console_options += " --no-debug"
           end
-          
+
           return console_options
         end
 

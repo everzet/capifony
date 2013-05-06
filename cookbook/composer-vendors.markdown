@@ -37,9 +37,9 @@ set :copy_vendors, false
 
 ## Scripts
 
-By default Composer does not run the `post-install` or `post-update` scripts 
+By default Composer does not run the `post-install` or `post-update` scripts
 specified within the `composer.json` file. This is because the `composer_options`
-default is `--no-scripts --verbose --prefer-dist`
+default is `--no-scripts --no-dev --verbose --prefer-dist --optimize-autoloader`
 
 Some extenal bundles may require a script to run with deployment. If you require
 composer to run scripts you can use the `composer_options` variable to specifiy
@@ -47,5 +47,5 @@ what is included when the composer command is called. For example to run the scr
 update the parameter:
 
 {% highlight ruby %}
-set :composer_options,  "--verbose --prefer-dist"
+set :composer_options,  "--no-dev --verbose --prefer-dist --optimize-autoloader"
 {% endhighlight %}

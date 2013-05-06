@@ -1,6 +1,16 @@
-### 2.2.9 / ???
+### 2.2.9 / May 6, 2013
 
-n/a
+* Change setfacl call to match Symfony2 permission granting instructions
+* Fixed default deploy.rb (refs #354)
+* Add 'symfony_debug' setting to toggle --no-debug on console commands
+* Add test for #362
+* Use capistrano-maintenance 0.0.3
+* Added custom assets:install path
+* update specs
+* Dump Assetic files to latest release directory
+* add unit test for doctrine_clear_use_flush_option
+* remove inline condition
+* add use of flush option in doctrine:clear_* task
 
 ### 2.2.8 / March 5, 2013
 

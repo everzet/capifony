@@ -227,7 +227,7 @@ module Capifony
           end
         end
 
-        ["symfony:composer:install", "symfony:composer:update"].each do |action|
+        ["symfony:composer:install", "symfony:composer:update", "symfony:vendors:install", "symfony:vendors:upgrade"].each do |action|
           before action do
             if copy_vendors
               symfony.composer.copy_vendors

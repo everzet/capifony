@@ -6,6 +6,7 @@ require 'fileutils'
 require 'inifile'
 require 'yaml'
 require 'zlib'
+require 'ruby-progressbar'
 
 module Capifony
   module Symfony2
@@ -209,6 +210,36 @@ module Capifony
               end
             end
           end
+        end
+
+        $progress_bar = nil
+        $download_msg_padding = nil
+
+        def capifony_progress_start(msg = "--> Working")
+          $download_msg_padding = '.' * (60 - msg.size)
+          # Format is equivalent to "Title............82% ETA: 00:00:12"
+          $progress_bar = ProgressBar.create(
+            :title => msg,
+            :format => "%t%B %p%% %e",
+            :length => 60,
+            :progress_mark => "."
+          )
+        end
+
+        def capifony_progress_update(current, total)
+          unless $progress_bar
+            raise "Please create a progress bar using capifony_progress_start"
+          end
+
+          percent = (current.to_f / total.to_f * 100).floor
+
+          if percent > 99
+            green_tick = '✔'.green
+            # Format is equivalent to "Title.............✔"
+            $progress_bar.format("%t#{$download_msg_padding}#{green_tick}")
+          end
+
+          $progress_bar.progress = percent
         end
 
         [

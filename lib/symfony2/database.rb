@@ -24,7 +24,12 @@ namespace :database do
       end
 
       FileUtils.mkdir_p("backups")
-      get file, "backups/#{filename}"
+
+      capifony_progress_start
+      get(file, "backups/#{filename}", :via => :scp) do |channel, name, sent, total|
+        capifony_progress_update(sent, total)
+      end
+
       begin
         FileUtils.ln_sf(filename, "backups/#{application}.#{env}_dump.latest.sql.gz")
       rescue Exception # fallback for file systems that don't support symlinks

@@ -66,7 +66,7 @@ In this case, on every `cap deploy`, capifony will:
 * run deployment hooks (`cache:warmup`, `cc`, etc.)
 
 > NOTE : By default capifony doesn't clean releases. To execute the clean releases
-> task, it's necessary to set the `keep_releases` param and to add the task after  
+> task, it's necessary to set the `keep_releases` param and to add the task after
 > end deploy in the deploy.rb file, like this: `after "deploy", "deploy:cleanup"`
 
 If you don't want to clone the whole repository on every deploy, you can set the
@@ -86,7 +86,7 @@ deployment machine via a copy.
 In this case, the deployment server (which may just be your local computer) **must**
 have access to the git repository (remote or not), and be able to pull from it.
 
-As vendors are still installed on the production server it is worth noting that 
+As vendors are still installed on the production server it is worth noting that
 if any of your vendors are remote private repositories you will need pull access
 for any of these repositories on your production server otherwise install via composer
 or `bin/vendors` will fail.
@@ -303,7 +303,7 @@ extension](cookbook/using-the-multistage-extension.html)
 
 [Deployment in clustered machines](cookbook/deployment-in-clustered-machines.html)
 
-[How to keep Symfony2 sessions after deploy](cookbook/deployment-in-clustered-machines.html)
+[How to keep Symfony2 sessions after deploy](cookbook/how-to-keep-sessions-after-deploy.html)
 
 <hr />
 

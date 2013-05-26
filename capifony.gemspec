@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.bindir       = "bin"
   spec.executables << "capifony"
 
-  spec.add_dependency 'capistrano', ">= 2.13.5","< 2.15"
+  spec.add_dependency 'capistrano', ">= 2.13.5","<= 2.15.4"
   spec.add_dependency 'colored', ">= 1.2.0"
   spec.add_dependency 'inifile', ">= 2.0.2"
   spec.add_dependency 'capistrano-maintenance', '0.0.3'

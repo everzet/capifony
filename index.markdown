@@ -303,6 +303,8 @@ extension](cookbook/using-the-multistage-extension.html)
 
 [Deployment in clustered machines](cookbook/deployment-in-clustered-machines.html)
 
+[How to keep Symfony2 sessions after deploy](cookbook/deployment-in-clustered-machines.html)
+
 <hr />
 
 ## Known Issues

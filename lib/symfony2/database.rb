@@ -19,7 +19,7 @@ namespace :database do
         data = capture("#{try_sudo} sh -c 'mysqldump -u#{config['database_user']} --host='#{config['database_host']}' --password='#{config['database_password']}' #{config['database_name']} | gzip -c > #{file}'")
         puts data
       when "pdo_pgsql", "pgsql"
-        data = capture("#{try_sudo} sh -c 'pg_dump -U #{config['database_user']} #{config['database_name']} --clean | gzip -c > #{file}'")
+        data = capture("#{try_sudo} sh -c 'PGPASSWORD=\"#{config['database_password']}\" pg_dump -U #{config['database_user']} #{config['database_name']} --clean | gzip -c > #{file}'")
         puts data
       end
 
@@ -51,7 +51,7 @@ namespace :database do
       when "pdo_mysql", "mysql"
         `mysqldump -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} > #{tmpfile}`
       when "pdo_pgsql", "pgsql"
-        `pg_dump -U #{config['database_user']} #{config['database_name']} --clean > #{tmpfile}`
+        `PGPASSWORD=\"#{config['database_password']}\" pg_dump -U #{config['database_user']} #{config['database_name']} --clean > #{tmpfile}`
       end
 
       File.open(tmpfile, "r+") do |f|
@@ -91,7 +91,7 @@ namespace :database do
       when "pdo_mysql", "mysql"
         `mysql -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} < backups/#{sqlfile}`
       when "pdo_pgsql", "pgsql"
-        `psql -U #{config['database_user']} #{config['database_name']} < backups/#{sqlfile}`
+        `PGPASSWORD=\"#{config['database_password']}\" psql -U #{config['database_user']} #{config['database_name']} < backups/#{sqlfile}`
       end
       FileUtils.rm("backups/#{sqlfile}")
     end
@@ -116,7 +116,7 @@ namespace :database do
         data = capture("#{try_sudo} mysql -u#{config['database_user']} --host='#{config['database_host']}' --password='#{config['database_password']}' #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}")
         puts data
       when "pdo_pgsql", "pgsql"
-        data = capture("#{try_sudo} psql -U #{config['database_user']} #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}")
+        data = capture("#{try_sudo} PGPASSWORD=\"#{config['database_password']}\" psql -U #{config['database_user']} #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}")
         puts data
       end
 

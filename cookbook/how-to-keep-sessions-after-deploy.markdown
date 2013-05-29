@@ -18,7 +18,7 @@ In order to change sessions save path change the `save_path` parameter under a `
 node in your application's `config.yml`
 
 {% highlight yaml %}
-framework
+framework:
     session:
         save_path: "%kernel.root_dir%/sessions/"
 {% endhighlight %}

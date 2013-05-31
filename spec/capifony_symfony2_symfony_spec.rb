@@ -174,6 +174,15 @@ describe "Capifony::Symfony2 - symfony" do
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar update --no-scripts --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress\'') }
   end
 
+  context "when running symfony:composer:update with interactive_mode disabled" do
+    before do
+      @configuration.set :interactive_mode, false
+      @configuration.find_and_execute_task('symfony:composer:update')
+    end
+
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar update --no-scripts --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress --no-interaction\'') }
+  end
+
   context "when running symfony:composer:update with a given composer_bin" do
     before do
       @configuration.set :composer_bin, "my_composer"
@@ -228,6 +237,15 @@ describe "Capifony::Symfony2 - symfony" do
     it { should_not have_run('vendorDir=/var/www/current/vendor; if [ -d $vendorDir ] || [ -h $vendorDir ]; then cp -a $vendorDir /var/www/releases/20120927/vendor; fi;') }
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar install --no-scripts --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress\'') }
+  end
+
+  context "when running symfony:composer:install with interactive mode disabled" do
+    before do
+      @configuration.set :interactive_mode, false
+      @configuration.find_and_execute_task('symfony:composer:install')
+    end
+
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar install --no-scripts --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress --no-interaction\'') }
   end
 
   context "when running symfony:composer:install with a given composer_bin" do

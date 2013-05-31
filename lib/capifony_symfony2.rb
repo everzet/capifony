@@ -61,7 +61,7 @@ module Capifony
         set :composer_bin,          false
 
         # Options to pass to composer when installing/updating
-        set :composer_options,      "--no-scripts --no-dev --verbose --prefer-dist --optimize-autoloader"
+        set :composer_options,      "--no-scripts --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress"
 
         # Whether to update vendors using the configured dependency manager (composer or bin/vendors)
         set :update_vendors,        false

@@ -5,7 +5,7 @@ title: Speeding up deploy
 
 > As of
 > [2.2.2](https://github.com/everzet/capifony/blob/master/CHANGELOG.md#222--november-13-2012),
-> capifony provides this task.
+> capifony provides this task. Just add `set :copy_vendors, true` to your deploy.rb file
 
 With default configuration, capifony will reinstall all your vendors for each deploy.
 If you feel that is inefficient, you can manage to have your vendors just updated, not

@@ -52,8 +52,8 @@ module Capifony
         # Symfony build_bootstrap script
         set :build_bootstrap,       "bin/build_bootstrap"
 
-        # Whether to use composer to install vendors.
-        # If set to false, it will use the bin/vendors script
+        # Deprecated way to use composer to install vendors - use vendors_method option instead.
+        # If set to false, it will use method specified by vendors_method option
         set :use_composer,          false
 
         # Path to composer binary
@@ -65,6 +65,9 @@ module Capifony
 
         # Whether to update vendors using the configured dependency manager (composer or bin/vendors)
         set :update_vendors,        false
+
+        # Vendors installation method - composer or bin_vendors
+        set :vendors_method,        "bin_vendors"
 
         # run bin/vendors script in mode (upgrade, install (faster if shared /vendor folder) or reinstall)
         set :vendors_mode,          "reinstall"
@@ -267,14 +270,27 @@ module Capifony
         end
 
         after "deploy:finalize_update" do
-          if use_composer
+          # Backwards compatibilty
+          if use_composer then
+            # Deprecation warning
+            puts 'You are using the deprecated use_composer option. Please remove it and use vendors_method="composer" instead'.orange
+            vendors_method = "composer"
             if update_vendors
-              symfony.composer.update
+              vendors_mode = "upgrade"
             else
-              symfony.composer.install
+              vendors_mode = "install"
+              update_vendors = true
             end
-          else
-            if update_vendors
+          end
+
+          if update_vendors
+            vendors_mode.chomp
+            if vendors_method == "composer" then
+              case vendors_mode
+              when "upgrade" then symfony.composer.update
+              when "install" then symfony.composer.install
+              end
+            elsif vendors_method == "bin_vendors" then
               vendors_mode.chomp # To remove trailing whiteline
               case vendors_mode
               when "upgrade" then symfony.vendors.upgrade
@@ -294,7 +310,7 @@ module Capifony
             symfony.propel.build.model
           end
 
-          if use_composer
+          if update_vendors && vendors_method == "composer"
             symfony.composer.dump_autoload
           end
 

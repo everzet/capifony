@@ -84,15 +84,26 @@ namespace :symfony do
   namespace :bootstrap do
     desc "Runs the bin/build_bootstrap script"
     task :build, :roles => :app, :except => { :no_release => true } do
-      capifony_pretty_print "--> Building bootstrap file"
+      if use_composer_tmp
+        logger.debug "Building bootstrap file in #{$temp_destination}"
+        capifony_pretty_print "--> Building bootstrap file in temp location"
 
-      if !remote_file_exists?("#{latest_release}/#{build_bootstrap}") && true == use_composer then
-        set :build_bootstrap, "vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php"
-        run "#{try_sudo} sh -c 'cd #{latest_release} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} #{app_path} || echo '#{build_bootstrap} not found, skipped''"
+        if !File.exists?("#{$temp_destination}/#{build_bootstrap}") && true == use_composer then
+          set :build_bootstrap, "vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php"
+          run_locally "cd #{$temp_destination} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} #{app_path} || echo '#{build_bootstrap} not found, skipped'"
+        else
+          run_locally "cd #{$temp_destination} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} || echo '#{build_bootstrap} not found, skipped'"
+        end
       else
-        run "#{try_sudo} sh -c 'cd #{latest_release} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} || echo '#{build_bootstrap} not found, skipped''"
-      end
+        capifony_pretty_print "--> Building bootstrap file"
 
+        if !remote_file_exists?("#{latest_release}/#{build_bootstrap}") && true == use_composer then
+          set :build_bootstrap, "vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php"
+          run "#{try_sudo} sh -c 'cd #{latest_release} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} #{app_path} || echo '#{build_bootstrap} not found, skipped''"
+        else
+          run "#{try_sudo} sh -c 'cd #{latest_release} && test -f #{build_bootstrap} && #{php_bin} #{build_bootstrap} || echo '#{build_bootstrap} not found, skipped''"
+        end
+      end
       capifony_puts_ok
     end
   end
@@ -100,14 +111,21 @@ namespace :symfony do
   namespace :composer do
     desc "Gets composer and installs it"
     task :get, :roles => :app, :except => { :no_release => true } do
-      if !remote_file_exists?("#{latest_release}/composer.phar")
-        capifony_pretty_print "--> Downloading Composer"
-
-        run "#{try_sudo} sh -c 'cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}'"
+      if use_composer_tmp
+        # Because we always install to temp location we assume that we download composer every time.
+        logger.debug "Downloading composer to #{$temp_destination}"
+        capifony_pretty_print "--> Downloading Composer to temp location"
+        run_locally "cd #{$temp_destination} && curl -s http://getcomposer.org/installer | #{php_bin}"
       else
-        capifony_pretty_print "--> Updating Composer"
+        if !remote_file_exists?("#{latest_release}/composer.phar")
+          capifony_pretty_print "--> Downloading Composer"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} composer.phar self-update'"
+          run "#{try_sudo} sh -c 'cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}'"
+        else
+          capifony_pretty_print "--> Updating Composer"
+
+          run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} composer.phar self-update'"
+        end
       end
       capifony_puts_ok
     end
@@ -116,14 +134,22 @@ namespace :symfony do
 
     desc "Runs composer to install vendors from composer.lock file"
     task :install, :roles => :app, :except => { :no_release => true } do
+
       if !composer_bin
         symfony.composer.get
         set :composer_bin, "#{php_bin} composer.phar"
       end
 
-      capifony_pretty_print "--> Installing Composer dependencies"
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} install #{composer_options}'"
-      capifony_puts_ok
+      if use_composer_tmp
+        logger.debug "Installing composer dependencies to #{$temp_destination}"
+        capifony_pretty_print "--> Installing Composer dependencies in temp location"
+        run_locally "cd #{$temp_destination} && #{composer_bin} install #{composer_options}"
+        capifony_puts_ok
+      else
+        capifony_pretty_print "--> Installing Composer dependencies"
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} install #{composer_options}'"
+        capifony_puts_ok
+      end
     end
 
     desc "Runs composer to update vendors, and composer.lock file"
@@ -156,6 +182,22 @@ namespace :symfony do
       run "vendorDir=#{current_path}/vendor; if [ -d $vendorDir ] || [ -h $vendorDir ]; then cp -a $vendorDir #{latest_release}/vendor; fi;"
       capifony_puts_ok
     end
+
+    # Install composer to temp directory.
+    # Not sure if this is required yet.
+    desc "Dumps an optimized autoloader"
+    task :dump_autoload_temp, :roles => :app, :except => { :no_release => true } do
+      if !composer_bin
+        symfony.composer.get_temp
+        set :composer_bin, "#{php_bin} composer.phar"
+      end
+
+      logger.debug "Dumping an optimised autoloader to #{$temp_destination}"
+      capifony_pretty_print "--> Dumping an optimized autoloader to temp location"
+      run_locally cd "#{$temp_destination} && #{composer_bin} dump-autoload --optimize"
+      capifony_puts_ok
+    end
+
   end
 
   namespace :cache do

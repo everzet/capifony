@@ -56,6 +56,9 @@ module Capifony
         # If set to false, it will use the bin/vendors script
         set :use_composer,          false
 
+        # Whether to use composer to install vendors to a local temp directory.
+        set :use_composer_tmp,     false
+
         # Path to composer binary
         # If set to false, Capifony will download/install composer
         set :composer_bin,          false
@@ -267,7 +270,7 @@ module Capifony
         end
 
         after "deploy:finalize_update" do
-          if use_composer
+          if use_composer && !use_composer_tmp
             if update_vendors
               symfony.composer.update
             else
@@ -294,7 +297,7 @@ module Capifony
             symfony.propel.build.model
           end
 
-          if use_composer
+          if use_composer && !use_composer_tmp
             symfony.composer.dump_autoload
           end
 

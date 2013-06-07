@@ -140,14 +140,19 @@ namespace :symfony do
         set :composer_bin, "#{php_bin} composer.phar"
       end
 
+      options = "#{composer_options}"
+      if !interactive_mode
+        options += " --no-interaction"
+      end
+
       if use_composer_tmp
         logger.debug "Installing composer dependencies to #{$temp_destination}"
         capifony_pretty_print "--> Installing Composer dependencies in temp location"
-        run_locally "cd #{$temp_destination} && #{composer_bin} install #{composer_options}"
+        run_locally "cd #{$temp_destination} && #{composer_bin} install #{options}"
         capifony_puts_ok
       else
         capifony_pretty_print "--> Installing Composer dependencies"
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} install #{composer_options}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} install #{options}'"
         capifony_puts_ok
       end
     end
@@ -159,8 +164,13 @@ namespace :symfony do
         set :composer_bin, "#{php_bin} composer.phar"
       end
 
+      options = "#{composer_options}"
+      if !interactive_mode
+        options += " --no-interaction"
+      end
+
       capifony_pretty_print "--> Updating Composer dependencies"
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} update #{composer_options}'"
+      run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} update #{options}'"
       capifony_puts_ok
     end
 

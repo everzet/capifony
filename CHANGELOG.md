@@ -1,3 +1,7 @@
+### 2.3.0 / ???
+
+n/a
+
 ### 2.2.10 / June 9, 2013
 
 * "interactive_mode" should also affect composer

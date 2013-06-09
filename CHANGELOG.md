@@ -1,6 +1,13 @@
-### 2.2.10 / ???
+### 2.2.10 / June 9, 2013
 
-n/a
+* "interactive_mode" should also affect composer
+* Override copy strategy to allow vendors to be installed locally.
+* Add "--no-progress" to composers default options
+* Improved #112 password is passed to pg_dump and psql
+* Implemented progress bar on "database:dump:remote"
+* Implemented wrapper around "ruby-progressbar" gem
+* also copy vendors for vendors:install and vendors:upgrade
+* Updated composer_options for the upcoming changes in composer.
 
 ### 2.2.9 / May 6, 2013
 

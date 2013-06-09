@@ -64,7 +64,7 @@ module Capifony
         set :composer_bin,          false
 
         # Options to pass to composer when installing/updating
-        set :composer_options,      "--no-scripts --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress"
+        set :composer_options,      "--no-dev --verbose --prefer-dist --optimize-autoloader --no-progress"
 
         # Whether to update vendors using the configured dependency manager (composer or bin/vendors)
         set :update_vendors,        false
@@ -82,7 +82,6 @@ module Capifony
         set :dump_assetic_assets,   false
 
         # Assets install
-        set :assets_install,        true
         set :assets_symlinks,       false
         set :assets_relative,       false
         set :assets_install_path,   web_path
@@ -287,8 +286,6 @@ module Capifony
             end
           end
 
-          symfony.bootstrap.build
-
           if use_set_permissions
             symfony.deploy.set_permissions
           end
@@ -303,10 +300,6 @@ module Capifony
 
           if update_assets_version
             symfony.assets.update_version   # Update `assets_version`
-          end
-
-          if assets_install
-            symfony.assets.install          # Publish bundle assets
           end
 
           if cache_warmup

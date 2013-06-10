@@ -89,7 +89,8 @@ have access to the git repository (remote or not), and be able to pull from it.
 As vendors are still installed on the production server it is worth noting that
 if any of your vendors are remote private repositories you will need pull access
 for any of these repositories on your production server otherwise install via composer
-or `bin/vendors` will fail.
+or `bin/vendors` will fail. You will need to use the following cookbook entry if you want
+to install vendors locally before deploy - [Install vendors locally before deploy](cookbook/copy-deps-locally-strategy.html).
 
 The deployment server **must** also have ssh access to the production server:
 
@@ -304,6 +305,8 @@ extension](cookbook/using-the-multistage-extension.html)
 [Deployment in clustered machines](cookbook/deployment-in-clustered-machines.html)
 
 [How to keep Symfony2 sessions after deploy](cookbook/how-to-keep-sessions-after-deploy.html)
+
+[Install vendors locally before deploy](cookbook/copy-deps-locally-strategy.html)
 
 <hr />
 

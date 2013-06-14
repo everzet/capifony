@@ -30,7 +30,7 @@ If you want to share the vendor folders between deployments you can add the foll
 to your configuration:
 
 {% highlight ruby %}
-set :copy_vendors, false
+set :copy_vendors, true
 {% endhighlight %}
 
 <hr />

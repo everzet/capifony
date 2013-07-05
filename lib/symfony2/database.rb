@@ -23,17 +23,17 @@ namespace :database do
         puts data
       end
 
-      FileUtils.mkdir_p("backups")
+      FileUtils.mkdir_p("#{backup_path}")
 
       capifony_progress_start
-      get(file, "backups/#{filename}", :via => :scp) do |channel, name, sent, total|
+      get(file, "#{backup_path}/#{filename}", :via => :scp) do |channel, name, sent, total|
         capifony_progress_update(sent, total)
       end
 
       begin
-        FileUtils.ln_sf(filename, "backups/#{application}.#{env}_dump.latest.sql.gz")
+        FileUtils.ln_sf(filename, "#{backup_path}/#{application}.#{env}_dump.latest.sql.gz")
       rescue Exception # fallback for file systems that don't support symlinks
-        FileUtils.cp_r("backups/#{filename}", "backups/#{application}.#{env}_dump.latest.sql.gz")
+        FileUtils.cp_r("#{backup_path}/#{filename}", "#{backup_path}/#{application}.#{env}_dump.latest.sql.gz")
       end
       run "#{try_sudo} rm -f #{file}"
     end
@@ -41,12 +41,12 @@ namespace :database do
     desc "Dumps local database"
     task :local do
       filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.gz"
-      tmpfile   = "backups/#{application}_dump_tmp.sql"
-      file      = "backups/#{filename}"
+      tmpfile   = "#{backup_path}/#{application}_dump_tmp.sql"
+      file      = "#{backup_path}/#{filename}"
       config    = load_database_config IO.read("#{app_config_path}/#{app_config_file}"), symfony_env_local
       sqlfile   = "#{application}_dump.sql"
 
-      FileUtils::mkdir_p("backups")
+      FileUtils::mkdir_p("#{backup_path}")
       case config['database_driver']
       when "pdo_mysql", "mysql"
         `mysqldump -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} > #{tmpfile}`
@@ -64,9 +64,9 @@ namespace :database do
       end
 
       begin
-        FileUtils.ln_sf(filename, "backups/#{application}.local_dump.latest.sql.gz")
+        FileUtils.ln_sf(filename, "#{backup_path}/#{application}.local_dump.latest.sql.gz")
       rescue Exception # fallback for file systems that don't support symlinks
-        FileUtils.cp_r("backups/#{filename}", "backups/#{application}.local_dump.latest.sql.gz")
+        FileUtils.cp_r("#{backup_path}/#{filename}", "#{backup_path}/#{application}.local_dump.latest.sql.gz")
       end
       FileUtils.rm(tmpfile)
     end
@@ -82,24 +82,24 @@ namespace :database do
 
       database.dump.remote
 
-      f = File.new("backups/#{sqlfile}", "a+")
-      gz = Zlib::GzipReader.new(File.open("backups/#{filename}", "r"))
+      f = File.new("#{backup_path}/#{sqlfile}", "a+")
+      gz = Zlib::GzipReader.new(File.open("#{backup_path}/#{filename}", "r"))
       f << gz.read
       f.close
 
       case config['database_driver']
       when "pdo_mysql", "mysql"
-        `mysql -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} < backups/#{sqlfile}`
+        `mysql -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} < #{backup_path}/#{sqlfile}`
       when "pdo_pgsql", "pgsql"
-        `PGPASSWORD=\"#{config['database_password']}\" psql -U #{config['database_user']} #{config['database_name']} < backups/#{sqlfile}`
+        `PGPASSWORD=\"#{config['database_password']}\" psql -U #{config['database_user']} #{config['database_name']} < #{backup_path}/#{sqlfile}`
       end
-      FileUtils.rm("backups/#{sqlfile}")
+      FileUtils.rm("#{backup_path}/#{sqlfile}")
     end
 
     desc "Dumps local database, loads it to remote, and populates there"
     task :to_remote, :roles => :db, :only => { :primary => true } do
       filename  = "#{application}.local_dump.latest.sql.gz"
-      file      = "backups/#{filename}"
+      file      = "#{backup_path}/#{filename}"
       sqlfile   = "#{application}_dump.sql"
       config    = ""
 

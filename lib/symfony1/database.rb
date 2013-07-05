@@ -19,12 +19,12 @@ namespace :database do
       logger.level = saved_log_level
 
       require "fileutils"
-      FileUtils.mkdir_p("backups")
-      get file, "backups/#{filename}"
+      FileUtils.mkdir_p("#{backup_path}")
+      get file, "#{backup_path}/#{filename}"
       begin
-        FileUtils.ln_sf(filename, "backups/#{application}.remote_dump.latest.sql.gz")
+        FileUtils.ln_sf(filename, "#{backup_path}/#{application}.remote_dump.latest.sql.gz")
       rescue Exception # fallback for file systems that don't support symlinks
-        FileUtils.cp_r("backups/#{filename}", "backups/#{application}.remote_dump.latest.sql.gz")
+        FileUtils.cp_r("#{backup_path}/#{filename}", "#{backup_path}/#{application}.remote_dump.latest.sql.gz")
       end
       run "#{try_sudo} rm #{file}"
     end
@@ -32,13 +32,13 @@ namespace :database do
     desc "Dump local database"
     task :local do
       filename  = "#{application}.local_dump.#{Time.now.strftime("%Y-%m-%d_%H-%M-%S")}.sql.gz"
-      tmpfile   = "backups/#{application}_dump_tmp.sql"
-      file      = "backups/#{filename}"
+      tmpfile   = "#{backup_path}/#{application}_dump_tmp.sql"
+      file      = "#{backup_path}/#{filename}"
       config    = load_database_config IO.read('config/databases.yml'), symfony_env_local
       sqlfile   = "#{application}_dump.sql"
 
       require "fileutils"
-      FileUtils::mkdir_p("backups")
+      FileUtils::mkdir_p("#{backup_path}")
 
       sql_dump_cmd = generate_sql_command('dump', config)
       run_locally "#{sql_dump_cmd} > #{tmpfile}"
@@ -53,9 +53,9 @@ namespace :database do
       end
 
       begin
-        FileUtils.ln_sf(filename, "backups/#{application}.local_dump.latest.sql.gz")
+        FileUtils.ln_sf(filename, "#{backup_path}/#{application}.local_dump.latest.sql.gz")
       rescue Exception # fallback for file systems that don't support symlinks
-        FileUtils.cp_r("backups/#{filename}", "backups/#{application}.local_dump.latest.sql.gz")
+        FileUtils.cp_r("#{backup_path}/#{filename}", "#{backup_path}/#{application}.local_dump.latest.sql.gz")
       end
       FileUtils.rm(tmpfile)
     end
@@ -68,11 +68,11 @@ namespace :database do
       database.dump.remote
 
       begin
-        zipped_file_path  = `readlink -f backups/#{application}.remote_dump.latest.sql.gz`.chop  # gunzip does not work with a symlink
+        zipped_file_path  = `readlink -f #{backup_path}/#{application}.remote_dump.latest.sql.gz`.chop  # gunzip does not work with a symlink
       rescue Exception # fallback for file systems that don't support symlinks
-        zipped_file_path  = "backups/#{application}.remote_dump.latest.sql.gz"
+        zipped_file_path  = "#{backup_path}/#{application}.remote_dump.latest.sql.gz"
       end
-      unzipped_file_path   = "backups/#{application}_dump.sql"
+      unzipped_file_path   = "#{backup_path}/#{application}_dump.sql"
 
       run_locally "gunzip -c #{zipped_file_path} > #{unzipped_file_path}"
 
@@ -91,7 +91,7 @@ namespace :database do
     task :to_remote, :roles => :db, :only => { :primary => true } do
 
       filename  = "#{application}.local_dump.latest.sql.gz"
-      file      = "backups/#{filename}"
+      file      = "#{backup_path}/#{filename}"
       sqlfile   = "#{application}_dump.sql"
       config    = ""
 

@@ -122,6 +122,9 @@ module Capifony
         # Doctrine custom entity manager
         set :doctrine_em,           false
 
+        # Database backup folder
+        set :backup_path,           "backups"
+
         # Use --flush option in doctrine:clear_* task
         set :doctrine_clear_use_flush_option, false
 

@@ -28,7 +28,7 @@ namespace :symfony do
     task :update_version, :roles => :app, :except => { :no_release => true } do
       capifony_pretty_print "--> Updating assets version (in config.yml)"
 
-      run "#{try_sudo} sed -i 's/\\(assets_version:[ ]*\\)\\([a-zA-Z0-9_]*\\)\\(.*\\)$/\\1#{real_revision[0,7]}\\3/g' #{latest_release}/#{app_config_path}/config.yml"
+      run "#{try_sudo} sed -i 's/\\(assets_version:[ ]*\\)\\([a-zA-Z0-9_]*\\)\\(.*\\)$/\\1#{real_revision.to_s[0,7]}\\3/g' #{latest_release}/#{app_config_path}/config.yml"
       capifony_puts_ok
     end
 

@@ -27,7 +27,7 @@ namespace :deploy do
           "setfacl -R -m u:#{user}:rwX -m u:#{webserver_user}:rwX %s",
           "setfacl -dR -m u:#{user}:rwx -m u:#{webserver_user}:rwx %s"
         ],
-        :chown => ["chown #{webserver_user} %s"]
+        :chown => ["chown -R #{webserver_user} %s"]
       }
 
       if methods[permission_method]

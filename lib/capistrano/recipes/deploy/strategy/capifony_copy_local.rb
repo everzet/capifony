@@ -12,7 +12,13 @@ module Capistrano
           copy_cache ? run_copy_cache_strategy : run_copy_strategy
           create_revision_file
           $temp_destination = destination  # Make temp location avaliable globally.
-          symfony.composer.install
+
+          if update_vendors
+            symfony.composer.update
+          else
+            symfony.composer.install
+          end
+
           symfony.bootstrap.build
           compress_repository
           distribute!

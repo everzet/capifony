@@ -169,9 +169,17 @@ namespace :symfony do
         options += " --no-interaction"
       end
 
-      capifony_pretty_print "--> Updating Composer dependencies"
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} update #{options}'"
-      capifony_puts_ok
+      if use_composer_tmp
+        logger.debug "Updating composer dependencies to #{$temp_destination}"
+        capifony_pretty_print "--> Updating Composer dependencies in temp location"
+        run_locally "cd #{$temp_destination} && #{composer_bin} update #{options}"
+        capifony_puts_ok
+      else
+        capifony_pretty_print "--> Updating Composer dependencies"
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} update #{options}'"
+        capifony_puts_ok
+      end
+
     end
 
     desc "Dumps an optimized autoloader"

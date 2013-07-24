@@ -272,19 +272,21 @@ module Capifony
         end
 
         after "deploy:finalize_update" do
-          if use_composer && !use_composer_tmp
-            if update_vendors
-              symfony.composer.update
+          if  !use_composer_tmp
+            if use_composer
+              if update_vendors
+                symfony.composer.update
+              else
+                symfony.composer.install
+              end
             else
-              symfony.composer.install
-            end
-          else
-            if update_vendors
-              vendors_mode.chomp # To remove trailing whiteline
-              case vendors_mode
-              when "upgrade" then symfony.vendors.upgrade
-              when "install" then symfony.vendors.install
-              when "reinstall" then symfony.vendors.reinstall
+              if update_vendors
+                vendors_mode.chomp # To remove trailing whiteline
+                case vendors_mode
+                when "upgrade" then symfony.vendors.upgrade
+                when "install" then symfony.vendors.install
+                when "reinstall" then symfony.vendors.reinstall
+                end
               end
             end
           end

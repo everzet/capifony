@@ -13,6 +13,7 @@ namespace :symfony do
       log   = action.to_s == 'tail' ? 'prod.log' : 'dev.log'
       desc "Tail #{log}"
       task action, :roles => :app, :except => { :no_release => true } do
+        log   = action.to_s == 'tail' ? "#{symfony_env_prod}.log" : "#{symfony_env_local}.log"
         run "#{try_sudo} tail -n #{lines} -f #{shared_path}/#{log_path}/#{log}" do |channel, stream, data|
           trap("INT") { puts 'Interupted'; exit 0; }
           puts

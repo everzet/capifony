@@ -1,6 +1,9 @@
-### 2.3.0 / ???
+### 2.3.0 / July 26, 2013
 
-n/a
+* Use `symfony_env_*` variables to tail
+* Allow more Capistrano version
+* Allow custom backup path
+* chown deployment is recursive now
 
 ### 2.2.10 / June 9, 2013
 

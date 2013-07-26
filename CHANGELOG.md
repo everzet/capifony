@@ -1,3 +1,7 @@
+### 2.3.1 / ???
+
+n/a
+
 ### 2.3.0 / July 26, 2013
 
 * Use `symfony_env_*` variables to tail

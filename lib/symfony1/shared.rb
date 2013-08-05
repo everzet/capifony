@@ -26,12 +26,12 @@ namespace :shared do
   namespace :uploads do
     desc "Download all files from remote web/uploads folder to local one"
     task :to_local do
-      download("#{shared_path}/web/uploads", "web", :via => :scp, :recursive => true)
+      download("#{shared_path}/#{web_path}/uploads", "#{web_path}", :via => :scp, :recursive => true)
     end
 
     desc "Upload all files from local web/uploads folder to remote one"
     task :to_remote do
-      upload("web/uploads", "#{shared_path}/web", :via => :scp, :recursive => true)
+      upload("#{web_path}/uploads", "#{shared_path}/#{web_path}", :via => :scp, :recursive => true)
     end
   end
 

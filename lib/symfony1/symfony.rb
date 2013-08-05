@@ -95,12 +95,12 @@ namespace :symfony do
 
         # First application listed becomes index.php
         if app = apps.shift
-          cmd << "cp #{release_path}/web/#{app}_#{env}.php #{release_path}/web/index.php"
+          cmd << "cp #{release_path}/#{web_path}/#{app}_#{env}.php #{release_path}/#{web_path}/index.php"
         end
 
         # All other apps are copied to their default controllers
         for app in apps
-          cmd << "cp #{release_path}/web/#{app}_#{env}.php #{release_path}/web/#{app}.php"
+          cmd << "cp #{release_path}/#{web_path}/#{app}_#{env}.php #{release_path}/#{web_path}/#{app}.php"
         end
 
         run "#{try_sudo} sh -c '#{cmd.join(';')}'" if cmd.join(';')

@@ -28,4 +28,6 @@ Gem::Specification.new do |spec|
   spec.homepage     = "http://capifony.org"
   spec.rubyforge_project = "capifony"
 
+  spec.license      = 'MIT'
+
 end

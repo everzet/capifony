@@ -6,7 +6,7 @@ namespace :database do
     desc "Dumps remote database"
     task :remote, :roles => :db, :only => { :primary => true } do
       env       = fetch(:deploy_env, "remote")
-      filename  = "#{application}.#{env}_dump.#{Time.now.to_i}.sql.gz"
+      filename  = "#{application}.#{env}_dump.#{Time.now.utc.strftime("%Y%m%d%H%M%S")}.sql.gz"
       file      = "#{remote_tmp_dir}/#{filename}"
       sqlfile   = "#{application}_dump.sql"
       config    = ""
@@ -40,7 +40,7 @@ namespace :database do
 
     desc "Dumps local database"
     task :local do
-      filename  = "#{application}.local_dump.#{Time.now.to_i}.sql.gz"
+      filename  = "#{application}.local_dump.#{Time.now.utc.strftime("%Y%m%d%H%M%S")}.sql.gz"
       tmpfile   = "#{backup_path}/#{application}_dump_tmp.sql"
       file      = "#{backup_path}/#{filename}"
       config    = load_database_config IO.read("#{app_config_path}/#{app_config_file}"), symfony_env_local

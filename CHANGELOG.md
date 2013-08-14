@@ -1,6 +1,6 @@
 ### 2.3.1 / ???
 
-n/a
+* Changed database backup filename to be human readable
 
 ### 2.3.0 / July 26, 2013
 

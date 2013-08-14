@@ -42,8 +42,8 @@ specified within the `composer.json` file. This is because the `composer_options
 default is `--no-scripts --no-dev --verbose --prefer-dist --optimize-autoloader`
 
 Some extenal bundles may require a script to run with deployment. If you require
-composer to run scripts you can use the `composer_options` variable to specifiy
-what is included when the composer command is called. For example to run the scripts
+composer to run scripts you can use the `composer_options` variable to specify
+what is included when the composer command is called. For example, to run the scripts
 update the parameter:
 
 {% highlight ruby %}

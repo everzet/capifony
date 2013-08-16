@@ -21,6 +21,7 @@ module Capifony
         load 'symfony2/doctrine'
         load 'symfony2/propel'
         load 'symfony2/web'
+        load 'symfony2/shared'
 
         # Symfony application path
         set :app_path,              "app"

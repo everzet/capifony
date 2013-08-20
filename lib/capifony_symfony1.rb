@@ -20,6 +20,9 @@ set :shared_files,      %w(config/databases.yml)
 # Asset folders (that need to be timestamped)
 set :asset_children,    %w(web/css web/images web/js)
 
+# Database backup folder
+set :backup_path,           "backups"
+
 # Use ORM
 set :use_orm,           true
 

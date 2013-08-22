@@ -182,8 +182,12 @@ namespace :symfony do
         set :composer_bin, "#{php_bin} composer.phar"
       end
 
+      options_dump_autoload = "#{composer_dump_autoload_options}"
+      # Force option "optimize"
+      options_dump_autoload += " --optimize"
+      
       capifony_pretty_print "--> Dumping an optimized autoloader"
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} dump-autoload --optimize'"
+      run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} dump-autoload #{options_dump_autoload}'"
       capifony_puts_ok
     end
 

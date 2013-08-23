@@ -1,4 +1,4 @@
-#logger.level = Logger::MAX_LEVEL# encoding: utf-8
+# encoding: utf-8
 require 'capistrano'
 require 'capistrano/maintenance'
 require 'colored'

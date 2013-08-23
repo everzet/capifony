@@ -83,7 +83,7 @@ module Capifony
         set :dump_assetic_assets,   false
 
         # Assets install
-        set :assets_install,        true
+        set :assets_install,        false
         set :assets_symlinks,       false
         set :assets_relative,       false
         set :assets_install_path,   web_path

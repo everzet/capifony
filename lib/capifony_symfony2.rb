@@ -97,7 +97,7 @@ module Capifony
         set :controllers_to_clear, ['app_*.php']
 
         # Files that need to remain the same between deploys
-        set :shared_files,          false
+        set :shared_files,          [app_path + "/config/" + app_config_file]
 
         # Dirs that need to remain the same between deploys (shared dirs)
         set :shared_children,       [log_path, web_path + "/uploads"]

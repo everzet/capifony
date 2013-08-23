@@ -86,6 +86,7 @@ module Capifony
         set :dump_assetic_assets,   false
 
         # Assets install
+        set :assets_install,        false
         set :assets_symlinks,       false
         set :assets_relative,       false
         set :assets_install_path,   web_path
@@ -311,6 +312,10 @@ module Capifony
 
           if cache_warmup
             symfony.cache.warmup            # Warmup clean cache
+          end
+
+          if assets_install
+            symfony.assets.install          # Install assets
           end
 
           if dump_assetic_assets

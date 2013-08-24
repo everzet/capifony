@@ -274,7 +274,7 @@ describe "Capifony::Symfony2 - symfony" do
     end
 
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar dump-autoload --optimize\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar dump-autoload --optimize \'') }
   end
 
   context "when running symfony:composer:dump_autoload with a given composer_bin" do
@@ -284,7 +284,7 @@ describe "Capifony::Symfony2 - symfony" do
     end
 
     it { should_not have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer dump-autoload --optimize\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer dump-autoload --optimize \'') }
   end
 
   it "defines symfony:cache tasks" do

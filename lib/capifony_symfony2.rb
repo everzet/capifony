@@ -67,6 +67,9 @@ module Capifony
         # Options to pass to composer when installing/updating
         set :composer_options,      "--no-dev --verbose --prefer-dist --optimize-autoloader --no-progress"
 
+        # Options to pass to composer when dumping the autoloader (dump-autoloader)
+        set :composer_dump_autoload_options, ""
+
         # Whether to update vendors using the configured dependency manager (composer or bin/vendors)
         set :update_vendors,        false
 

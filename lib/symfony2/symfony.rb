@@ -183,7 +183,7 @@ namespace :symfony do
       end
 
       capifony_pretty_print "--> Dumping an optimized autoloader"
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} dump-autoload --optimize'"
+      run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} dump-autoload #{composer_dump_autoload_options}'"
       capifony_puts_ok
     end
 

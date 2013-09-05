@@ -19,7 +19,7 @@ namespace :database do
         data = capture("#{try_sudo} sh -c 'mysqldump -u#{config['database_user']} --host='#{config['database_host']}' --password='#{config['database_password']}' #{config['database_name']} | gzip -c > #{file}'")
         puts data
       when "pdo_pgsql", "pgsql"
-        data = capture("#{try_sudo} sh -c 'PGPASSWORD=\"#{config['database_password']}\" pg_dump -U #{config['database_user']} #{config['database_name']} --clean | gzip -c > #{file}'")
+        data = capture("#{try_sudo} sh -c 'PGPASSWORD=\"#{config['database_password']}\" pg_dump -U #{config['database_user']} #{config['database_name']} -h#{config['database_host']} --clean | gzip -c > #{file}'")
         puts data
       end
 
@@ -116,7 +116,7 @@ namespace :database do
         data = capture("#{try_sudo} mysql -u#{config['database_user']} --host='#{config['database_host']}' --password='#{config['database_password']}' #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}")
         puts data
       when "pdo_pgsql", "pgsql"
-        data = capture("#{try_sudo} PGPASSWORD=\"#{config['database_password']}\" psql -U #{config['database_user']} #{config['database_name']} < #{remote_tmp_dir}/#{sqlfile}")
+        data = capture("#{try_sudo} PGPASSWORD=\"#{config['database_password']}\" psql -U #{config['database_user']} #{config['database_name']} -h#{config['database_host']} < #{remote_tmp_dir}/#{sqlfile}")
         puts data
       end
 

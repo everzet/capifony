@@ -190,7 +190,7 @@ namespace :symfony do
     task :copy_vendors, :except => { :no_release => true } do
       capifony_pretty_print "--> Copying vendors from previous release"
 
-      run "vendorDir=#{current_path}/vendor; if [ -d $vendorDir ] || [ -h $vendorDir ]; then cp -a $vendorDir #{latest_release}/vendor; fi;"
+      run "vendorDir=#{current_path}/vendor; if [ -d $vendorDir ] || [ -h $vendorDir ]; then cp -a $vendorDir #{latest_release}; fi;"
       capifony_puts_ok
     end
 

@@ -1,6 +1,16 @@
-### 2.3.1 / ???
+### 2.4.0 / September 17, 2013
 
-* Changed database backup filename to be human readable
+* Fixed: copy vendor dir to latest_release, not to latest_release/vendor
+* Added: -h option with host into postgresql dump tasks
+* Fixed: assets install step disappeared ??
+* Added: variable to set options of dump-autoload action
+* Added: missing backup_path definition for symfony 1
+* Added: new gem dependency on fakefs (specs)
+* Added: backup task for the shared folder
+* Fixed: changed database backup filename to be human readable
+* Added: license to gemspec
+* Added: web_path variable
+* Fixed: set symfony environment prior calling composer install
 
 ### 2.3.0 / July 26, 2013
 

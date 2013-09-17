@@ -1,3 +1,7 @@
+### 2.4.1 / ???
+
+n/a
+
 ### 2.4.0 / September 17, 2013
 
 * Fixed: copy vendor dir to latest_release, not to latest_release/vendor

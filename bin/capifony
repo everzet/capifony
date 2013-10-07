@@ -3,9 +3,8 @@
 require 'optparse'
 require 'fileutils'
 
-symfony_version  = nil
 symfony_app_path = 'app'
-capifony_version = '2.4.1.dev'
+capifony_version = '3.0.0.dev'
 
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename($0)} [path]"
@@ -18,10 +17,6 @@ OptionParser.new do |opts|
   opts.on("-v", "--version", "") do
     puts "capifony v#{capifony_version}"
     exit 0
-  end
-
-  opts.on("-s", "--symfony VERSION", "Capify specific symfony version (1|2)") do |version|
-    symfony_version = version.to_i
   end
 
   opts.on("-p", "--app NAME", "Specify app name (folder) to capify") do |path|
@@ -53,63 +48,86 @@ def unindent(string)
 end
 
 base = ARGV.shift
-symfony_version = symfony_version || ((File.directory? File.join(base, 'config')) ? 1 : 2)
 
-if symfony_version == 2
-  files = {
-    "Capfile" => unindent(<<-FILE),
-      load 'deploy' if respond_to?(:namespace) # cap2 differentiator
+files = {
+  "Capfile" => unindent(<<-FILE),
+    # Load DSL and Setup Up Stages
+    require 'capistrano/setup'
+    # Includes default deployment tasks
+    require 'capistrano/deploy'
+    # Symfony tasks!
+    require 'capistrano/symfony'
 
-      require 'capifony_symfony2'
-      load '#{symfony_app_path}/config/deploy'
-    FILE
+    # Loads custom tasks from `lib/capistrano/tasks' if you have any defined.
+    Dir.glob('lib/capistrano/tasks/*.cap').each { |r| import r }
+  FILE
 
-    "#{symfony_app_path}/config/deploy.rb" => unindent(<<-FILE)
-      set :application, "set your application name here"
-      set :domain,      "\#{application}.com"
-      set :deploy_to,   "/var/www/\#{domain}"
-      set :app_path,    "#{symfony_app_path}"
+  "config/deploy.rb" => unindent(<<-FILE),
+    set :application, "your application name"
+    set :repo_url, "git@github.com:org/your_repository.git"
+    # set :deploy_to, "/var/www/app_path"
 
-      set :repository,  "\#{domain}:/var/repos/\#{application}.git"
-      set :scm,         :git
-      # Or: `accurev`, `bzr`, `cvs`, `darcs`, `subversion`, `mercurial`, `perforce`, or `none`
+    # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
 
-      set :model_manager, "doctrine"
-      # Or: `propel`
+    # set :scm, :git
 
-      role :web,        domain                         # Your HTTP server, Apache/etc
-      role :app,        domain, :primary => true       # This may be the same as your `Web` server
+    # set :format, :pretty
+    # set :log_level, :debug
+    # set :pty, true
 
-      set  :keep_releases,  3
+    # set :linked_files, %w{app/config/parameters.yml}
+    # set :linked_dirs, %w{app/logs web/uploads}
+    # set :writable_dirs %w{app/logs app/cache}
+    # set :permission_method, :acl
 
-      # Be more verbose by uncommenting the following line
-      # logger.level = Logger::MAX_LEVEL
-    FILE
-  }
-else
-  files = {
-    "Capfile" => unindent(<<-FILE),
-      load 'deploy' if respond_to?(:namespace) # cap2 differentiator
-      Dir['plugins/*/lib/recipes/*.rb'].each { |plugin| load(plugin) }
+    # set :keep_releases, 5
+  FILE
 
-      load Gem.find_files('capifony_symfony1.rb').first.to_s
-      load 'config/deploy'
-    FILE
+  "config/deploy/production.rb" => unindent(<<-FILE),
+    set :stage, :production
 
-    "config/deploy.rb" => 'set :application, "set your application name here"
-set :domain,      "#{application}.com"
-set :deploy_to,   "/var/www/#{domain}"
+    # Simple Role Syntax
+    # ==================
+    # Supports bulk-adding hosts to roles, the primary
+    # server in each group is considered to be the first
+    # unless any hosts have the primary property set.
+    role :app, %w{deploy@example.com}
+    role :web, %w{deploy@example.com}
+    role :db,  %w{deploy@example.com}
 
-set :repository,  "#{domain}:/var/repos/#{application}.git"
-set :scm,         :git
-# Or: `accurev`, `bzr`, `cvs`, `darcs`, `subversion`, `mercurial`, `perforce`, or `none`
+    # Extended Server Syntax
+    # ======================
+    # This can be used to drop a more detailed server
+    # definition into the server list. The second argument
+    # something that quacks like a has can be used to set
+    # extended properties on the server.
+    server 'example.com', user: 'deploy', roles: %w{web app}, my_property: :my_value
 
-role :web,        domain                         # Your HTTP server, Apache/etc
-role :app,        domain, :primary => true       # This may be the same as your `Web` server
+    # you can set custom ssh options
+    # it's possible to pass any option but you need to keep in mind that net/ssh understand limited list of options
+    # you can see them in [net/ssh documentation](http://net-ssh.github.io/net-ssh/classes/Net/SSH.html#method-c-start)
+    # set it globally
+    #  set :ssh_options, {
+    #    keys: %w(/home/rlisowski/.ssh/id_rsa),
+    #    forward_agent: false,
+    #    auth_methods: %w(password)
+    #  }
+    # and/or per server
+    # server 'example.com',
+    #   user: 'user_name',
+    #   roles: %w{web app},
+    #   ssh_options: {
+    #     user: 'user_name', # overrides user setting above
+    #     keys: %w(/home/user_name/.ssh/id_rsa),
+    #     forward_agent: false,
+    #     auth_methods: %w(publickey password)
+    #     # password: 'please use keys'
+    #   }
+    # setting per server overrides global ssh_options
 
-set  :keep_releases,  3'
-  }
-end
+    # fetch(:default_env).merge!(:rails_env, :production)
+  FILE
+}
 
 files.each do |file, content|
   file = File.join(base, file)
@@ -127,4 +145,4 @@ files.each do |file, content|
   end
 end
 
-puts "[done] symfony #{symfony_version.to_s} project capifonied!"
+puts "[done] project capifonied!"

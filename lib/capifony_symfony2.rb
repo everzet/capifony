@@ -211,7 +211,7 @@ module Capifony
 
               def write(s)
                 if @@firstLine
-                  s = '✘' << "\n" << s
+                  _write('✘'.red << "\n")  
                   @@firstLine = false
                 end
 

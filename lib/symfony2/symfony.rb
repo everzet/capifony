@@ -171,7 +171,7 @@ namespace :symfony do
       end
 
       capifony_pretty_print "--> Updating Composer dependencies"
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{composer_bin} update #{options}'"
+      run "#{try_sudo} sh -c 'cd #{latest_release} && SYMFONY_ENV=#{symfony_env_prod} #{composer_bin} update #{options}'"
       capifony_puts_ok
     end
 

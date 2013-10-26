@@ -171,7 +171,7 @@ describe "Capifony::Symfony2 - symfony" do
 
     it { should_not have_run('vendorDir=/var/www/current/vendor; if [ -d $vendorDir ] || [ -h $vendorDir ]; then cp -a $vendorDir /var/www/releases/20120927; fi;') }
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar update --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && SYMFONY_ENV=prod php composer.phar update --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress\'') }
   end
 
   context "when running symfony:composer:update with interactive_mode disabled" do
@@ -180,7 +180,7 @@ describe "Capifony::Symfony2 - symfony" do
       @configuration.find_and_execute_task('symfony:composer:update')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php composer.phar update --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress --no-interaction\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && SYMFONY_ENV=prod php composer.phar update --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress --no-interaction\'') }
   end
 
   context "when running symfony:composer:update with a given composer_bin" do
@@ -191,7 +191,7 @@ describe "Capifony::Symfony2 - symfony" do
 
     it { should_not have_run('vendorDir=/var/www/current/vendor; if [ -d $vendorDir ] || [ -h $vendorDir ]; then cp -a $vendorDir /var/www/releases/20120927; fi;') }
     it { should_not have_run(' sh -c \'cd /var/www/releases/20120927 && curl -s http://getcomposer.org/installer | php\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && my_composer update --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && SYMFONY_ENV=prod my_composer update --no-dev --verbose --prefer-dist --optimize-autoloader --no-progress\'') }
   end
 
   context "when running symfony:composer:update with enabled copy_vendors" do

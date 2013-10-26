@@ -1,6 +1,7 @@
 ### 2.4.1 / ???
 
-n/a
+* Fixed: error incompatible character encodings: UTF-8 and ASCII-8BIT
+* Added: use SYMFONY_ENV for composer update call
 
 ### 2.4.0 / September 17, 2013
 

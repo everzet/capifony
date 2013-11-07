@@ -1,4 +1,5 @@
 require "capistrano/composer"
+require "capistrano/symfony/dsl"
 
 # Core tasks for deploying symfony
 load File.expand_path("../tasks/symfony.rake", __FILE__)

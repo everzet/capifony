@@ -1,6 +1,3 @@
-# Map php executable (configurable)
-SSHKit.config.command_map[:php] = "#{fetch(:php_bin)}"
-
 module Capistrano
   class FileNotFound < StandardError
   end

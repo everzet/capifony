@@ -1,8 +1,3 @@
-require 'rake'
-
-# Map php executable (configurable)
-SSHKit.config.command_map[:symfony] = "#{fetch(:php_bin)} #{fetch(:symfony_console)} --env=#{fetch(:symfony_env_prod)} #{fetch(:symfony_debug) ? "" : "--no-debug"}"
-
 namespace :symfony do
   desc "Exceute a provided symfony command"
   task :default, :arg_1 do |t, args|
@@ -11,7 +6,7 @@ namespace :symfony do
 
     on roles :app do
       within current_path do
-        execute :symfony, command_to_run
+        execute :php, fetch(:symfony_console_path), command_to_run, command_args, fetch(:symfony_console_flags)
       end
     end
   end

@@ -4,9 +4,6 @@ set :symfony_env_local, "dev"
 # Symfony environment
 set :symfony_env_prod,  "prod"
 
-# PHP binary to execute
-set :php_bin,           "php"
-
 set :remote_tmp_dir,    "/tmp"
 
 # Symfony application path
@@ -14,9 +11,6 @@ set :app_path,              "app"
 
 # Symfony web path
 set :web_path,              "web"
-
-# Symfony debug flag for console commands
-set :symfony_debug,         false
 
 # Symfony log path
 set :log_path,              fetch(:app_path) + "/logs"
@@ -56,10 +50,9 @@ set :permission_method,     false
 # Execute set permissions
 set :use_set_permissions,   false
 
-# If set to false, it will never ask for confirmations (migrations task for instance)
-# Use it carefully, really!
-set :interactive_mode,      true
-set :symfony_console, fetch(:app_path) + "/console"
+
+set :symfony_console_path, fetch(:app_path) + "/console"
+set :symfony_console_flags, "--env #{fetch(:symfony_env_prod)} --no-debug"
 
 # Use AsseticBundle
 set :dump_assetic_assets,   false

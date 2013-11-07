@@ -86,6 +86,8 @@ deploy
 `clear_controllers` -> not needed, just make `controllers_to_clear` empty array
 `symfony_version` -> Not sure if this is needed any more?
 `build_bootstrap`
+`php_bin` -> use case covered by SSHKit command mapping
+`symfony_debug` -> Flag for this can be included in `symfony_console_flags`
 
 #### New variables
 `composer_download_path` - might change due to MITM problems?

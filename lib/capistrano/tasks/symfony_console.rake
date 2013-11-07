@@ -16,12 +16,12 @@ namespace :symfony do
   namespace :cache do
     desc "Run app/console cache:clear for the #{fetch(:symfony_env_prod)} environment"
     task :clear do
-      Rake::Task["symfony:command"].invoke("cache:clear")
+      invoke "symfony:command", "cache:clear"
     end
 
     desc "Run app/console cache:warmup for the #{fetch(:symfony_env_prod)} environment"
     task :warmup do
-      Rake::Task["symfony:command"].invoke("cache:warmup")
+      invoke "symfony:command", "cache:warmup"
     end
   end
 

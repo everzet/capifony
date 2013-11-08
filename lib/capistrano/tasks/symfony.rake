@@ -3,23 +3,15 @@ module Capistrano
   end
 end
 
-def writable_absolute_paths()
-  linked_dirs = fetch(:linked_dirs)
-  fetch(:writable_dirs).map do |d|
-    linked_dirs.include?(d) ? shared_path.join(d) : release_path.join(d)
-  end
-end
-
 namespace :deploy do
   desc "Create the cache directory"
   task :create_cache_dir do
     on roles :app do
-      cache_path = fetch(:cache_path)
       within release_path do
-        if test "[ -d #{release_path.join(cache_path)} ]"
-          execute :rm, "-rf", cache_path
+        if test "[ -d #{symfony_cache_path} ]"
+          execute :rm, "-rf", symfony_cache_path
         end
-        execute :mkdir, "-pv", cache_path
+        execute :mkdir, "-pv", fetch(:cache_path)
       end
     end
   end
@@ -28,7 +20,7 @@ namespace :deploy do
   task :clear_controllers do
     next unless any? :controllers_to_clear
     on roles :app do
-      within release_path.join(fetch(:web_path)) do
+      within symfony_web_path do
         execute :rm, "-f", *fetch(:controllers_to_clear)
       end
     end
@@ -41,7 +33,7 @@ namespace :deploy do
   task :set_permissions do
     # next unless fetch :use_set_permissions
     on roles :app do
-      writable_absolute_paths().each do |path|
+      writable_dirs.each do |path|
         unless test "[ -d #{path} ]" or test "[ -e #{path} ]"
           msg = "Cannot change permissions: #{path} is not a file or directory"
           warn msg
@@ -57,7 +49,6 @@ namespace :deploy do
       next unless any? :writable_dirs
       # check for sudo test
       on roles :app, reject: lambda { |h| h.properties.no_release } do
-        writable_dirs = writable_absolute_paths()
         permission = "allow delete,write,append,file_inherit,directory_inherit"
 
         execute :chmod, "+a", fetch(:user), permissions, *writable_dirs
@@ -67,7 +58,6 @@ namespace :deploy do
     task :acl do
       next unless any? :writable_dirs
       on roles :app, reject: lambda { |h| h.properties.no_release } do |host|
-        writable_dirs = writable_absolute_paths()
         webserver_user = fetch(:webserver_user)
         execute :setfacl, "-R", "-m u:#{host.user}:rwX", "-m u:#{webserver_user}:rwX", *writable_dirs
         execute :setfacl, "-dR", "-m u:#{host.user}:rwx -m u:#{webserver_user}:rwx", *writable_dirs
@@ -77,7 +67,6 @@ namespace :deploy do
       next unless any? :writable_dirs
       next unless fetch :use_sudo, false
       on roles :app, reject: lambda { |h| h.properties.no_release } do
-        writable_dirs = writable_absolute_paths()
         execute :chown, "-R", fetch(:webserver_user), *writable_dirs
       end
     end

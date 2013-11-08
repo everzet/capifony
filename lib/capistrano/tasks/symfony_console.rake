@@ -29,8 +29,8 @@ namespace :symfony do
     desc "tails #{fetch(:log_path)}/#{fetch(:symfony_env_prod)}.log"
     task :tail do
       on roles :app do
-        within current_path do
-          execute :tail, "#{fetch(:log_path)}/#{fetch(:symfony_env_prod)}.log"
+        within symfony_log_path do
+          execute :tail, "#{fetch(:symfony_env_prod)}.log"
         end
       end
     end

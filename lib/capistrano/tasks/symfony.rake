@@ -49,7 +49,7 @@ namespace :deploy do
       next unless any? :writable_dirs
       # check for sudo test
       on roles :app, reject: lambda { |h| h.properties.no_release } do
-        permission = "allow delete,write,append,file_inherit,directory_inherit"
+        permissions = "allow delete,write,append,file_inherit,directory_inherit"
 
         execute :chmod, "+a", fetch(:user), permissions, *writable_dirs
         execute :chmod, "+a", fetch(:webserver_user), permissions, *writable_dirs

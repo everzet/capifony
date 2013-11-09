@@ -50,8 +50,7 @@ set :permission_method,     false
 # Execute set permissions
 set :use_set_permissions,   false
 
-set :composer_flags, "--no-dev --verbose --prefer-dist --optimize-autoloader --no-progress"
-set :composer_env, { symfony_env: fetch(:symfony_env_prod) }
+set :composer_install_flags, "--no-dev --verbose --prefer-dist --optimize-autoloader --no-progress"
 
 set :symfony_console_path, fetch(:app_path) + "/console"
 set :symfony_console_flags, "--env #{fetch(:symfony_env_prod)} --no-debug"
@@ -71,3 +70,5 @@ set :update_assets_version, false
 set :normalize_asset_timestamps, true
 # Asset folders (that need to be timestamped)
 set :asset_children,        [fetch(:web_path) + "/css", fetch(:web_path) + "/images", fetch(:web_path) + "/js"]
+
+fetch(:default_env).merge!(symfony_env: fetch(:symfony_env_prod))

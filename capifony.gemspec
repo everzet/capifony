@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.executables << "capifony"
 
   spec.add_dependency 'capistrano', ">= 3.0.0.dev","<= 3.1.0"
-  spec.add_dependency 'capistrano-composer'
+  spec.add_dependency 'capistrano-composer', ">= 0.0.3"
   # spec.add_dependency 'colored', ">= 1.2.0"
   # spec.add_dependency 'inifile', ">= 2.0.2"
   # spec.add_dependency 'capistrano-maintenance', '0.0.3'

@@ -6,4 +6,3 @@ gem 'rake'
 gem 'rspec'
 gem 'capistrano-spec', :git => 'git://github.com/mydrive/capistrano-spec.git'
 gem 'fakefs', :require => 'fakefs/safe'
-gem "capistrano-composer", :git => "git://github.com/peterjmit/composer", :branch => "patch-1"

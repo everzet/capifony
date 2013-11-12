@@ -7,7 +7,7 @@ namespace :symfony do
     command_args = args.extras
 
     on roles :app do
-      within current_path do
+      within release_path do
         execute :php, fetch(:symfony_console_path), command, *command_args, fetch(:symfony_console_flags)
       end
     end

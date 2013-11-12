@@ -50,7 +50,7 @@ set :permission_method,     false
 # Execute set permissions
 set :use_set_permissions,   false
 
-set :composer_install_flags, "--no-dev --verbose --prefer-dist --optimize-autoloader --no-progress"
+set :composer_install_flags, "--no-dev --no-scripts --verbose --prefer-dist --optimize-autoloader --no-progress"
 
 set :symfony_console_path, fetch(:app_path) + "/console"
 set :symfony_console_flags, "--no-debug"

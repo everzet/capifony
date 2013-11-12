@@ -136,6 +136,12 @@ namespace :deploy do
     invoke "deploy:linked_parameters:copy_template"
   end
 
+  task :updated do
+    invoke "deploy:build_bootstrap"
+    invoke "symfony:cache:warmup"
+  end
+
   before "deploy:starting", "deploy:linked_parameters:check"
   after "deploy:updated", "deploy:clear_controllers"
+  after "deploy:updated", "deploy:assets:install"
 end

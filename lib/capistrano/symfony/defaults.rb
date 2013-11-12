@@ -53,7 +53,7 @@ set :use_set_permissions,   false
 set :composer_install_flags, "--no-dev --verbose --prefer-dist --optimize-autoloader --no-progress"
 
 set :symfony_console_path, fetch(:app_path) + "/console"
-set :symfony_console_flags, "--env #{fetch(:symfony_env_prod)} --no-debug"
+set :symfony_console_flags, "--no-debug"
 
 # Use AsseticBundle
 set :dump_assetic_assets,   false

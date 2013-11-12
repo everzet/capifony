@@ -26,6 +26,14 @@ namespace :deploy do
     end
   end
 
+  task :build_bootstrap do
+    on roles :app do
+      within release_path do
+        execute "./vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php"
+      end
+    end
+  end
+
   desc <<-DESC
     Sets permissions for writable_dirs folders as described in the Symfony documentation
     (http://symfony.com/doc/master/book/installation.html#configuration-and-setup)

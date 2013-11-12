@@ -1,5 +1,10 @@
 namespace :deploy do
   namespace :assets do
+
+    task :install do
+      invoke "symfony:command", "assets:install", "web"
+    end
+
     desc "Normalize asset timestamps"
     task :normalize do
       next unless fetch :normalize_asset_timestamps
@@ -12,5 +17,6 @@ namespace :deploy do
       end
     end
   end
+
   after "deploy:updated", "deploy:assets:normalize"
 end

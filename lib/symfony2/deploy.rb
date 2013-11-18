@@ -43,8 +43,11 @@ namespace :deploy do
           dirs.each do |dir|
             is_owner = (capture "`echo stat #{dir} -c %U`").chomp == user
             if is_owner && permission_method != :chown
-              methods[permission_method].each do |cmd|
-                try_sudo sprintf(cmd, dir)
+              has_facl = (capture "getfacl -p #{dir} | grep #{webserver_user} | wc -l").chomp != "0"
+              if (!has_facl)
+                methods[permission_method].each do |cmd|
+                  try_sudo sprintf(cmd, dir)
+                end
               end
             else
               puts "    #{dir} is not owned by #{user} or you are using 'chown' method without ':use_sudo'"

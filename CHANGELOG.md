@@ -1,3 +1,7 @@
+### 2.4.2 / ???
+
+n/a
+
 ### 2.4.1 / November 19, 2013
 
 * Fixed: Set facl permissions only once

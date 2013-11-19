@@ -1,5 +1,6 @@
-### 2.4.1 / ???
+### 2.4.1 / November 19, 2013
 
+* Fixed: Set facl permissions only once
 * Fixed: error incompatible character encodings: UTF-8 and ASCII-8BIT
 * Added: use SYMFONY_ENV for composer update call
 

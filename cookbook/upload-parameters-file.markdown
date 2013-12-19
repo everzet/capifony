@@ -56,7 +56,7 @@ after "deploy:setup", "upload_parameters"
 
 You can also have multiple stages each having their own parameters file. To
 accomplish this task you can also setup an automatic upload of parameters
-files. For this exemple we are assuming that all your parameters files are
+files. For this example we are assuming that all your parameters files are
 located on an `app/config/parameters` folder which contains `parameters_prod.yml`
 and `parameters_staging.yml` files.
 

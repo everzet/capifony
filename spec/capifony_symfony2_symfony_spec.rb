@@ -111,7 +111,7 @@ describe "Capifony::Symfony2 - symfony" do
       @configuration.find_and_execute_task('symfony:assetic:dump')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console assetic:dump --env=prod --no-debug /var/www/releases/20120927/web\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console assetic:dump --env=prod --no-debug\'') }
   end
 
   context "when running symfony:assetic:dump with sudo" do
@@ -120,7 +120,7 @@ describe "Capifony::Symfony2 - symfony" do
       @configuration.find_and_execute_task('symfony:assetic:dump')
     end
 
-    it { should have_run('sudo sh -c \'cd /var/www/releases/20120927 && php app/console assetic:dump --env=prod --no-debug /var/www/releases/20120927/web\'') }
+    it { should have_run('sudo sh -c \'cd /var/www/releases/20120927 && php app/console assetic:dump --env=prod --no-debug\'') }
   end
 
   it "defines symfony:vendors tasks" do

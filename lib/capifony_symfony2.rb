@@ -294,10 +294,6 @@ module Capifony
             end
           end
 
-          if use_set_permissions
-            symfony.deploy.set_permissions
-          end
-
           if model_manager == "propel"
             symfony.propel.build.model
           end
@@ -329,6 +325,11 @@ module Capifony
               set(:controllers_to_clear) { clear_controllers }
             end
             symfony.project.clear_controllers
+          end
+
+          if use_set_permissions
+            # Set permissions after all cache files have been created
+            symfony.deploy.set_permissions
           end
         end
 

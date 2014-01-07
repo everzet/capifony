@@ -1,6 +1,9 @@
 ### 2.4.2 / ???
 
-n/a
+* Fixed: add null value(tylda) to regular expression (#447)
+* Fixed: move set_permission task after cache warmup (#443, #453)
+* Removed: unneeded overwrite of assetic `write_to` parameter when dumping
+  assets (#451)
 
 ### 2.4.1 / November 19, 2013
 

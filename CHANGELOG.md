@@ -1,4 +1,4 @@
-### 2.4.2 / ???
+### 2.4.2 / January 7, 2014
 
 * Fixed: add null value(tylda) to regular expression (#447)
 * Fixed: move set_permission task after cache warmup (#443, #453)

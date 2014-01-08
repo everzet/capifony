@@ -1,11 +1,11 @@
 namespace :deploy do
   desc "Runs the symfony migrations"
-  task :migrate do
+  task :migrate, :roles => :app, :except => { :no_release => true } do
     symfony.orm.migrate
   end
 
   desc "Symlink static directories and static files that need to remain between deployments."
-  task :share_childs do
+  task :share_childs, :roles => :app, :except => { :no_release => true } do
     if shared_children
       shared_children.each do |link|
         run "#{try_sudo} mkdir -p #{shared_path}/#{link}"
@@ -24,7 +24,7 @@ namespace :deploy do
   end
 
   desc "Customize the finalize_update task to work with symfony."
-  task :finalize_update, :except => { :no_release => true } do
+  task :finalize_update, :roles => :app, :except => { :no_release => true } do
     run "#{try_sudo} chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
     run "#{try_sudo} mkdir -p #{latest_release}/cache"
     run "#{try_sudo} chmod -R g+w #{latest_release}/cache"
@@ -40,14 +40,14 @@ namespace :deploy do
   end
 
   desc "Need to overwrite the deploy:cold task so it doesn't try to run the migrations."
-  task :cold do
+  task :cold, :roles => :app, :except => { :no_release => true } do
     update
     symfony.orm.build_db_and_load
     start
   end
 
   desc "Deploy the application and run the test suite."
-  task :testall do
+  task :testall, :roles => :app, :except => { :no_release => true } do
     update_code
     create_symlink
     symfony.orm.build_db_and_load

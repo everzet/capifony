@@ -154,11 +154,76 @@ namespace :symfony do
       if use_composer_tmp
         logger.debug "Installing composer dependencies to #{$temp_destination}"
         capifony_pretty_print "--> Installing Composer dependencies in temp location"
-        run_locally "cd #{$temp_destination} && SYMFONY_ENV=#{symfony_env_prod} #{composer_bin} install #{options}"
+
+        tmp_options = options
+
+        if deploy_via == :capifony_copy_local
+          # do not run scripts locally: they must be executed on the target server
+          tmp_options += " --no-scripts"
+        end
+
+        run_locally "cd #{$temp_destination} && SYMFONY_ENV=#{symfony_env_prod} #{composer_bin} install #{tmp_options}"
         capifony_puts_ok
       else
         capifony_pretty_print "--> Installing Composer dependencies"
-        run "#{try_sudo} sh -c 'cd #{latest_release} && SYMFONY_ENV=#{symfony_env_prod} #{composer_bin} install #{options}'"
+        
+        command = "#{try_sudo} sh -c 'cd #{latest_release} && SYMFONY_ENV=#{symfony_env_prod} #{composer_bin} install #{options}'"
+        
+        if interactive_mode
+        
+            input = ''
+            print_wizard = false
+            close_header = true
+            run(command, { :pty => true, :eof => false }) do |channel, stream, data|
+                    
+                # on normal output
+                channel.on_data do |ch, data|
+                
+                    # check if composer is waiting for user input
+                    print_wizard = data =~ /:[[:space:]]*$/
+                    
+                    # avoid echoing the user input
+                    if input.strip != data.strip and not print_wizard
+                        logger.debug data
+                    end
+                    
+                    # if input has been requested
+                    if print_wizard
+                        
+                        if close_header
+                        
+                            # finalize the info string
+                            capifony_puts_ok
+                            
+                            # and open a new section
+                            capifony_pretty_print "--> Updating parameters"
+                            puts if logger.level == Logger::IMPORTANT
+                            
+                            close_header = false
+                        end
+                        
+                        print data
+                        
+                        # capture the user input
+                        input = $stdin.gets
+                        
+                        # send it to the remote process
+                        channel.send_data(input)
+                    end
+                end
+                
+                # on error
+                channel.on_extended_data do |ch, data|
+                    warn "[err :: #{ch[:server]}] #{data}"
+                end
+            end
+            
+            capifony_pretty_print "--> Parameters updated" if not close_header
+            
+        else
+            run command
+        end
+        
         capifony_puts_ok
       end
     end
@@ -176,7 +241,64 @@ namespace :symfony do
       end
 
       capifony_pretty_print "--> Updating Composer dependencies"
-      run "#{try_sudo} sh -c 'cd #{latest_release} && SYMFONY_ENV=#{symfony_env_prod} #{composer_bin} update #{options}'"
+      
+      command = "#{try_sudo} sh -c 'cd #{latest_release} && SYMFONY_ENV=#{symfony_env_prod} #{composer_bin} update #{options}'"
+        
+        if interactive_mode
+        
+            input = ''
+            print_wizard = false
+            close_header = true
+            run(command, { :pty => true, :eof => false }) do |channel, stream, data|
+                    
+                # on normal output
+                channel.on_data do |ch, data|
+                
+                    # check if composer is waiting for user input
+                    print_wizard = data =~ /:[[:space:]]*$/
+                    
+                    # avoid echoing the user input
+                    if input.strip != data.strip and not print_wizard
+                        logger.debug data
+                    end
+                    
+                    # if input has been requested
+                    if print_wizard
+                        
+                        if close_header
+                        
+                            # finalize the info string
+                            capifony_puts_ok
+                            
+                            # and open a new section
+                            capifony_pretty_print "--> Updating parameters"
+                            puts if logger.level == Logger::IMPORTANT
+                            
+                            close_header = false
+                        end
+                        
+                        print data
+                        
+                        # capture the user input
+                        input = $stdin.gets
+                        
+                        # send it to the remote process
+                        channel.send_data(input)
+                    end
+                end
+                
+                # on error
+                channel.on_extended_data do |ch, data|
+                    warn "[err :: #{ch[:server]}] #{data}"
+                end
+            end
+            
+            capifony_pretty_print "--> Parameters updated" if not close_header
+            
+        else
+            run command
+        end
+      
       capifony_puts_ok
     end
 

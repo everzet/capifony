@@ -347,6 +347,13 @@ module Capifony
         after "deploy:create_symlink" do
           puts "--> Successfully deployed!".green
         end
+        
+        # Recreate the autoload file after rolling back
+        # https://github.com/everzet/capifony/issues/422
+        after "deploy:rollback" do
+            run "cd #{current_path} && #{composer_bin} dump-autoload #{composer_dump_autoload_options}"
+        end        
+        
       end
 
     end

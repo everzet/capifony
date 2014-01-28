@@ -16,13 +16,13 @@ namespace :symfony do
   end
 
   desc "Clears the cache"
-  task :cc do
+  task :cc, :roles => :app, :except => { :no_release => true } do
     run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony cache:clear'"
     run "#{try_sudo} chmod -R g+w #{latest_release}/cache"
   end
 
   desc "Creates symbolic link to symfony lib in shared"
-  task :create_lib_symlink do
+  task :create_lib_symlink, :roles => :app, :except => { :no_release => true } do
     prompt_with_default(:version, symfony_version)
     symlink_path = "#{latest_release}/lib/vendor/symfony"
 
@@ -32,7 +32,7 @@ namespace :symfony do
 
   namespace :configure do
     desc "Configure database DSN"
-    task :database do
+    task :database, :roles => :app, :except => { :no_release => true } do
       prompt_with_default(:dsn,         "mysql:host=localhost;dbname=#{application}")
       prompt_with_default(:db_username, "root")
       db_password = Capistrano::CLI.password_prompt("db_password : ")
@@ -53,17 +53,17 @@ namespace :symfony do
 
   namespace :project do
     desc "Disables an application in a given environment"
-    task :disable do
+    task :disable, :roles => :app, :except => { :no_release => true } do
       run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony project:disable #{symfony_env_prod}'"
     end
 
     desc "Enables an application in a given environment"
-    task :enable do
+    task :enable, :roles => :app, :except => { :no_release => true } do
       run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony project:enable #{symfony_env_prod}'"
     end
 
     desc "Fixes symfony directory permissions"
-    task :permissions do
+    task :permissions, :roles => :app, :except => { :no_release => true } do
       run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony project:permissions'"
     end
 
@@ -75,7 +75,7 @@ namespace :symfony do
     end
 
     desc "Clears all non production environment controllers"
-    task :clear_controllers do
+    task :clear_controllers, :roles => :app, :except => { :no_release => true } do
       run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony project:clear-controllers'"
     end
 

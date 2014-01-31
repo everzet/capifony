@@ -306,16 +306,16 @@ module Capifony
             symfony.assets.update_version   # Update `assets_version`
           end
 
-          if cache_warmup
-            symfony.cache.warmup            # Warmup clean cache
-          end
-
           if assets_install
             symfony.assets.install          # Install assets
           end
 
           if dump_assetic_assets
             symfony.assetic.dump            # Dump assetic assets
+          end
+
+          if cache_warmup
+            symfony.cache.warmup            # Warmup clean cache
           end
 
           if clear_controllers

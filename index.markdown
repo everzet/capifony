@@ -258,7 +258,7 @@ If you need to deploy and run your migrations you can call:
 
 To run your test suite on the production server, just invoke:
 
-    cap deploy:testall
+    cap deploy:test_all
 
 You can invoke tasks/commands by calling:
 

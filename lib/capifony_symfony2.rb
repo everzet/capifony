@@ -277,6 +277,10 @@ module Capifony
         end
 
         after "deploy:finalize_update" do
+          if update_assets_version
+            symfony.assets.update_version   # Update `assets_version`
+          end
+
           if use_composer && !use_composer_tmp
             if update_vendors
               symfony.composer.update
@@ -300,10 +304,6 @@ module Capifony
 
           if use_composer && !use_composer_tmp
             symfony.composer.dump_autoload
-          end
-
-          if update_assets_version
-            symfony.assets.update_version   # Update `assets_version`
           end
 
           if assets_install

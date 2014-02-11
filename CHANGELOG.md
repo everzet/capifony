@@ -1,6 +1,12 @@
-### 2.4.3 / ???
+### 2.5.0 / February 11, 2014
 
-n/a
+* Added: more no_release attributes to allow using custom roles
+* Fixed: symfony:assets:update_version executed before composer
+* Fixed: updated the specified version for the ruby-progressbar to 1.4.1 (the
+  latest version).
+* Fixed: missing parameter "-p" for "getfacl" on CentOS
+* Fixed: moved `cache warmup` task after `assetic dump` task
+* Fixed: recreated composer autoload after deploy:rollback
 
 ### 2.4.2 / January 7, 2014
 

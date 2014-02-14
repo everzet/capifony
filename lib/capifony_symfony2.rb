@@ -302,10 +302,6 @@ module Capifony
             symfony.propel.build.model
           end
 
-          if use_composer && !use_composer_tmp
-            symfony.composer.dump_autoload
-          end
-
           if assets_install
             symfony.assets.install          # Install assets
           end

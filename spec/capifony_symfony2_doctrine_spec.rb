@@ -108,7 +108,7 @@ describe "Capifony::Symfony2 - doctrine" do
       @configuration.find_and_execute_task('symfony:doctrine:load_fixtures')
     end
 
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:fixtures:load --env=prod --no-debug\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:fixtures:load --no-interaction --env=prod --no-debug\'') }
   end
 
   it "defines symfony:doctrine:migrations tasks" do

@@ -112,20 +112,25 @@ namespace :symfony do
   namespace :composer do
     desc "Gets composer and installs it"
     task :get, :roles => :app, :except => { :no_release => true } do
+      install_options = ''
+      unless composer_version.empty?
+        install_options += " -- --version=#{composer_version}"
+      end
+
       if use_composer_tmp
         # Because we always install to temp location we assume that we download composer every time.
         logger.debug "Downloading composer to #{$temp_destination}"
         capifony_pretty_print "--> Downloading Composer to temp location"
-        run_locally "cd #{$temp_destination} && curl -s http://getcomposer.org/installer | #{php_bin}"
+        run_locally "cd #{$temp_destination} && curl -s http://getcomposer.org/installer | #{php_bin}#{install_options}"
       else
         if !remote_file_exists?("#{latest_release}/composer.phar")
           capifony_pretty_print "--> Downloading Composer"
 
-          run "#{try_sudo} sh -c 'cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}'"
+          run "#{try_sudo} sh -c 'cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}#{install_options}'"
         else
           capifony_pretty_print "--> Updating Composer"
 
-          run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} composer.phar self-update'"
+          run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} composer.phar self-update #{composer_version}'" \
         end
       end
       capifony_puts_ok

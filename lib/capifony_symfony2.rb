@@ -64,6 +64,10 @@ module Capifony
         # If set to false, Capifony will download/install composer
         set :composer_bin,          false
 
+        # Release number to composer
+        # If you would like to instead update to a specific release simply specify it (for example '1.0.0-alpha8')
+        set :composer_version,      ""
+
         # Options to pass to composer when installing/updating
         set :composer_options,      "--no-dev --verbose --prefer-dist --optimize-autoloader --no-progress"
 

@@ -204,7 +204,7 @@ describe "Capifony::Symfony2 - doctrine" do
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:create --env=prod --no-debug --em=custom_em\'') }
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:drop --force --env=prod --no-debug --em=custom_em\'') }
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:schema:update --force --env=prod --no-debug --em=custom_em\'') }
-    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:fixtures:load --env=prod --no-debug --em=custom_em\'') }
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:fixtures:load --no-interaction --env=prod --no-debug --em=custom_em\'') }
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:migrations:status --env=prod --no-debug --em=custom_em\'') }
   end
   

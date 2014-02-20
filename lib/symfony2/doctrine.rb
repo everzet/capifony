@@ -94,7 +94,10 @@ namespace :symfony do
 
     desc "Load data fixtures"
     task :load_fixtures, :roles => :app, :except => { :no_release => true } do
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:fixtures:load #{console_options}#{doctrine_em_flag}'", :once => true
+      if !interactive_mode || Capistrano::CLI.ui.agree("Careful, database will be purged. Do you want to continue? (Y/N)")
+        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:fixtures:load --no-interaction #{console_options}#{doctrine_em_flag}'", :once => true
+      end
+      capifony_puts_ok
     end
 
     namespace :migrations do

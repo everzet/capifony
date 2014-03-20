@@ -110,7 +110,7 @@ namespace :symfony do
 
   namespace :plugin do
     desc "Publishes web assets for all plugins"
-    task :publish_assets do
+    task :publish_assets, :roles => :app, :except => { :no_release => true } do
       run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony plugin:publish-assets'"
     end
   end

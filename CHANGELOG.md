@@ -1,3 +1,7 @@
+### 2.6.1 / ???
+
+n/a
+
 ### 2.6.0 / April 9, 2014
 
 * Added: `no_release` for symfony1 `publish_assets`

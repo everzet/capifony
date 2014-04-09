@@ -1,6 +1,9 @@
-### 2.5.1 / ???
+### 2.6.0 / April 9, 2014
 
-n/a
+* Added: `no_release` for symfony1 `publish_assets`
+* Added: allow to skip or not interactive_mode for the task `capifony:doctrine:load:fixtures`
+* Added: support composer version specify (install/self-update)
+* Removed: unneeded dump of autoload files
 
 ### 2.5.0 / February 11, 2014
 

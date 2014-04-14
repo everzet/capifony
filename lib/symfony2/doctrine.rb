@@ -159,6 +159,14 @@ namespace :symfony do
           end
         end
       end
+
+      desc "Load data fixtures"
+      task :load_fixtures, :roles => :app, :except => { :no_release => true } do
+        if !interactive_mode || Capistrano::CLI.ui.agree("Careful, database will be purged. Do you want to continue? (Y/N)")
+          run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:fixtures:load --no-interaction #{console_options}'", :once => true
+        end
+        capifony_puts_ok
+      end
     end
 
     namespace :init do

@@ -172,6 +172,18 @@ describe "Capifony::Symfony2 - doctrine" do
     it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:mongodb:schema:drop --index --env=prod --no-debug\'') }
   end
 
+  it "defines symfony:doctrine:mongodb:load_fixtures task" do
+    @configuration.find_task('symfony:doctrine:mongodb:load_fixtures').should_not == nil
+  end
+
+  context "when running symfony:doctrine:mongodb:load_fixtures" do
+    before do
+      @configuration.find_and_execute_task('symfony:doctrine:mongodb:load_fixtures')
+    end
+
+    it { should have_run(' sh -c \'cd /var/www/releases/20120927 && php app/console doctrine:mongodb:fixtures:load --no-interaction --env=prod --no-debug\'') }
+  end
+
   it "defines symfony:doctrine:init tasks" do
     @configuration.find_task('symfony:doctrine:init:acl').should_not == nil
   end

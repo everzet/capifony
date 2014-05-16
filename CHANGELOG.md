@@ -1,3 +1,7 @@
+### 2.7.1 / ???
+
+n/a
+
 ### 2.7.0 / May 16, 2014
 
 * Added: support for command `doctrine:mongodb:fixtures:load`

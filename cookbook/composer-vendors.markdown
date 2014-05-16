@@ -35,17 +35,12 @@ set :copy_vendors, true
 
 <hr />
 
-## Scripts
+## Composer Options
 
-By default Composer does not run the `post-install` or `post-update` scripts
-specified within the `composer.json` file. This is because the `composer_options`
-default is `--no-scripts --no-dev --verbose --prefer-dist --optimize-autoloader`
-
-Some external bundles may require a script to run with deployment. If you require
-composer to run scripts you can use the `composer_options` variable to specify
-what is included when the composer command is called. For example, to run the scripts
-update the parameter:
+You can control command line options passed to composer like so:
 
 {% highlight ruby %}
-set :composer_options,  "--no-dev --verbose --prefer-dist --optimize-autoloader"
+set :composer_options,  "--no-dev --verbose --prefer-dist --optimize-autoloader --no-progress"
 {% endhighlight %}
+
+This means that by default, any post-install/post-update hooks that are defined in your `composer.json` file will run. You can disable that behavior by passing `--no-scripts` as one of the options above, and perhaps tell Capifony to run separate scripts in your `deploy.rb` file.

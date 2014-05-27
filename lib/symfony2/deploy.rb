@@ -43,7 +43,7 @@ namespace :deploy do
           dirs.each do |dir|
             is_owner = (capture "`echo stat #{dir} -c %U`").chomp == user
             if is_owner && permission_method != :chown
-              has_facl = (capture "getfacl --absolute-names #{dir} | grep #{webserver_user} | wc -l").chomp != "0"
+              has_facl = (capture "getfacl --absolute-names -t #{dir} | grep #{webserver_user}.*rwx | wc -l").chomp != "0"
               if (!has_facl)
                 methods[permission_method].each do |cmd|
                   try_sudo sprintf(cmd, dir)

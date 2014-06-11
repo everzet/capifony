@@ -72,7 +72,7 @@ namespace :database do
     end
   end
 
-  namespace :move do
+  namespace :copy do
     desc "Dumps remote database, downloads it to local, and populates here"
     task :to_local, :roles => :db, :only => { :primary => true } do
       env       = fetch(:deploy_env, "remote")

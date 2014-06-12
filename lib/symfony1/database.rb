@@ -61,7 +61,7 @@ namespace :database do
     end
   end
 
-  namespace :move do
+  namespace :copy do
     desc "Dump remote database, download it to local & populate here"
     task :to_local, :roles => :db, :only => { :primary => true } do
 

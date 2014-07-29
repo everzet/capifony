@@ -27,6 +27,9 @@ namespace :deploy do
           "setfacl -R -m u:#{user}:rwX -m u:#{webserver_user}:rwX %s",
           "setfacl -dR -m u:#{user}:rwx -m u:#{webserver_user}:rwx %s"
         ],
+        :chmod_alt => [
+          "chmod -R a+w %s"
+        ],
         :chown => ["chown -R #{webserver_user} %s"]
       }
 

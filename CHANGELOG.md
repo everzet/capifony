@@ -1,6 +1,12 @@
-### 2.7.1 / ???
+### 2.8.0 / August 1, 2014
 
-n/a
+* Added: alternative way on Linux/Ubuntu to deploy using chmod option: access
+  recursively all users write permissions to following directory.
+* Added: rename database move commands to copy
+* Added: check for possible already existing acl on directory
+* Added: make `symfony:composer:install` run in interactive mode, to allow
+  `parameters.(ini|yml)` configuration using
+  `incenteev/composer-parameter-handle`
 
 ### 2.7.0 / May 16, 2014
 

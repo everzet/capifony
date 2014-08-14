@@ -1,3 +1,7 @@
+### 2.8.2 / ???
+
+n/a
+
 ### 2.8.1 / August 14, 2014
 
 * Fixed: use `--tabular` for `getfacl` instead of `-t` shortcut

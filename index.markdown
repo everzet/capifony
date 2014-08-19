@@ -254,7 +254,7 @@ meaning you only need to configure after the initial deploy.
 
 If you need to deploy and run your migrations you can call:
 
-    cap deploy:migrate
+    cap deploy:migrations
 
 To run your test suite on the production server, just invoke:
 

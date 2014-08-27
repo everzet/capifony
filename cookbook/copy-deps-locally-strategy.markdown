@@ -3,6 +3,8 @@ layout: cookbook
 title: Deployment &rarr; production (with deps via local copy)
 ---
 
+NOTE: This script assumes that you have a directory called /opt/local/share/curl containing a certificate file. It seemes as this script assumes an OSX environment with CURL installed via MacPorts. It won't run on many other systems like Arch Linux.
+
 This third strategy involves deployment to a production server with dependencies
 right from your deployment machine via a local copy.
 

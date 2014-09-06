@@ -16,10 +16,10 @@ run:
 If you need to dump remote database, and populate this dump on local machine,
 run:
 
-    cap database:move:to_local
+    cap database:copy:to_local
 
 If you need to dump local database, and populate this dump on remote server,
 run:
 
-    cap database:move:to_remote
+    cap database:copy:to_remote
 

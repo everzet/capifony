@@ -12,18 +12,18 @@ namespace :shared do
       run "#{try_sudo} sh -c 'cd #{shared_path}; tar -zcvf #{file} --exclude='cached-copy' .'"
       capifony_puts_ok
 
-      FileUtils.mkdir_p("backups/")
+      FileUtils.mkdir_p("#{backup_path}/")
 
       capifony_progress_start
-      get(file, "backups/#{filename}", :via => :scp) do |channel, name, sent, total|
+      get(file, "#{backup_path}/#{filename}", :via => :scp) do |channel, name, sent, total|
         capifony_progress_update(sent, total)
       end
 
       capifony_pretty_print "--> Cleaning up"
       begin
-        FileUtils.ln_sf(filename, "backups/#{application}.#{env}_shared.latest.tar.gz")
+        FileUtils.ln_sf(filename, "#{backup_path}/#{application}.#{env}_shared.latest.tar.gz")
       rescue Exception # fallback for file systems that don't support symlinks
-        FileUtils.cp_r("backups/#{filename}", "backups/#{application}.#{env}_shared.latest.tar.gz")
+        FileUtils.cp_r("#{backup_path}/#{filename}", "#{backup_path}/#{application}.#{env}_shared.latest.tar.gz")
       end
       run "#{try_sudo} rm -f #{file}"
       capifony_puts_ok

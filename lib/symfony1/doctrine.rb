@@ -7,7 +7,7 @@ namespace :symfony do
 
     desc "Ensure Doctrine is correctly configured"
     task :setup do
-      conf_files_exists = capture("if test -s #{shared_path}/config/databases.yml ; then echo 'exists' ; fi").strip
+      conf_files_exists = capture("if test -s #{shared_path}/#{databases_config_path} ; then echo 'exists' ; fi").strip
       if (!conf_files_exists.eql?("exists"))
         symfony.configure.database
       end

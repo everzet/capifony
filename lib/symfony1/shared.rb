@@ -1,13 +1,13 @@
 namespace :shared do
   namespace :databases do
-    desc "Download config/databases.yml from remote server"
+    desc "Download database config file from remote server"
     task :to_local do
-      download("#{shared_path}/config/databases.yml", "config/databases.yml", :via => :scp)
+      download("#{shared_path}/#{databases_config_path}", databases_config_path, :via => :scp)
     end
 
-    desc "Upload config/databases.yml to remote server"
+    desc "Upload database config to remote server"
     task :to_remote do
-      upload("config/databases.yml", "#{shared_path}/config/databases.yml", :via => :scp)
+      upload(databases_config_path, "#{shared_path}/#{databases_config_path}", :via => :scp)
     end
   end
 

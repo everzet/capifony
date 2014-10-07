@@ -1,6 +1,8 @@
-### 2.8.2 / ???
+### 2.8.2 / October 7, 2014
 
-n/a
+* Fixed: set default `:use_composer` to true
+* Fixed: Inifile 3.0.0 gem is incompatible with Capifony. Use Inifile version >=
+  2.0.2 and < 3.0.0. fixes #523
 
 ### 2.8.1 / August 14, 2014
 

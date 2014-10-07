@@ -1,3 +1,7 @@
+### 2.8.3 / ???
+
+n/a
+
 ### 2.8.2 / October 7, 2014
 
 * Fixed: set default `:use_composer` to true

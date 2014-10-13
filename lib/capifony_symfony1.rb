@@ -11,11 +11,13 @@ load 'symfony1/web'
 
 require 'yaml'
 
+set :databases_config_path, "config/databases.yml"
+
 # Dirs that need to remain the same between deploys (shared dirs)
 set :shared_children,   %w(log web/uploads)
 
 # Files that need to remain the same between deploys
-set :shared_files,      %w(config/databases.yml)
+set :shared_files,      %w(#{databases_config_path})
 
 # Asset folders (that need to be timestamped)
 set :asset_children,    %w(web/css web/images web/js)
@@ -40,7 +42,7 @@ set :use_shared_symfony, false
 set :symfony_version,    "1.4.18"
 
 def guess_symfony_orm
-  databases = YAML::load(IO.read('config/databases.yml'))
+  databases = YAML::load(IO.read(databases_config_path))
 
   if databases[symfony_env_local]
     databases[symfony_env_local].keys[0].to_s

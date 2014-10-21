@@ -1,6 +1,26 @@
-### 2.7.1 / ???
+### 2.8.3 / ???
 
 n/a
+
+### 2.8.2 / October 7, 2014
+
+* Fixed: set default `:use_composer` to true
+* Fixed: Inifile 3.0.0 gem is incompatible with Capifony. Use Inifile version >=
+  2.0.2 and < 3.0.0. fixes #523
+
+### 2.8.1 / August 14, 2014
+
+* Fixed: use `--tabular` for `getfacl` instead of `-t` shortcut
+
+### 2.8.0 / August 1, 2014
+
+* Added: alternative way on Linux/Ubuntu to deploy using chmod option: access
+  recursively all users write permissions to following directory.
+* Added: rename database move commands to copy
+* Added: check for possible already existing acl on directory
+* Added: make `symfony:composer:install` run in interactive mode, to allow
+  `parameters.(ini|yml)` configuration using
+  `incenteev/composer-parameter-handle`
 
 ### 2.7.0 / May 16, 2014
 

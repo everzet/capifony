@@ -67,7 +67,7 @@ module Capifony
 
         # Whether to use composer to install vendors.
         # If set to false, it will use the bin/vendors script
-        set :use_composer,          false
+        set :use_composer,          true
 
         # Whether to use composer to install vendors to a local temp directory.
         set :use_composer_tmp,     false

@@ -2,7 +2,7 @@ namespace :symfony do
   namespace :propel do
     desc "Ensure Propel is correctly configured"
     task :setup, :roles => :app, :except => { :no_release => true } do
-      conf_files_exists = capture("if test -s #{shared_path}/config/propel.ini -a -s #{shared_path}/config/databases.yml ; then echo 'exists' ; fi").strip
+      conf_files_exists = capture("if test -s #{shared_path}/config/propel.ini -a -s #{shared_path}/#{databases_config_path} ; then echo 'exists' ; fi").strip
 
       # share childs again (for propel.ini file)
       shared_files << "config/propel.ini"

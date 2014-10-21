@@ -27,6 +27,9 @@ namespace :deploy do
           "setfacl -R -m u:#{user}:rwX -m u:#{webserver_user}:rwX %s",
           "setfacl -dR -m u:#{user}:rwx -m u:#{webserver_user}:rwx %s"
         ],
+        :chmod_alt => [
+          "chmod -R a+w %s"
+        ],
         :chown => ["chown -R #{webserver_user} %s"]
       }
 
@@ -43,7 +46,7 @@ namespace :deploy do
           dirs.each do |dir|
             is_owner = (capture "`echo stat #{dir} -c %U`").chomp == user
             if is_owner && permission_method != :chown
-              has_facl = (capture "getfacl --absolute-names -t #{dir} | grep #{webserver_user}.*rwx | wc -l").chomp != "0"
+              has_facl = (capture "getfacl --absolute-names --tabular #{dir} | grep #{webserver_user}.*rwx | wc -l").chomp != "0"
               if (!has_facl)
                 methods[permission_method].each do |cmd|
                   try_sudo sprintf(cmd, dir)

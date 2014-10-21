@@ -7,7 +7,7 @@ namespace :database do
       sqlfile   = "#{application}_dump.sql"
       config    = ""
 
-      run "#{try_sudo} cat #{shared_path}/config/databases.yml" do |ch, st, data|
+      run "#{try_sudo} cat #{shared_path}/#{databases_config_path}" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
       end
 
@@ -34,7 +34,7 @@ namespace :database do
       filename  = "#{application}.local_dump.#{Time.now.strftime("%Y-%m-%d_%H-%M-%S")}.sql.gz"
       tmpfile   = "#{backup_path}/#{application}_dump_tmp.sql"
       file      = "#{backup_path}/#{filename}"
-      config    = load_database_config IO.read('config/databases.yml'), symfony_env_local
+      config    = load_database_config IO.read(databases_config_path), symfony_env_local
       sqlfile   = "#{application}_dump.sql"
 
       require "fileutils"
@@ -76,7 +76,7 @@ namespace :database do
 
       run_locally "gunzip -c #{zipped_file_path} > #{unzipped_file_path}"
 
-      config = load_database_config IO.read('config/databases.yml'), symfony_env_local
+      config = load_database_config IO.read(databases_config_path), symfony_env_local
 
       run_locally generate_sql_command('drop', config)
       run_locally generate_sql_command('create', config)
@@ -100,7 +100,7 @@ namespace :database do
       upload(file, "#{remote_tmp_dir}/#{filename}", :via => :scp)
       run "#{try_sudo} gunzip -c #{remote_tmp_dir}/#{filename} > #{remote_tmp_dir}/#{sqlfile}"
 
-      run "#{try_sudo} cat #{shared_path}/config/databases.yml" do |ch, st, data|
+      run "#{try_sudo} cat #{shared_path}/#{databases_config_path}" do |ch, st, data|
         config = load_database_config data, symfony_env_prod
       end
 

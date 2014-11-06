@@ -89,9 +89,9 @@ namespace :database do
 
       case config['database_driver']
       when "pdo_mysql", "mysql"
-        `mysql -u#{config['database_user']} --password=\"#{config['database_password']}\" #{config['database_name']} < #{backup_path}/#{sqlfile}`
+        `mysql -u#{config['database_user']} --host=\"#{config['database_host']}\" --password=\"#{config['database_password']}\" #{config['database_name']} < #{backup_path}/#{sqlfile}`
       when "pdo_pgsql", "pgsql"
-        `PGPASSWORD=\"#{config['database_password']}\" psql -U #{config['database_user']} #{config['database_name']} < #{backup_path}/#{sqlfile}`
+        `PGPASSWORD=\"#{config['database_password']}\" psql -U #{config['database_user']} #{config['database_name']} -h#{config['database_host']}< #{backup_path}/#{sqlfile}`
       end
       FileUtils.rm("#{backup_path}/#{sqlfile}")
     end

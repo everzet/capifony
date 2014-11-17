@@ -58,4 +58,21 @@ namespace :deploy do
     run "#{try_sudo} mkdir -p #{dirs.join(' ')}"
     run "#{try_sudo} chmod g+w #{dirs.join(' ')}" if fetch(:group_writable, true)
   end
+
+  desc <<-DESC
+    Copies your project to the remote servers. This is the first stage \
+    of any deployment; moving your updated code and assets to the deployment \
+    servers. You will rarely call this task directly, however; instead, you \
+    should call the `deploy' task (to do a complete deploy) or the `update' \
+    task (if you want to perform the `restart' task separately).
+    You will need to make sure you set the :scm variable to the source \
+    control software you are using (it defaults to :subversion), and the \
+    :deploy_via variable to the strategy you want to use to deploy (it \
+    defaults to :checkout).
+  DESC
+  task :update_code, :except => { :no_release => true } do
+    on_rollback { run "#{try_sudo} rm -rf #{release_path}; true" }
+    strategy.deploy!
+    finalize_update
+  end
 end

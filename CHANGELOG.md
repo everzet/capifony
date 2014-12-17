@@ -4,9 +4,9 @@ n/a
 
 ### 2.8.3 / December 17, 2014
 
-Fixed: rollback using the sudo context if available.
-Fixed: support for hosts other then localhost when using `database:copy:to_local`
-Fixed: revert "Recreated composer autoload after `deploy:rollback`
+* Fixed: rollback using the sudo context if available.
+* Fixed: support for hosts other then localhost when using `database:copy:to_local`
+* Fixed: revert "Recreated composer autoload after `deploy:rollback`
 
 ### 2.8.2 / October 7, 2014
 

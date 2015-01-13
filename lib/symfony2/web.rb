@@ -1,5 +1,6 @@
 namespace :deploy do
   namespace :web do
+
     desc <<-DESC
       Present a maintenance page to visitors. Disables your application's web \
       interface by writing a "#{maintenance_basename}.html" file to each web server. The \
@@ -43,14 +44,18 @@ namespace :deploy do
     DESC
     task :disable, :roles => :web, :except => { :no_release => true } do
       require 'erb'
-      on_rollback { run "rm #{latest_release}/#{web_path}/#{maintenance_basename}.html" }
+      maintenance_file_path = "#{current_path}/#{web_path}/#{maintenance_basename}.html"
+      on_rollback { run "rm #{maintenance_file_path}" }
 
       reason   = ENV['REASON']
       deadline = ENV['UNTIL']
       template = File.read(maintenance_template_path)
       result   = ERB.new(template).result(binding)
 
-      put result, "#{latest_release}/#{web_path}/#{maintenance_basename}.html", :mode => 0644
+      file = File.new(maintenance_file_path, "w")
+      file.syswrite(result)
+      file.chmod(0644)
+      file.close
     end
 
     desc <<-DESC
@@ -60,7 +65,8 @@ namespace :deploy do
       web-accessible again.
     DESC
     task :enable, :roles => :web, :except => { :no_release => true } do
-      run "#{try_sudo} rm -f #{latest_release}/#{web_path}/#{maintenance_basename}.html"
+      maintenance_file_path = "#{current_path}/#{web_path}/#{maintenance_basename}.html"
+      run "#{try_sudo} rm -f #{maintenance_file_path}"
     end
   end
 end

@@ -25,12 +25,38 @@ namespace :symfony do
   end
 
   namespace :assets do
-    desc "Updates assets version (in config.yml)"
+    desc "Creates a config file (assets_version.yml) withe latest asset version"
     task :update_version, :roles => :app, :except => { :no_release => true } do
-      capifony_pretty_print "--> Updating assets version (in config.yml)"
+      capifony_pretty_print "--> Updating `assets_version`"
+      asset_paths = asset_children.map { |p| "#{latest_release}/#{p}" }.join(" ")
 
-      run "#{try_sudo} sed -i 's/\\(assets_version:[ ]*\\)\\([a-zA-Z0-9_~]*\\)\\(.*\\)$/\\1#{real_revision.to_s[0,7]}\\3/g' #{latest_release}/#{app_config_path}/config.yml"
-      capifony_puts_ok
+      if asset_paths.chomp.empty?
+        puts "    No asset paths found, skipped".yellow
+      else
+        assets_version = capture("find #{asset_paths} -type f -printf '%Ts\\n' | sort -n | tail -1")
+        assets_version = assets_version.to_i.to_s(36)
+        puts "    Latest assets version: (#{assets_version})"
+
+        file_path = "#{latest_release}/#{app_config_path}/assets_version.yml"
+        file_content = "parameters:\\n    assets_version: #{assets_version}"
+        run "echo '#{file_content}' | #{try_sudo} tee #{file_path}"
+        capifony_puts_ok
+      end
+    end
+
+    desc "Normalizes assets timestamps"
+    task :normalize_timestamps, :roles => :app, :except => { :no_release => true } do
+      stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
+      asset_paths = asset_children.map { |p| "#{latest_release}/#{p}" }.join(" ")
+
+      if asset_paths.chomp.empty?
+        puts "    No asset paths found, skipped".yellow
+      else
+        capifony_pretty_print "--> Normalizing asset timestamps"
+
+        run "#{try_sudo} find #{asset_paths} -exec touch -t #{stamp} {} ';' &> /dev/null || true", :env => { "TZ" => "UTC" }
+        capifony_puts_ok
+      end
     end
 
     desc "Installs bundle's assets"

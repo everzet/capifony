@@ -105,20 +105,6 @@ namespace :deploy do
     capifony_puts_ok
 
     share_childs
-
-    if fetch(:normalize_asset_timestamps, true)
-      stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
-      asset_paths = asset_children.map { |p| "#{latest_release}/#{p}" }.join(" ")
-
-      if asset_paths.chomp.empty?
-        puts "    No asset paths found, skipped".yellow
-      else
-        capifony_pretty_print "--> Normalizing asset timestamps"
-
-        run "#{try_sudo} find #{asset_paths} -exec touch -t #{stamp} {} ';' &> /dev/null || true", :env => { "TZ" => "UTC" }
-        capifony_puts_ok
-      end
-    end
   end
 
   desc <<-DESC

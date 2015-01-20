@@ -95,8 +95,11 @@ module Capifony
         set :assets_relative,       false
         set :assets_install_path,   web_path
 
-        # Whether to update `assets_version` in `config.yml`
+        # Whether to update `assets_version` parameter in `assets_version.yml`
         set :update_assets_version, false
+
+        # Whether to normalize assets timestamps
+        set :normalize_asset_timestamps, false
 
         # Need to clear *_dev controllers
         set :clear_controllers,     true
@@ -282,7 +285,11 @@ module Capifony
 
         after "deploy:finalize_update" do
           if update_assets_version
-            symfony.assets.update_version   # Update `assets_version`
+            symfony.assets.update_version
+          end
+
+          if normalize_asset_timestamps
+            symfony.assets.normalize_timestamps
           end
 
           if use_composer && !use_composer_tmp

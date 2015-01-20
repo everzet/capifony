@@ -54,7 +54,7 @@ end
 def guess_symfony_lib
   symfony_version = capture("cd #{latest_release} && #{php_bin} ./symfony -V")
 
-  /\((.*)\)/.match(symfony_version)[1]
+  /1\.[0-1]\.[0-9]{2}/.match(symfony_version)[1]
 end
 
 def deep_merge(hash1, hash2)

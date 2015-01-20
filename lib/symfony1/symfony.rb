@@ -17,7 +17,7 @@ namespace :symfony do
 
   desc "Clears the cache"
   task :cc, :roles => :app, :except => { :no_release => true } do
-    run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony cache:clear'"
+    run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony clear-cache'"
     run "#{try_sudo} chmod -R g+w #{latest_release}/cache"
   end
 

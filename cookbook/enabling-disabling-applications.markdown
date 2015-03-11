@@ -3,6 +3,33 @@ layout: cookbook
 title: Enabling/Disabling applications
 ---
 
+Prerequisites:
+
+Apache web server:
+Place (or modify existing) .htaccess file under /web directory
+
+```
+    ErrorDocument 503 /#{maintenance_basename}.html
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} !\.(css|gif|jpg|png)$
+    RewriteCond %{DOCUMENT_ROOT}/#{maintenance_basename}.html -f
+    RewriteCond %{SCRIPT_FILENAME} !#{maintenance_basename}.html
+    RewriteRule ^.*$ - [redirect=503,last]
+```
+
+Nginx web server    
+
+```
+    if (-f $document_root/maintenance.html) {
+        return 503;
+    }
+    error_page 503 @maintenance;
+    location @maintenance {
+        rewrite ^(.*)$ /maintenance.html last;
+        break;
+    }
+```
+ 
 If you want to quickly disable your application, run:
 
     cap deploy:web:disable

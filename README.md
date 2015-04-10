@@ -1,3 +1,15 @@
+#### Hi! This is your captain speaking.
+
+#### **Capifony** is based on *Capistrano v2.x* and will stick to this version (i.e. Capifony is feature-frozen, and will only accept bug fixes).
+
+#### At the time of writing, [*Capistrano v3*](http://capistranorb.com/) is the current major version, and *Capifony is not compatible* with it.
+
+#### Don't worry, there is a plugin for that! Using *Capistrano v3* + [*capistrano/symfony*](https://github.com/capistrano/symfony) (heavily inspired by *Capifony*) is the way to go for new projects!
+
+#### Cheers!
+
+---
+
 Capifony
 ========
 

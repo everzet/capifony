@@ -4,7 +4,7 @@
 
 #### At the time of writing, [*Capistrano v3*](http://capistranorb.com/) is the current major version, and *Capifony is not compatible* with it.
 
-#### Don't worry, there is a plugin for that! Using *Capistrano v3* + [*capistrano/symfony*](https://github.com/capistrano/symfony) (heavily inspired by *Capifony*) may be the way to go for new projects! You can [read more on capifony and its future](williamdurand.fr/2015/04/11/on-capifony-and-its-future/).
+#### Don't worry, there is a plugin for that! Using *Capistrano v3* + [*capistrano/symfony*](https://github.com/capistrano/symfony) (heavily inspired by *Capifony*) may be the way to go for new projects! You can [read more on capifony and its future](http://williamdurand.fr/2015/04/11/on-capifony-and-its-future/).
 
 #### Cheers!
 

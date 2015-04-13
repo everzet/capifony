@@ -1,6 +1,9 @@
-### 2.8.4 / ???
+### 2.8.4 / April 13, 2015
 
-n/a
+* Fixed: update_assets_version by date of last modified file
+* Fixed: replace latest_release with current_path and write tests
+
+*Important:* http://williamdurand.fr/2015/04/11/on-capifony-and-its-future/
 
 ### 2.8.3 / December 17, 2014
 

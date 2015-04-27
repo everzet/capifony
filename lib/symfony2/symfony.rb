@@ -147,12 +147,12 @@ namespace :symfony do
         # Because we always install to temp location we assume that we download composer every time.
         logger.debug "Downloading composer to #{$temp_destination}"
         capifony_pretty_print "--> Downloading Composer to temp location"
-        run_locally "cd #{$temp_destination} && curl -s http://getcomposer.org/installer | #{php_bin}#{install_options}"
+        run_locally "cd #{$temp_destination} && curl -sL https://getcomposer.org/installer | #{php_bin}#{install_options}"
       else
         if !remote_file_exists?("#{latest_release}/composer.phar")
           capifony_pretty_print "--> Downloading Composer"
 
-          run "#{try_sudo} sh -c 'cd #{latest_release} && curl -s http://getcomposer.org/installer | #{php_bin}#{install_options}'"
+          run "#{try_sudo} sh -c 'cd #{latest_release} && curl -sL https://getcomposer.org/installer | #{php_bin}#{install_options}'"
         else
           capifony_pretty_print "--> Updating Composer"
 
@@ -384,7 +384,7 @@ namespace :symfony do
 
   namespace :project do
     desc "Clears all non production environment controllers"
-    task :clear_controllers, :roles => :app, :except => { :no_release => true } do
+    task :clear_controllers, :roles => :app, :except => { :no_release =htt> true } do
       capifony_pretty_print "--> Clear controllers"
 
       command = "#{try_sudo} sh -c 'cd #{latest_release} && rm -f"

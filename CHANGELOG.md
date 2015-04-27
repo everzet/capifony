@@ -1,6 +1,6 @@
-### 2.8.5 / ???
+### 2.8.5 / April 27, 2015
 
-n/a
+* Fixed: Fetch composer binary from HTTPS-only (see #568)
 
 ### 2.8.4 / April 13, 2015
 

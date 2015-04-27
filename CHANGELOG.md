@@ -1,3 +1,7 @@
+### 2.8.6 / ???
+
+n/a
+
 ### 2.8.5 / April 27, 2015
 
 * Fixed: Fetch composer binary from HTTPS-only (see #568)

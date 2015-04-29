@@ -1,6 +1,6 @@
-### 2.8.6 / ???
+### 2.8.6 / April 29, 2015
 
-n/a
+* Fixed: asset version (see #565)
 
 ### 2.8.5 / April 27, 2015
 

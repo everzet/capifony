@@ -17,7 +17,7 @@ set :databases_config_path, "config/databases.yml"
 set :shared_children,   %w(log web/uploads)
 
 # Files that need to remain the same between deploys
-set :shared_files,      %w(#{databases_config_path})
+set :shared_files,      %W(#{databases_config_path})
 
 # Asset folders (that need to be timestamped)
 set :asset_children,    %w(web/css web/images web/js)

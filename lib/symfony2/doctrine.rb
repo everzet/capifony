@@ -105,7 +105,7 @@ namespace :symfony do
       task :migrate, :roles => :app, :only => { :primary => true }, :except => { :no_release => true } do
         currentVersion = nil
         run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} --no-ansi doctrine:migrations:status #{console_options}#{doctrine_em_flag}'", :once => true do |ch, stream, out|
-          if stream == :out and out =~ /Current Version:.+\(([\w]+)\)/
+          if stream == :out and out =~ /Current Version:.+\(([^\)]+)\)/
             currentVersion = Regexp.last_match(1)
           end
           if stream == :out and out =~ /Current Version:\s*0\s*$/
@@ -119,8 +119,8 @@ namespace :symfony do
         logger.info "    Current database version: #{currentVersion}"
 
         on_rollback {
-          if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database back to version #{currentVersion}? (y/N)")
-            run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate #{currentVersion} #{console_options} --no-interaction#{doctrine_em_flag}'", :once => true
+          if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database back to version \"#{currentVersion}\"? (y/N)")
+            run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate \"#{currentVersion}\" #{console_options} --no-interaction#{doctrine_em_flag}'", :once => true
           end
         }
 

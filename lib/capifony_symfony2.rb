@@ -23,23 +23,35 @@ module Capifony
         load 'symfony2/web'
         load 'symfony2/shared'
 
+        # Whether to use the Symfony 3 directory structure.
+        # Available since Symfony 2.5, the cache and log paths
+        # are `var/cache` and `var/log` and console path is
+        # `bin/console`
+        set :use_symfony_3_dirs,    false
+
         # Symfony application path
         set :app_path,              "app"
 
         # Symfony web path
         set :web_path,              "web"
 
+        # Symfony bin path
+        set :bin_path,              "bin"
+
+        # Symfony var path
+        set :var_path,              "var"
+
         # Symfony console bin
-        set :symfony_console,       app_path + "/console"
+        set :symfony_console,       (use_symfony_3_dirs ? bin_path : app_path) + "/console"
 
         # Symfony debug flag for console commands
         set :symfony_debug,         false
 
         # Symfony log path
-        set :log_path,              app_path + "/logs"
+        set :log_path,              (use_symfony_3_dirs ? var_path : app_path) + "/logs"
 
         # Symfony cache path
-        set :cache_path,            app_path + "/cache"
+        set :cache_path,            (use_symfony_3_dirs ? var_path : app_path) + "/cache"
 
         # Symfony config file path
         set :app_config_path,       app_path + "/config"
@@ -48,10 +60,10 @@ module Capifony
         set :app_config_file,       "parameters.yml"
 
         # Symfony bin vendors
-        set :symfony_vendors,       "bin/vendors"
+        set :symfony_vendors,       bin_path + "/vendors"
 
         # Symfony build_bootstrap script
-        set :build_bootstrap,       "bin/build_bootstrap"
+        set :build_bootstrap,       bin_path + "/build_bootstrap"
 
         # Whether to use composer to install vendors.
         # If set to false, it will use the bin/vendors script

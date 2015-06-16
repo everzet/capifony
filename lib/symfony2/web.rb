@@ -52,10 +52,7 @@ namespace :deploy do
       template = File.read(maintenance_template_path)
       result   = ERB.new(template).result(binding)
 
-      file = File.new(maintenance_file_path, "w")
-      file.syswrite(result)
-      file.chmod(0644)
-      file.close
+      put result, "#{latest_release}/#{web_path}/#{maintenance_basename}.html", :mode => 0644
     end
 
     desc <<-DESC

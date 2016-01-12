@@ -82,8 +82,11 @@ namespace :symfony do
     desc "Dumps all assets to the filesystem"
     task :dump, :roles => :app,  :except => { :no_release => true } do
       capifony_pretty_print "--> Dumping all assets to the filesystem"
-
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump #{console_options}'"
+        if use_composer_tmp 
+            run_locally "cd #{$temp_destination} && #{php_bin} #{symfony_console} assetic:dump #{console_options}"
+        else
+            run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} assetic:dump #{console_options}"
+        end 
       capifony_puts_ok
     end
   end

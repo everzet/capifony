@@ -39,7 +39,7 @@ namespace :symfony do
 
         file_path = "#{latest_release}/#{app_config_path}/assets_version.yml"
         file_content = "parameters:\n    assets_version: #{assets_version}"
-        run "echo '#{file_content}' | #{try_sudo} tee #{file_path}"
+        run "printf 'parameters:\\n    assets_version: #{assets_version}' | #{try_sudo} tee #{file_path}"
         capifony_puts_ok
       end
     end

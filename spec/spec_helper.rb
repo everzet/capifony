@@ -17,6 +17,7 @@ RSpec.configure do |config|
 end
 
 require 'capifony_symfony2'
+require 'capifony_symfony3'
 
 # Overriding these methods avoids a dirty console output
 def capifony_pretty_print(msg)

@@ -20,7 +20,7 @@ OptionParser.new do |opts|
     exit 0
   end
 
-  opts.on("-s", "--symfony VERSION", "Capify specific symfony version (1|2)") do |version|
+  opts.on("-s", "--symfony VERSION", "Capify specific symfony version (1|2|3)") do |version|
     symfony_version = version.to_i
   end
 
@@ -55,7 +55,38 @@ end
 base = ARGV.shift
 symfony_version = symfony_version || ((File.directory? File.join(base, 'config')) ? 1 : 2)
 
-if symfony_version == 2
+if symfony_version == 3
+  files = {
+    "Capfile" => unindent(<<-FILE),
+      load 'deploy' if respond_to?(:namespace) # cap2 differentiator
+
+      require 'capifony_symfony3'
+      load '#{symfony_app_path}/config/deploy'
+    FILE
+
+    "#{symfony_app_path}/config/deploy.rb" => unindent(<<-FILE)
+      set :application, "set your application name here"
+      set :domain,      "\#{application}.com"
+      set :deploy_to,   "/var/www/\#{domain}"
+      set :app_path,    "#{symfony_app_path}"
+
+      set :repository,  "\#{domain}:/var/repos/\#{application}.git"
+      set :scm,         :git
+      # Or: `accurev`, `bzr`, `cvs`, `darcs`, `subversion`, `mercurial`, `perforce`, or `none`
+
+      set :model_manager, "doctrine"
+      # Or: `propel`
+
+      role :web,        domain                         # Your HTTP server, Apache/etc
+      role :app,        domain, :primary => true       # This may be the same as your `Web` server
+
+      set  :keep_releases,  3
+
+      # Be more verbose by uncommenting the following line
+      # logger.level = Logger::MAX_LEVEL
+    FILE
+  }
+elsif symfony_version == 2
   files = {
     "Capfile" => unindent(<<-FILE),
       load 'deploy' if respond_to?(:namespace) # cap2 differentiator

@@ -352,6 +352,9 @@ module Capifony
         end
 
         after "deploy:create_symlink" do
+          if keep_releases
+            deploy.cleanup
+          end
           puts "--> Successfully deployed!".green
         end
       end

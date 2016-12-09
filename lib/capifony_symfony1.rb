@@ -54,7 +54,7 @@ end
 def guess_symfony_lib
   symfony_version = capture("cd #{latest_release} && #{php_bin} ./symfony -V")
 
-  /\((.*)\)/.match(symfony_version)[1]
+  /1\.[0-1]\.[0-9]{2}/.match(symfony_version)[1]
 end
 
 def deep_merge(hash1, hash2)
@@ -149,7 +149,6 @@ after "deploy:finalize_update" do
     symfony.orm.build_classes             # 2. (Re)build the model
   end
   symfony.cc                              # 3. Clear cache
-  symfony.plugin.publish_assets           # 4. Publish plugin assets
   symfony.project.permissions             # 5. Fix project permissions
   if symfony_env_prod.eql?("prod")
     symfony.project.clear_controllers     # 6. Clear controllers in production environment

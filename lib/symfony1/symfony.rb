@@ -17,7 +17,7 @@ namespace :symfony do
 
   desc "Clears the cache"
   task :cc, :roles => :app, :except => { :no_release => true } do
-    run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony cache:clear'"
+    run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony clear-cache'"
     run "#{try_sudo} chmod -R g+w #{latest_release}/cache"
   end
 
@@ -30,53 +30,46 @@ namespace :symfony do
     run "#{try_sudo} ln -nfs #{shared_path}/symfony-#{version} #{symlink_path};"
   end
 
-  namespace :configure do
-    desc "Configure database DSN"
-    task :database, :roles => :app, :except => { :no_release => true } do
-      prompt_with_default(:dsn,         "mysql:host=localhost;dbname=#{application}")
-      prompt_with_default(:db_username, "root")
-      db_password = Capistrano::CLI.password_prompt("db_password : ")
+  # namespace :configure do
+  #   desc "Configure database DSN"
+  #   task :database, :roles => :app, :except => { :no_release => true } do
+  #     prompt_with_default(:dsn,         "mysql:host=localhost;dbname=#{application}")
+  #     prompt_with_default(:db_username, "root")
+  #     db_password = Capistrano::CLI.password_prompt("db_password : ")
 
-      # surpress debug log output to hide the password
-      current_logger_level = self.logger.level
-      if current_logger_level >= Capistrano::Logger::DEBUG
-        logger.debug %(executing "cd #{latest_release} && #{php_bin} ./symfony configure:database '#{dsn}' '#{db_username}' ***")
-        self.logger.level = Capistrano::Logger::INFO
-      end
+  #     # surpress debug log output to hide the password
+  #     current_logger_level = self.logger.level
+  #     if current_logger_level >= Capistrano::Logger::DEBUG
+  #       logger.debug %(executing "cd #{latest_release} && #{php_bin} ./symfony configure:database '#{dsn}' '#{db_username}' ***")
+  #       self.logger.level = Capistrano::Logger::INFO
+  #     end
 
-      stream "cd #{latest_release} && #{php_bin} ./symfony configure:database '#{dsn}' '#{db_username}' '#{db_password}'"
+  #     stream "cd #{latest_release} && #{php_bin} ./symfony configure:database '#{dsn}' '#{db_username}' '#{db_password}'"
 
-      # restore logger level
-      self.logger.level = current_logger_level
-    end
-  end
+  #     # restore logger level
+  #     self.logger.level = current_logger_level
+  #   end
+  # end
 
   namespace :project do
     desc "Disables an application in a given environment"
     task :disable, :roles => :app, :except => { :no_release => true } do
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony project:disable #{symfony_env_prod}'"
+      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony disable #{symfony_env_prod}'"
     end
 
     desc "Enables an application in a given environment"
     task :enable, :roles => :app, :except => { :no_release => true } do
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony project:enable #{symfony_env_prod}'"
+      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony enable #{symfony_env_prod}'"
     end
 
     desc "Fixes symfony directory permissions"
     task :permissions, :roles => :app, :except => { :no_release => true } do
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony project:permissions'"
-    end
-
-    desc "Optimizes a project for better performance"
-    task :optimize do
-      prompt_with_default(:application, "frontend")
-
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony project:optimize #{application}'"
+      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony fix-perms'"
     end
 
     desc "Clears all non production environment controllers"
     task :clear_controllers, :roles => :app, :except => { :no_release => true } do
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony project:clear-controllers'"
+      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony clear-controllers'"
     end
 
     desc "Sends emails stored in a queue"
@@ -105,13 +98,6 @@ namespace :symfony do
 
         run "#{try_sudo} sh -c '#{cmd.join(';')}'" if cmd.join(';')
       end
-    end
-  end
-
-  namespace :plugin do
-    desc "Publishes web assets for all plugins"
-    task :publish_assets, :roles => :app, :except => { :no_release => true } do
-      run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony plugin:publish-assets'"
     end
   end
 

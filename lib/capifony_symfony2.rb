@@ -324,6 +324,10 @@ module Capifony
           if cache_warmup
             symfony.cache.warmup            # Warmup clean cache
           end
+          
+          if assets_install
+            symfony.assets.install          # Install assets
+          end
 
           if clear_controllers
             # If clear_controllers is an array set controllers_to_clear,

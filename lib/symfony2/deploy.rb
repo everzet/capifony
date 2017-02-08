@@ -20,8 +20,11 @@ namespace :deploy do
 
       methods = {
         :chmod => [
-          "chmod +a \"#{user} allow delete,write,append,file_inherit,directory_inherit\" %s",
-          "chmod +a \"#{webserver_user} allow delete,write,append,file_inherit,directory_inherit\" %s"
+          "groupadd -f capifony_group_#{application.downcase}",
+  	      "usermod -a -G capifony_group_#{application.downcase} \"#{user}\"",
+		      "usermod -a -G capifony_group_#{application.downcase} \"#{webserver_user}\"",
+		      "chgrp -Rv capifony_group_#{application.downcase} %s",
+		      "chmod g+rwx %s"
         ],
         :acl   => [
           "setfacl -R -m u:#{user}:rwX -m u:#{webserver_user}:rwX %s",

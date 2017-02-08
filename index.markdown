@@ -300,6 +300,8 @@ extension](cookbook/using-the-multistage-extension.html)
 
 [Speeding up deploy](cookbook/speeding-up-deploy.html)
 
+[Generate autoload class map](cookbook/generate-autoload-class-map.html)
+
 [Working with databases](cookbook/working-with-databases.html)
 
 [Deployment in clustered machines](cookbook/deployment-in-clustered-machines.html)

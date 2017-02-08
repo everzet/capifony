@@ -396,4 +396,22 @@ namespace :symfony do
       capifony_puts_ok
     end
   end
+  
+  desc "Configures logrotate for application logs"
+  task :setup_logrotate, :roles => :app, :except => { :no_release => true } do
+    pretty_print "--> Setting up configuration for logrotate"
+
+    rotate_script = %Q{#{shared_path}/#{log_path}/*.log {
+    daily
+    rotate 14
+    size 5M
+    compress
+    missingok
+    }}
+    put rotate_script, "#{shared_path}/logrotate_script"
+    try_sudo "cp #{shared_path}/logrotate_script /etc/logrotate.d/#{application}"
+    run "rm -rf #{shared_path}/logrotate_script"
+
+    puts_ok
+  end
 end

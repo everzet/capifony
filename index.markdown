@@ -178,7 +178,26 @@ To quickly setup a new server, you can do:
 
 <hr />
 
-## 5. Deploy!
+## 5. Point Apache vhost
+
+Last thing before deploy is configure apache or other web sever which you use (nginx, lighttpd, etc.) 
+to point web server vhost to the new document root under `current` symlink, like:
+
+    `
+    <VirtualHost *:80>
+        ServerName my-app.com
+        DocumentRoot /var/www/my-app.com/current/web
+
+        # Other directives here
+
+    </VirtualHost>
+    `
+> NOTE: Do not forget to reload web server service,
+> `service apache2 reload` for apache web server.
+ 
+<hr />
+
+## 6. Deploy!
 
 To deploy your application, simply run:
 

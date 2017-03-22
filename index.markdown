@@ -38,7 +38,7 @@ repository (remote or not) and be able to issue a "pull" from it.
 You **must** have ssh access to the production server from wherever
 you're deploying from:
 
-![](/images/strategy_a.png)
+![](./images/strategy_a.png)
 
 {% highlight ruby %}
 # deploy.rb
@@ -94,7 +94,7 @@ to install vendors locally before deploy - [Install vendors locally before deplo
 
 The deployment server **must** also have ssh access to the production server:
 
-![](/images/strategy_b.png)
+![](./images/strategy_b.png)
 
 {% highlight ruby %}
 # deploy.rb

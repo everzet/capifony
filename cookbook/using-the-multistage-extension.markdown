@@ -62,6 +62,6 @@ be run with your `staging` settings.
 But now, you can run `cap production deploy` to deploy your application to your
 production server, and it's the same pattern for all tasks:
 
-    cap stage taskname
+    cap staging taskname
 
 Where _stage_ can be either `staging`, or `production` in our example.

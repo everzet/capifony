@@ -47,7 +47,7 @@ lot easier.
 
 ## What's next? ##
 
-Read the [capifony documentation](http://capifony.org/)
+Read the <del>[capifony documentation](http://capifony.org/)</del>
 
 ## Running the test suite ##
 
